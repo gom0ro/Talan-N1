@@ -8,10 +8,24 @@ from .models import (
 
 # ── Жаңалықтар ──────────────────────────────────────────────
 
+class NewsInline(admin.StackedInline):
+    """Категория ішінде жаңалықтарды қосу/өңдеу"""
+    model = News
+    extra = 0
+    fields = ('title', 'image', 'is_published', 'created_at')
+    readonly_fields = ('created_at',)
+    show_change_link = True  # Толық өңдеу сілтемесі
+
+
 @admin.register(NewsCategory)
 class NewsCategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug')
+    list_display = ('name', 'slug', 'news_count')
     prepopulated_fields = {'slug': ('name',)}
+    inlines = [NewsInline]
+
+    @admin.display(description='Жаңалық саны')
+    def news_count(self, obj):
+        return obj.news.count()
 
 
 @admin.register(News)
@@ -22,6 +36,17 @@ class NewsAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('title',)}
     list_editable = ('is_published',)
     date_hierarchy = 'created_at'
+    list_per_page = 20
+
+    fieldsets = (
+        ('📝 Негізгі ақпарат', {
+            'fields': ('title', 'slug', 'category', 'text', 'image'),
+        }),
+        ('⚙️ Баптаулар', {
+            'fields': ('is_published',),
+            'classes': ('collapse',),
+        }),
+    )
 
 
 # ── Әкімшілік персонал ──────────────────────────────────────
