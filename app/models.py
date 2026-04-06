@@ -275,3 +275,89 @@ class ClubImage(models.Model):
 
     def __str__(self):
         return self.caption or f"Сурет #{self.pk}"
+
+
+class Article(models.Model):
+    """Мақалалар — психология, әлеуметтік жұмыс, мед. қызмет, қамқоршылық"""
+    SECTION_CHOICES = [
+        ('psychology', 'Психология'),
+        ('social', 'Әлеуметтік жұмыс'),
+        ('medical', 'Медициналық қызмет'),
+        ('guardian', 'Қамқоршылық кеңес'),
+    ]
+
+    title = models.CharField('Тақырыбы', max_length=255)
+    slug = models.SlugField('URL', max_length=270, unique=True, blank=True)
+    content = models.TextField('Мазмұны')
+    image = models.ImageField('Негізгі сурет', upload_to='articles/', blank=True, null=True)
+    section = models.CharField('Бөлім', max_length=20, choices=SECTION_CHOICES)
+    author = models.ForeignKey(
+        'auth.User', on_delete=models.SET_NULL,
+        null=True, blank=True, verbose_name='Автор'
+    )
+    is_published = models.BooleanField('Жарияланған', default=True)
+    created_at = models.DateTimeField('Құрылған уақыты', auto_now_add=True)
+    updated_at = models.DateTimeField('Жаңартылған уақыты', auto_now=True)
+
+    class Meta:
+        verbose_name = 'Мақала'
+        verbose_name_plural = 'Мақалалар'
+        ordering = ['-created_at']
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(unidecode(self.title))
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.title
+
+    def get_section_display_kz(self):
+        return dict(self.SECTION_CHOICES).get(self.section, self.section)
+
+
+class ArticleImage(models.Model):
+    """Мақалаға қосымша суреттер (1-5)"""
+    article = models.ForeignKey(
+        Article, on_delete=models.CASCADE,
+        related_name='images', verbose_name='Мақала'
+    )
+    image = models.ImageField('Сурет', upload_to='articles/gallery/')
+    caption = models.CharField('Сипаттама', max_length=200, blank=True)
+
+    class Meta:
+        verbose_name = 'Қосымша сурет'
+        verbose_name_plural = 'Қосымша суреттер'
+
+    def __str__(self):
+        return self.caption or f"Сурет #{self.pk}"
+
+
+# ── Proxy модельдер (әр бөлім админкада бөлек көрінеді) ──────
+
+class PsychologyArticle(Article):
+    class Meta:
+        proxy = True
+        verbose_name = 'Психология мақаласы'
+        verbose_name_plural = 'Психология мақалалары'
+
+
+class SocialArticle(Article):
+    class Meta:
+        proxy = True
+        verbose_name = 'Әлеуметтік жұмыс мақаласы'
+        verbose_name_plural = 'Әлеуметтік жұмыс'
+
+
+class MedicalArticle(Article):
+    class Meta:
+        proxy = True
+        verbose_name = 'Медициналық қызмет мақаласы'
+        verbose_name_plural = 'Медициналық қызмет'
+
+
+class GuardianArticle(Article):
+    class Meta:
+        proxy = True
+        verbose_name = 'Қамқоршылық кеңес мақаласы'
+        verbose_name_plural = 'Қамқоршылық кеңес'

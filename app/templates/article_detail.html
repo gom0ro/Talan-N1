@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ article.title }} — {{ section_title }}{% endblock %}
+
+{% block content %}
+
+<!-- ─── PAGE HEADER ──────────────────────────────────────── -->
+<section class="page-header" data-aos="fade-down">
+  <div class="container text-center">
+    <h1>{{ section_title }}</h1>
+    <p>{{ article.title }}</p>
+  </div>
+</section>
+
+<!-- ─── ARTICLE DETAIL ───────────────────────────────────── -->
+<section style="padding: 60px 0;">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+
+        <!-- Meta info -->
+        <div class="d-flex flex-wrap gap-3 mb-4 text-muted" style="font-size: 0.95rem;">
+          <span><i class="bi bi-calendar3 me-1"></i> {{ article.created_at|date:"d.m.Y, H:i" }}</span>
+          {% if article.author %}
+          <span><i class="bi bi-person me-1"></i> {{ article.author.get_full_name|default:article.author.username }}</span>
+          {% endif %}
+          <span class="badge" style="background: var(--primary); color: white; font-size: 0.85rem; padding: 4px 12px; border-radius: 20px;">
+            {{ article.get_section_display }}
+          </span>
+        </div>
+
+        <!-- Title -->
+        <h2 style="font-weight: 800; margin-bottom: 24px; color: var(--dark);">{{ article.title }}</h2>
+
+        <!-- Main image -->
+        {% if article.image %}
+        <div style="margin-bottom: 30px; border-radius: var(--radius-lg); overflow: hidden;">
+          <img src="{{ article.image.url }}" alt="{{ article.title }}" 
+               style="width: 100%; height: auto; display: block;">
+        </div>
+        {% endif %}
+
+        <!-- Content -->
+        <div class="article-content" style="font-size: 1.05rem; line-height: 1.8; color: #374151;">
+          {{ article.content|linebreaks }}
+        </div>
+
+        <!-- Gallery -->
+        {% if article.images.all %}
+        <div style="margin-top: 40px;">
+          <h4 style="font-weight: 700; margin-bottom: 16px;"><i class="bi bi-images me-2"></i>Фотогалерея</h4>
+          <div class="row g-3">
+            {% for img in article.images.all %}
+            <div class="col-6 col-md-4">
+              <div style="border-radius: var(--radius); overflow: hidden; aspect-ratio: 4/3;">
+                <img src="{{ img.image.url }}" alt="{{ img.caption }}" 
+                     style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; cursor: pointer;"
+                     onmouseover="this.style.transform='scale(1.05)'" 
+                     onmouseout="this.style.transform='scale(1)'">
+              </div>
+              {% if img.caption %}
+              <p class="text-muted text-center mt-1" style="font-size: 0.85rem;">{{ img.caption }}</p>
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Back button -->
+        <div class="mt-5">
+          <a href="{% url 'app:article_list' section=section %}" class="btn btn-primary-custom">
+            <i class="bi bi-arrow-left me-2"></i>{{ section_title }} тізіміне оралу
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Related articles -->
+    {% if related %}
+    <div class="mt-5 pt-4" style="border-top: 1px solid #e5e7eb;">
+      <h3 class="text-center mb-4" style="font-weight: 700;">Басқа мақалалар</h3>
+      <div class="row g-4">
+        {% for item in related %}
+        <div class="col-md-4" data-aos="fade-up">
+          <article class="news-card">
+            <div class="news-card-img">
+              {% if item.image %}
+              <img src="{{ item.image.url }}" alt="{{ item.title }}">
+              {% else %}
+              <div class="news-card-placeholder">
+                <i class="bi bi-journal-text"></i>
+              </div>
+              {% endif %}
+            </div>
+            <div class="news-card-body">
+              <div class="news-card-date">
+                <i class="bi bi-calendar3 me-1"></i>{{ item.created_at|date:"d.m.Y" }}
+              </div>
+              <h3 class="news-card-title">{{ item.title }}</h3>
+              <a href="{% url 'app:article_detail' section=section slug=item.slug %}" class="news-card-link">
+                Оқу <i class="bi bi-arrow-right ms-1"></i>
+              </a>
+            </div>
+          </article>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% endblock %}

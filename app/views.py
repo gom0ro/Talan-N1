@@ -5,7 +5,8 @@ from django.contrib import messages
 
 from .models import (
     News, NewsCategory, Teacher, GalleryAlbum,
-    DocumentCategory, Document, Page, Slider, Club
+    DocumentCategory, Document, Page, Slider, Club,
+    Article
 )
 from .forms import ContactForm
 
@@ -148,3 +149,47 @@ def club_detail(request, slug):
     """Үйірмелер мен клубтардың толық беті"""
     club = get_object_or_404(Club, slug=slug)
     return render(request, 'club_detail.html', {'club': club})
+
+
+# ── Мақалалар (психология, әлеуметтік, мед., қамқоршылық) ──────
+
+SECTION_TITLES = {
+    'psychology': 'Психология',
+    'social': 'Әлеуметтік жұмыс',
+    'medical': 'Медициналық қызмет',
+    'guardian': 'Қамқоршылық кеңес',
+}
+
+
+def article_list(request, section):
+    """Бөлім бойынша мақалалар тізімі"""
+    articles = Article.objects.filter(section=section, is_published=True)
+    section_title = SECTION_TITLES.get(section, section)
+
+    paginator = Paginator(articles, 9)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'page_obj': page_obj,
+        'section': section,
+        'section_title': section_title,
+    }
+    return render(request, 'article_list.html', context)
+
+
+def article_detail(request, section, slug):
+    """Мақаланың толық беті"""
+    article = get_object_or_404(Article, slug=slug, section=section, is_published=True)
+    related = Article.objects.filter(
+        section=section, is_published=True
+    ).exclude(pk=article.pk)[:3]
+    section_title = SECTION_TITLES.get(section, section)
+
+    context = {
+        'article': article,
+        'related': related,
+        'section': section,
+        'section_title': section_title,
+    }
+    return render(request, 'article_detail.html', context)

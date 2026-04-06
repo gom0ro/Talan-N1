@@ -84,5 +84,9 @@ urlpatterns = [
     path('mad-d/', TemplateView.as_view(template_name='pages/mad_d.html'), name='mad_d'),
     path('mad-e/', TemplateView.as_view(template_name='pages/mad_e.html'), name='mad_e'),
 
+    # Мақалалар (психология, әлеуметтік, мед., қамқоршылық)
+    path('articles/<str:section>/', views.article_list, name='article_list'),
+    path('articles/<str:section>/<slug:slug>/', views.article_detail, name='article_detail'),
+
     path('page/<slug:slug>/', views.static_page, name='static_page'),
 ]

@@ -94,7 +94,7 @@ a:hover {
   border-bottom: 1px solid #e2e8f0;
   padding: 12px 0;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 1050;
+  z-index: 1030;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
@@ -209,44 +209,58 @@ a:hover {
   transform-origin: left center;
 }
 
-/* Mobile adjustments (<576px) - Екі қатарлы көрініс */
+/* Mobile adjustments (<576px) - Бір қатарлы көрініс */
 @media (max-width: 575.98px) {
   body {
-    padding-top: 112px;
+    padding-top: 72px; /* шапка кішірейгендіктен padding-ті азайттық */
   }
 
   #mainNavbar {
-    padding: 12px 0 8px;
+    padding: 10px 0;
   }
 
   #mainNavbar .container {
-    flex-direction: column;
+    flex-direction: row-reverse; /* Логотип сол жақта, мәзір оң жақта тұруы үшін */
+    justify-content: space-between;
     align-items: center;
+    flex-wrap: nowrap;
     gap: 8px;
   }
 
   .navbar-brand {
     width: auto;
+    margin: 0;
   }
 
   .brand-text {
-    font-size: 1.05rem;
+    font-size: 1.1rem;
   }
 
   .navbar-controls {
-    width: 100%;
-    justify-content: center;
-    padding-top: 4px;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    width: auto;
+    border-top: none;
+    padding-top: 0;
+    gap: 8px;
+    display: flex;
+    align-items: center;
   }
 
   .btn-nav-contact {
-    padding: 6px 14px;
+    padding: 6px 12px;
     font-size: 0.75rem;
   }
 
+  .btn-nav-contact span {
+    display: none; /* телефонда тек иконка қалады (орын үнемдеу үшін) немесе кішкентай текст */
+  }
+
+  .btn-nav-contact i {
+    margin-right: 0 !important;
+    font-size: 1rem;
+  }
+
   .btn-menu-toggle {
-    padding: 6px 14px;
+    padding: 6px 12px;
     font-size: 0.75rem;
   }
 
@@ -254,6 +268,7 @@ a:hover {
     font-size: 0.75rem;
   }
 }
+
 
 /* Small phones (≤375px) */
 @media (max-width: 375px) {
@@ -354,49 +369,53 @@ a:hover {
 }
 
 .custom-search-group {
-  background: rgba(0, 0, 0, 0.25);
-  border-radius: 12px;
-  padding: 5px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   display: flex;
   transition: all 0.3s ease;
+  align-items: stretch;
 }
 
 .custom-search-group:focus-within {
   border-color: var(--primary);
-  background: rgba(0, 0, 0, 0.35);
-  box-shadow: 0 0 15px rgba(37, 99, 235, 0.15);
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
 }
 
 .custom-search-group .form-control {
   background: transparent !important;
   border: none !important;
   color: white !important;
-  font-size: 0.9rem;
-  padding-left: 15px;
+  font-size: 0.95rem;
+  padding: 10px 16px;
   box-shadow: none !important;
+  height: auto;
 }
 
 .custom-search-group .form-control::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .custom-search-group .btn {
   background: var(--primary) !important;
   color: white !important;
   border-radius: 10px !important;
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: center;
   border: none !important;
   transition: all 0.2s ease;
+  font-size: 1.1rem;
 }
 
 .custom-search-group .btn:hover {
   background: var(--primary-dark) !important;
-  transform: scale(1.05);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
 }
 
 /* Sidebar Links */
@@ -1587,14 +1606,257 @@ a:hover {
   color: var(--white);
 }
 
-.breadcrumb-item+.breadcrumb-item::before {
-  color: var(--white);
+/* ─── SECTION PADDING ──────────────────────────────────────── */
+.section-padding {
+  padding: 60px 0;
 }
 
-.breadcrumb-item+.breadcrumb-item::before {
-  color: var(--white);
+.section-news {
+  padding: 60px 0;
 }
 
-.breadcrumb-item+.breadcrumb-item::before {
+/* ─── NEWS FILTER BAR ──────────────────────────────────────── */
+.news-filter-bar {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--border);
+  margin-bottom: 32px;
+}
+
+.news-filter-bar .form-control,
+.news-filter-bar .form-select {
+  border-radius: var(--radius);
+  border: 1.5px solid #e2e8f0;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  transition: var(--transition);
+  background: #f8fafc;
+}
+
+.news-filter-bar .form-control:focus,
+.news-filter-bar .form-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  background: var(--white);
+}
+
+.news-filter-bar .input-group-text {
+  background: var(--primary);
   color: var(--white);
+  border: none;
+  border-radius: var(--radius) 0 0 var(--radius);
+  padding: 12px 14px;
+}
+
+.news-filter-bar .input-group .form-control {
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+/* ─── RESULTS INFO ─────────────────────────────────────────── */
+.results-info {
+  margin-bottom: 20px;
+  padding: 12px 20px;
+  background: var(--primary-bg);
+  border-radius: var(--radius);
+  border-left: 4px solid var(--primary);
+}
+
+.results-info p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.clear-filters {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 12px;
+}
+
+.clear-filters:hover {
+  color: var(--primary-dark);
+}
+
+/* ─── NEWS CARDS ───────────────────────────────────────────── */
+.news-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--border);
+  transition: var(--transition);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.news-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+}
+
+.news-card-img {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.news-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.news-card:hover .news-card-img img {
+  transform: scale(1.05);
+}
+
+.news-card-placeholder {
+  width: 100%;
+  height: 100%;
+  background: var(--primary-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: var(--primary);
+  opacity: 0.5;
+}
+
+.news-badge,
+.news-category-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--primary);
+  color: var(--white);
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.news-card-body {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.news-card-date {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.news-card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-bottom: 10px;
+  color: var(--dark);
+}
+
+.news-card-title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.news-card-title a:hover {
+  color: var(--primary);
+}
+
+.news-card-text,
+.news-card-excerpt {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  flex: 1;
+}
+
+.news-card-link {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--primary);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition: var(--transition);
+  margin-top: auto;
+}
+
+.news-card-link:hover {
+  color: var(--primary-dark);
+  transform: translateX(4px);
+}
+
+/* ─── EMPTY STATE ──────────────────────────────────────────── */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.empty-state i {
+  font-size: 4rem;
+  color: var(--primary);
+  opacity: 0.4;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.empty-state h4 {
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  color: var(--text-secondary);
+}
+
+/* ─── MOBILE SEARCH RESPONSIVE ─────────────────────────────── */
+@media (max-width: 767.98px) {
+  .news-filter-bar {
+    padding: 16px;
+  }
+
+  .news-filter-bar .row {
+    gap: 0 !important;
+  }
+
+  .news-filter-bar .col-md-5,
+  .news-filter-bar .col-md-4,
+  .news-filter-bar .col-md-3 {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .news-filter-bar .form-control,
+  .news-filter-bar .form-select {
+    padding: 14px 16px;
+    font-size: 1rem;
+  }
+
+  .news-filter-bar .input-group-text {
+    padding: 14px 16px;
+  }
+
+  .news-card-img {
+    height: 180px;
+  }
+
+  .news-card-title {
+    font-size: 1rem;
+  }
+
+  .section-padding,
+  .section-news {
+    padding: 40px 0;
+  }
 }

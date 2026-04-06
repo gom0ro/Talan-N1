@@ -2,7 +2,9 @@ from django.contrib import admin
 from .models import (
     NewsCategory, News, Teacher, GalleryAlbum, GalleryImage,
     DocumentCategory, Document, Page, Slider, ContactMessage,
-    Club, ClubSchedule, ClubMember, ClubImage
+    Club, ClubSchedule, ClubMember, ClubImage,
+    Article, ArticleImage,
+    PsychologyArticle, SocialArticle, MedicalArticle, GuardianArticle
 )
 
 
@@ -172,6 +174,94 @@ class ClubAdmin(admin.ModelAdmin):
 
 
 # ── Админ-сайт баптаулары ───────────────────────────────────
-admin.site.site_header = 'Talant №1 — Әкімшілік'
-admin.site.site_title = 'Talant №1 Админ (Школа №1)'
+admin.site.site_header = '«Талант №1» мектебі'
+admin.site.site_title = 'Талант №1 — Админ панель'
 admin.site.index_title = 'Басқару панелі'
+
+
+# ── Мақалалар (психология, әлеуметтік, мед. қызмет, қамқоршылық) ───
+
+class ArticleImageInline(admin.TabularInline):
+    model = ArticleImage
+    verbose_name = 'Қосымша сурет'
+    verbose_name_plural = 'Галерея: Қосымша суреттер (5-ке дейін)'
+    extra = 1
+    max_num = 5
+
+
+@admin.register(Article)
+class ArticleAdmin(admin.ModelAdmin):
+    list_display = ('title', 'section', 'author', 'is_published', 'created_at')
+    list_filter = ('section', 'is_published', 'created_at')
+    search_fields = ('title', 'content')
+    prepopulated_fields = {'slug': ('title',)}
+    list_editable = ('is_published',)
+    date_hierarchy = 'created_at'
+    list_per_page = 20
+
+    fieldsets = (
+        ('📝 Негізгі ақпарат', {
+            'fields': ('title', 'slug', 'section', 'author', 'content', 'image'),
+        }),
+        ('⚙️ Баптаулар', {
+            'fields': ('is_published',),
+            'classes': ('collapse',),
+        }),
+    )
+
+    inlines = [ArticleImageInline]
+
+
+# ── Proxy модельдер (әр бөлім бөлек) ────────────────────────
+
+class SectionArticleAdmin(admin.ModelAdmin):
+    """Бір бөлімнің мақалаларын көрсететін базалық класс"""
+    section_key = None  # override in subclass
+
+    list_display = ('title', 'author', 'is_published', 'created_at')
+    list_filter = ('is_published', 'created_at')
+    search_fields = ('title', 'content')
+    prepopulated_fields = {'slug': ('title',)}
+    list_editable = ('is_published',)
+    date_hierarchy = 'created_at'
+    list_per_page = 20
+    inlines = [ArticleImageInline]
+
+    fieldsets = (
+        ('📝 Негізгі ақпарат', {
+            'fields': ('title', 'slug', 'author', 'content', 'image'),
+        }),
+        ('⚙️ Баптаулар', {
+            'fields': ('is_published',),
+            'classes': ('collapse',),
+        }),
+    )
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(section=self.section_key)
+
+    def save_model(self, request, obj, form, change):
+        obj.section = self.section_key
+        if not obj.author:
+            obj.author = request.user
+        super().save_model(request, obj, form, change)
+
+
+@admin.register(PsychologyArticle)
+class PsychologyArticleAdmin(SectionArticleAdmin):
+    section_key = 'psychology'
+
+
+@admin.register(SocialArticle)
+class SocialArticleAdmin(SectionArticleAdmin):
+    section_key = 'social'
+
+
+@admin.register(MedicalArticle)
+class MedicalArticleAdmin(SectionArticleAdmin):
+    section_key = 'medical'
+
+
+@admin.register(GuardianArticle)
+class GuardianArticleAdmin(SectionArticleAdmin):
+    section_key = 'guardian'
