@@ -209,8 +209,8 @@ a:hover {
   transform-origin: left center;
 }
 
-/* Mobile adjustments (<576px) - Бір қатарлы көрініс */
-@media (max-width: 575.98px) {
+/* Mobile and Tablet adjustments (<992px) - Бір қатарлы көрініс */
+@media (max-width: 991.98px) {
   body {
     padding-top: 72px; /* шапка кішірейгендіктен padding-ті азайттық */
   }
