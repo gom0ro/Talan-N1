@@ -322,8 +322,8 @@ a:hover {
   color: white;
   width: 330px !important;
   max-width: 90vw !important;
-  border-left: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.4);
+  border-right: 1px solid rgba(255, 255, 255, 0.05); /* border-left -> border-right */
+  box-shadow: 10px 0 40px rgba(0, 0, 0, 0.4); /* -10px -> 10px */
 }
 
 .sidebar-offcanvas .offcanvas-header {
@@ -1392,6 +1392,10 @@ a:hover {
 
 .floating-social-widget .whatsapp {
   background: #25d366;
+}
+
+.floating-social-widget .tiktok {
+  background: #000000;
 }
 
 @media (max-width: 768px) {

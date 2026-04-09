@@ -25,7 +25,7 @@
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
 
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}?v=8">
 
   <!-- Favicon -->
   <link rel="shortcut icon" href="{% static 'img/Талант копия.png' %}" type="image/x-icon">
@@ -38,8 +38,18 @@
   <!-- ─── NAVBAR ────────────────────────────────────────── -->
   <nav class="navbar navbar-expand-lg fixed-top" id="mainNavbar">
     <div class="container">
-      <!-- Мәзір және Байланыс түймелері (сол жақ) -->
+      <!-- Logo және Brand (сол жақ) -->
+      <a class="navbar-brand d-flex align-items-center" href="{% url 'app:index' %}">
+        <span class="brand-text">Talant <strong>№1</strong></span>
+        <img src="{% static 'img/Талант копия.png' %}" alt="Logo" width="32" height="32" class="ms-2">
+      </a>
+
+      <!-- Мәзір және Байланыс түймелері (оң жақ) -->
       <div class="navbar-controls">
+        <a class="btn-nav-contact" href="{% url 'app:contact' %}">
+          <i class="bi bi-envelope"></i>
+          <span>Байланыс</span>
+        </a>
         <button class="btn-menu-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
           aria-controls="offcanvasNavbar" aria-label="Мәзір">
           <div class="hamburger-icon">
@@ -49,22 +59,12 @@
           </div>
           <span class="menu-text">МӘЗІР</span>
         </button>
-        <a class="btn-nav-contact" href="{% url 'app:contact' %}">
-          <i class="bi bi-envelope"></i>
-          <span>Байланыс</span>
-        </a>
       </div>
-
-      <!-- Logo және Brand (оң жақ) -->
-      <a class="navbar-brand d-flex align-items-center" href="{% url 'app:index' %}">
-        <span class="brand-text">Talant <strong>№1</strong></span>
-        <img src="{% static 'img/Талант копия.png' %}" alt="Logo" width="32" height="32" class="ms-2">
-      </a>
     </div>
   </nav>
 
   <!-- ─── SIDEBAR MENU (OFFCANVAS) ────────────────────────── -->
-  <div class="offcanvas offcanvas-end sidebar-offcanvas" tabindex="-1" id="offcanvasNavbar"
+  <div class="offcanvas offcanvas-start sidebar-offcanvas" tabindex="-1" id="offcanvasNavbar"
     aria-labelledby="offcanvasNavbarLabel">
     <div class="offcanvas-header border-bottom">
       <div class="d-flex align-items-center">
@@ -356,10 +356,13 @@
     <a href="#" class="social-btn whatsapp" aria-label="WhatsApp">
       <i class="bi bi-whatsapp"></i>
     </a>
+    <a href="#" class="social-btn tiktok" aria-label="TikTok">
+      <i class="bi bi-tiktok"></i>
+    </a>
   </div>
 
   <!-- ─── SCRIPTS (кешіктірілген жүктеу) ─────────────────────── -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+  <script src=" https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js" defer></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
