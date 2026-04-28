@@ -6,7 +6,7 @@ from django.contrib import messages
 from .models import (
     News, NewsCategory, Teacher, GalleryAlbum,
     DocumentCategory, Document, Page, Slider, Club,
-    Article
+    Article, InstagramReel, LibraryCategory, LibraryBook
 )
 from .forms import ContactForm
 
@@ -17,9 +17,11 @@ def index(request):
     """Басты бет"""
     sliders = Slider.objects.filter(is_active=True)
     latest_news = News.objects.filter(is_published=True)[:6]
+    instagram_reels = InstagramReel.objects.filter(is_active=True)
     context = {
         'sliders': sliders,
         'latest_news': latest_news,
+        'instagram_reels': instagram_reels,
     }
     return render(request, 'index.html', context)
 
@@ -35,6 +37,26 @@ def about(request):
         'teachers_preview': teachers_preview,
     }
     return render(request, 'about.html', context)
+
+
+def kitapkhana(request):
+    """Кітапхана беті (санаттар тізімі)"""
+    categories = LibraryCategory.objects.all()
+    context = {
+        'categories': categories,
+    }
+    return render(request, 'about/kitapkhana.html', context)
+
+
+def kitapkhana_category(request, slug):
+    """Белгілі бір санаттағы кітаптар тізімі"""
+    category = get_object_or_404(LibraryCategory, slug=slug)
+    books = category.books.filter(is_published=True)
+    context = {
+        'category': category,
+        'books': books,
+    }
+    return render(request, 'about/kitapkhana_category.html', context)
 
 
 # ── Жаңалықтар ──────────────────────────────────────────────

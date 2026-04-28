@@ -44,7 +44,8 @@ urlpatterns = [
     # Мектеп туралы (жеке HTML беттер)
     path('about/history/', TemplateView.as_view(template_name='about/history.html'), name='history'),
     path('about/administration/', TemplateView.as_view(template_name='about/administration.html'), name='administration'),
-    path('about/kitapkhana/', TemplateView.as_view(template_name='about/kitapkhana.html'), name='kitapkhana'),
+    path('about/kitapkhana/', views.kitapkhana, name='kitapkhana'),
+    path('about/kitapkhana/<slug:slug>/', views.kitapkhana_category, name='kitapkhana_category'),
     path('about/askhana/', TemplateView.as_view(template_name='about/askhana.html'), name='askhana'),
     
     # Әдістемелік жұмыстар (жеке HTML беттер)

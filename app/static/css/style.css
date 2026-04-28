@@ -40,8 +40,18 @@
   --radius-lg: 20px;
   --radius-full: 50px;
 
-  /* Transitions */
+  /* Transitions & Animations */
   --transition: all .3s cubic-bezier(.4, 0, .2, 1);
+}
+
+@keyframes floatAnimation {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: floatAnimation 3s ease-in-out infinite;
 }
 
 /* ─── GLOBAL RESET ──────────────────────────────────────── */

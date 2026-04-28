@@ -136,9 +136,13 @@ class DocumentCategory(models.Model):
 
 
 class Document(models.Model):
-    """Құжаттар"""
+    """Құжаттар — файл жүктеу немесе сілтеме беру"""
     title = models.CharField('Атауы', max_length=255)
-    file = models.FileField('Файл', upload_to='documents/')
+    description = models.CharField('Сипаттамасы', max_length=500, blank=True)
+    file = models.FileField('Файл', upload_to='documents/', blank=True, null=True,
+                            help_text='Word, PDF, Excel және т.б. файлдарды жүктеңіз')
+    link = models.URLField('Сілтеме (URL)', blank=True,
+                           help_text='Сыртқы сілтеме — файл жүктемей, тікелей URL беру үшін')
     category = models.ForeignKey(
         DocumentCategory, on_delete=models.SET_NULL,
         null=True, blank=True, verbose_name='Санаты',
@@ -153,6 +157,88 @@ class Document(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def download_url(self):
+        """Файл немесе сілтемені қайтарады"""
+        if self.file:
+            return self.file.url
+        return self.link or '#'
+
+    @property
+    def file_type(self):
+        """Файл түрін анықтау (иконка үшін)"""
+        if self.file and self.file.name:
+            name = self.file.name.lower()
+            if name.endswith(('.doc', '.docx')):
+                return 'word'
+            elif name.endswith('.pdf'):
+                return 'pdf'
+            elif name.endswith(('.xls', '.xlsx')):
+                return 'excel'
+            elif name.endswith(('.ppt', '.pptx')):
+                return 'powerpoint'
+            elif name.endswith(('.jpg', '.jpeg', '.png', '.gif', '.webp')):
+                return 'image'
+            elif name.endswith(('.zip', '.rar', '.7z')):
+                return 'archive'
+        if self.link:
+            return 'link'
+        return 'file'
+
+
+
+class LibraryCategory(models.Model):
+    """Кітапхана санаттары"""
+    name = models.CharField('Атауы', max_length=100)
+    slug = models.SlugField('URL', max_length=120, unique=True, blank=True)
+    order = models.PositiveIntegerField('Реттілік', default=0)
+
+    class Meta:
+        verbose_name = 'Кітап санаты'
+        verbose_name_plural = 'Кітап санаттары'
+        ordering = ['order', 'name']
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(unidecode(self.name))
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+
+class LibraryBook(models.Model):
+    """Кітапхана — кітаптар тізімі"""
+    book_number = models.CharField('№ (Номер)', max_length=50, blank=True)
+    title = models.CharField('Тақырыбы / Тема', max_length=255)
+    description = models.TextField('Сипаттамасы', blank=True)
+    cover = models.ImageField('Мұқаба суреті', upload_to='library/', blank=True, null=True)
+    file = models.FileField('Файл (PDF, Word)', upload_to='library/files/', blank=True, null=True,
+                            help_text='Электронды кітапты жүктеңіз')
+    link = models.URLField('Сыртқы сілтеме', blank=True,
+                           help_text='Google Drive, т.б. сілтеме')
+    category = models.ForeignKey(
+        LibraryCategory, on_delete=models.SET_NULL,
+        null=True, blank=True, verbose_name='Санаты',
+        related_name='books'
+    )
+    is_published = models.BooleanField('Жарияланған', default=True)
+    created_at = models.DateTimeField('Қосылған уақыты', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Кітап'
+        verbose_name_plural = 'Кітапхана'
+        ordering = ['category__order', 'title']
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def download_url(self):
+        if self.file:
+            return self.file.url
+        return self.link or '#'
 
 
 class Page(models.Model):
@@ -361,3 +447,20 @@ class GuardianArticle(Article):
         proxy = True
         verbose_name = 'Қамқоршылық кеңес мақаласы'
         verbose_name_plural = 'Қамқоршылық кеңес'
+
+
+class InstagramReel(models.Model):
+    """Инстаграм рилстары (басты бетте көрсету үшін)"""
+    title = models.CharField('Атауы немесе сипаттамасы', max_length=200, blank=True, help_text='Тек өзіңізге түсінікті болу үшін')
+    embed_code = models.TextField('Instagram Embed коды', help_text='Инстаграмнан алынған HTML кодты осында қойыңыз')
+    is_active = models.BooleanField('Көрсету', default=True)
+    order = models.PositiveIntegerField('Реттілік', default=0)
+    created_at = models.DateTimeField('Қосылған уақыты', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Инстаграм рилс'
+        verbose_name_plural = 'Инстаграм рилстары'
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return self.title or f"Рилс #{self.pk}"

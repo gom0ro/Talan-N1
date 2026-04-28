@@ -4,7 +4,8 @@ from .models import (
     DocumentCategory, Document, Page, Slider, ContactMessage,
     Club, ClubSchedule, ClubMember, ClubImage,
     Article, ArticleImage,
-    PsychologyArticle, SocialArticle, MedicalArticle, GuardianArticle
+    PsychologyArticle, SocialArticle, MedicalArticle, GuardianArticle,
+    InstagramReel, LibraryCategory, LibraryBook
 )
 
 
@@ -91,9 +92,33 @@ class DocumentCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Document)
 class DocumentAdmin(admin.ModelAdmin):
-    list_display = ('title', 'category', 'uploaded_at')
+    list_display = ('title', 'category', 'doc_type_display', 'uploaded_at')
     list_filter = ('category',)
-    search_fields = ('title',)
+    search_fields = ('title', 'description')
+
+    fieldsets = (
+        ('📄 Негізгі ақпарат', {
+            'fields': ('title', 'description', 'category'),
+        }),
+        ('📎 Файл немесе сілтеме', {
+            'fields': ('file', 'link'),
+            'description': 'Файл жүктеңіз НЕМЕСЕ сыртқы сілтеме беріңіз. Екеуін де толтыруға болады.',
+        }),
+    )
+
+    @admin.display(description='Түрі')
+    def doc_type_display(self, obj):
+        icons = {
+            'word': '📝 Word',
+            'pdf': '📕 PDF',
+            'excel': '📊 Excel',
+            'powerpoint': '📙 PowerPoint',
+            'image': '🖼️ Сурет',
+            'archive': '📦 Архив',
+            'link': '🔗 Сілтеме',
+            'file': '📄 Файл',
+        }
+        return icons.get(obj.file_type, '📄 Файл')
 
 
 # ── Беттер ──────────────────────────────────────────────────
@@ -265,3 +290,41 @@ class MedicalArticleAdmin(SectionArticleAdmin):
 @admin.register(GuardianArticle)
 class GuardianArticleAdmin(SectionArticleAdmin):
     section_key = 'guardian'
+
+
+@admin.register(LibraryCategory)
+class LibraryCategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'order')
+    list_editable = ('order',)
+    prepopulated_fields = {'slug': ('name',)}
+
+
+@admin.register(LibraryBook)
+class LibraryBookAdmin(admin.ModelAdmin):
+    list_display = ('book_number', 'title', 'category', 'is_published', 'created_at')
+    list_display_links = ('book_number', 'title')
+    list_editable = ('is_published', 'category')
+    list_filter = ('category', 'is_published')
+    search_fields = ('book_number', 'title', 'description')
+    
+    fieldsets = (
+        ('📝 Негізгі ақпарат', {
+            'fields': ('book_number', 'title', 'description', 'category'),
+        }),
+        ('📎 Файл және Мұқаба', {
+            'fields': ('cover', 'file', 'link'),
+            'description': 'Электронды кітапты жүктеңіз немесе сілтеме беріңіз.',
+        }),
+        ('⚙️ Баптаулар', {
+            'fields': ('is_published',),
+        }),
+    )
+
+
+@admin.register(InstagramReel)
+class InstagramReelAdmin(admin.ModelAdmin):
+    list_display = ('title', 'is_active', 'order', 'created_at')
+    list_editable = ('is_active', 'order')
+    list_filter = ('is_active', 'created_at')
+    search_fields = ('title', 'embed_code')
+

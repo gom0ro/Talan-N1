@@ -63,11 +63,11 @@
       <div class="row w-100 align-items-center">
         <div class="col-lg-7" data-aos="fade-right">
           <div class="hero-content text-center text-lg-start">
-            <img src="{% static 'img/Талант копия.png' %}" alt="Talant Mobile Logo" class="img-fluid d-block d-lg-none mx-auto mb-4" style="max-width: 140px;">
+            <img src="{% static 'img/Талант копия.png' %}?v=new" alt="Talant Mobile Logo" class="img-fluid d-block d-lg-none mx-auto mb-4 animate-float" style="max-width: 140px;">
             <h1 class="hero-title">Talant №1</h1>
             <p class="hero-subtitle">Шымкент қаласындағы заманауи білім беру мекемесі. Болашақ IT мамандарын бірге
               дайындаймыз.</p>
-            <div class="d-flex flex-wrap gap-3">
+            <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
               <a href="{% url 'app:history' %}" class="btn-hero">Біз туралы <i class="bi bi-arrow-right ms-2"></i></a>
               <a href="{% url 'app:contact' %}" class="btn-hero-outline">Байланыс <i
                   class="bi bi-telephone ms-2"></i></a>
@@ -76,7 +76,7 @@
         </div>
         <div class="col-lg-5 d-none d-lg-block" data-aos="fade-left" data-aos-delay="200">
           <div class="hero-image-box">
-            <img src="{% static 'img/Талант копия.png' %}" alt="Logo" class="img-fluid hero-logo-extra">
+            <img src="{% static 'img/Талант копия.png' %}?v=new" alt="Logo" class="img-fluid hero-logo-extra animate-float">
           </div>
         </div>
       </div>
@@ -183,6 +183,28 @@
     {% endif %}
   </div>
 </section>
+
+<!-- ─── INSTAGRAM REELS SECTION ──────────────────────────────── -->
+{% if instagram_reels %}
+<section class="section-padding bg-light">
+  <div class="container">
+    <div class="section-title text-center mb-5" data-aos="fade-up">
+      <h2><i class="bi bi-instagram text-danger me-2"></i> Инстаграмнан видеолар</h2>
+      <p>Біздің мектеп өмірінен қызықты сәттер</p>
+    </div>
+    
+    <div class="row g-4 justify-content-center">
+      {% for reel in instagram_reels %}
+      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:1 }}00">
+        <div class="reel-card shadow-sm rounded overflow-hidden bg-white h-100 p-2 d-flex justify-content-center">
+          {{ reel.embed_code|safe }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
 
 <!-- ─── CTA SECTION ──────────────────────────────────────── -->
 <section class="cta-section" data-aos="fade-up">

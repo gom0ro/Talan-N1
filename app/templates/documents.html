@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Talant №1{% endblock %}
+{% block title %}Құжаттар — Talant №1{% endblock %}
 
 {% block content %}
 
@@ -33,15 +33,40 @@
         {% for doc in category.documents.all %}
         <div class="document-item">
           <div class="document-icon">
-            <i class="bi bi-file-earmark-pdf-fill"></i>
+            {% if doc.file_type == 'word' %}
+              <i class="bi bi-file-earmark-word-fill" style="color: #2b579a;"></i>
+            {% elif doc.file_type == 'pdf' %}
+              <i class="bi bi-file-earmark-pdf-fill" style="color: #d32f2f;"></i>
+            {% elif doc.file_type == 'excel' %}
+              <i class="bi bi-file-earmark-excel-fill" style="color: #217346;"></i>
+            {% elif doc.file_type == 'powerpoint' %}
+              <i class="bi bi-file-earmark-ppt-fill" style="color: #d24726;"></i>
+            {% elif doc.file_type == 'image' %}
+              <i class="bi bi-file-earmark-image-fill" style="color: #6366f1;"></i>
+            {% elif doc.file_type == 'archive' %}
+              <i class="bi bi-file-earmark-zip-fill" style="color: #f59e0b;"></i>
+            {% elif doc.file_type == 'link' %}
+              <i class="bi bi-link-45deg" style="color: #2563eb;"></i>
+            {% else %}
+              <i class="bi bi-file-earmark-fill" style="color: #64748b;"></i>
+            {% endif %}
           </div>
           <div class="document-info">
             <h5>{{ doc.title }}</h5>
+            {% if doc.description %}
+            <p class="text-muted small mb-0">{{ doc.description }}</p>
+            {% endif %}
             <small>{{ doc.uploaded_at|date:"d.m.Y" }}</small>
           </div>
+          {% if doc.file %}
           <a href="{{ doc.file.url }}" target="_blank" class="btn btn-sm btn-outline-custom" download>
             <i class="bi bi-download me-1"></i> Жүктеу
           </a>
+          {% elif doc.link %}
+          <a href="{{ doc.link }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-custom">
+            <i class="bi bi-box-arrow-up-right me-1"></i> Ашу
+          </a>
+          {% endif %}
         </div>
         {% endfor %}
       </div>

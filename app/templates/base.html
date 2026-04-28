@@ -25,10 +25,10 @@
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
 
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="{% static 'css/style.css' %}?v=8">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}?v=9">
 
   <!-- Favicon -->
-  <link rel="shortcut icon" href="{% static 'img/Талант копия.png' %}" type="image/x-icon">
+  <link rel="shortcut icon" href="{% static 'img/Талант копия.png' %}?v=new" type="image/x-icon">
 
   {% block extra_head %}{% endblock %}
 </head>
@@ -41,7 +41,7 @@
       <!-- Logo және Brand (сол жақ) -->
       <a class="navbar-brand d-flex align-items-center" href="{% url 'app:index' %}">
         <span class="brand-text">Talant <strong>№1</strong></span>
-        <img src="{% static 'img/Талант копия.png' %}" alt="Logo" width="32" height="32" class="ms-2">
+        <img src="{% static 'img/Талант копия.png' %}?v=new" alt="Logo" width="32" height="32" class="ms-2">
       </a>
 
       <!-- Мәзір және Байланыс түймелері (оң жақ) -->
@@ -68,7 +68,7 @@
     aria-labelledby="offcanvasNavbarLabel">
     <div class="offcanvas-header border-bottom">
       <div class="d-flex align-items-center">
-        <img src="{% static 'img/Талант копия.png' %}" alt="Logo" width="30" height="30" class="me-2">
+        <img src="{% static 'img/Талант копия.png' %}?v=new" alt="Logo" width="30" height="30" class="me-2">
         <h5 class="offcanvas-title fw-bold" id="offcanvasNavbarLabel">Шарлау</h5>
       </div>
       <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -286,7 +286,7 @@
         <div class="row g-4">
           <div class="col-lg-4 col-md-6">
             <div class="footer-brand d-flex align-items-center mb-3">
-              <img src="{% static 'img/Талант копия.png' %}" alt="Logo" width="45" height="45" class="me-2">
+              <img src="{% static 'img/Талант копия.png' %}?v=new" alt="Logo" width="45" height="45" class="me-2">
               <div>
                 <h5 class="mb-0">Talant №1</h5>
                 <small class="text-muted-light">Шымкент қаласы</small>

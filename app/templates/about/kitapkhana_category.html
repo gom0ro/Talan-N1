@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ category.name }} — Кітапхана{% endblock %}
+
+{% block content %}
+<!-- ─── PAGE HEADER ──────────────────────────────────────── -->
+<section class="page-header">
+  <div class="container">
+    <nav aria-label="breadcrumb" data-aos="fade-down">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'app:index' %}">Басты бет</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'app:kitapkhana' %}">Кітапхана</a></li>
+        <li class="breadcrumb-item active">{{ category.name }}</li>
+      </ol>
+    </nav>
+    <h1 class="page-header-title" data-aos="fade-up">{{ category.name }}</h1>
+  </div>
+</section>
+
+<!-- ─── BOOKS LIST ───────────────────────────────────────── -->
+<section class="section-padding bg-light">
+  <div class="container">
+    
+    {% if books %}
+    <div class="row g-4" data-aos="fade-up">
+      {% for book in books %}
+      <div class="col-12">
+        <div class="book-card-layout bg-white p-4 rounded-4 shadow-sm d-flex flex-column flex-md-row gap-4 h-100 border">
+          
+          <!-- LEFT SIDE: Photo / Placeholder -->
+          <div class="book-cover-wrap flex-shrink-0 mx-auto mx-md-0 rounded-3 overflow-hidden bg-light border" style="width: 220px; height: 310px; position: relative;">
+            {% if book.cover %}
+              <img src="{{ book.cover.url }}" alt="{{ book.title }}" class="w-100 h-100" style="object-fit: cover;">
+            {% else %}
+              <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center text-primary bg-primary bg-opacity-10">
+                <i class="bi bi-book mb-2 text-primary opacity-50" style="font-size: 3.5rem;"></i>
+                <span class="fw-bold" style="font-size: 2.5rem;">{{ book.book_number|default:"-" }}</span>
+              </div>
+            {% endif %}
+          </div>
+          
+          <!-- RIGHT SIDE: Content -->
+          <div class="book-content-wrap d-flex flex-column justify-content-between flex-grow-1 py-2">
+            
+            <!-- Top: Theme / Title -->
+            <div class="book-header border-bottom pb-3 mb-4">
+              <div class="d-flex align-items-start gap-3">
+                {% if book.book_number %}
+                <span class="badge bg-primary text-white rounded-pill px-3 py-2" style="font-size: 0.9rem; margin-top: 5px;">№ {{ book.book_number }}</span>
+                {% endif %}
+                <h3 class="text-dark fw-bold mb-0 lh-sm">{{ book.title }}</h3>
+              </div>
+            </div>
+            
+            <!-- Middle: Description -->
+            <div class="book-description flex-grow-1 mb-4">
+              {% if book.description %}
+                <p class="text-secondary mb-0" style="font-size: 1.05rem; line-height: 1.6; white-space: pre-wrap;">{{ book.description }}</p>
+              {% else %}
+                <p class="text-muted fst-italic mb-0" style="font-size: 1rem;">Сипаттамасы жоқ</p>
+              {% endif %}
+            </div>
+            
+            <!-- Bottom: Action Buttons -->
+            <div class="book-actions mt-auto d-flex flex-wrap gap-2">
+              {% if book.file %}
+                <a href="{{ book.file.url }}" target="_blank" class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm" download>
+                  <i class="bi bi-cloud-arrow-down me-1"></i> Жүктеу
+                </a>
+              {% endif %}
+              
+              {% if book.link %}
+                <a href="{{ book.link }}" target="_blank" class="btn btn-outline-primary btn-sm rounded-pill px-4 shadow-sm">
+                  <i class="bi bi-box-arrow-up-right me-1"></i> Ашу
+                </a>
+              {% endif %}
+
+              {% if not book.file and not book.link %}
+                <span class="badge bg-secondary bg-opacity-10 text-secondary py-2 px-3 rounded-pill border fw-normal">Офлайн кітап</span>
+              {% endif %}
+            </div>
+            
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state bg-white p-5 rounded-4 shadow-sm text-center" data-aos="fade-up">
+      <i class="bi bi-journal-x display-4 text-muted mb-3 d-block"></i>
+      <h4>Бұл санатта кітаптар жоқ</h4>
+      <p class="text-muted">Кітаптар жақын арада қосылады</p>
+      <a href="{% url 'app:kitapkhana' %}" class="btn btn-outline-primary mt-3 rounded-pill px-4">Кері қайту</a>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+<style>
+  .book-card-layout {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .book-card-layout:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08) !important;
+    border-color: rgba(37, 99, 235, 0.3) !important;
+  }
+</style>
+{% endblock %}
