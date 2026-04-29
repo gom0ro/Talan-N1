@@ -56,7 +56,7 @@ class Teacher(models.Model):
     name = models.CharField('Аты-жөні', max_length=200)
     slug = models.SlugField('URL', max_length=220, unique=True, blank=True)
     photo = models.ImageField('Фото', upload_to='teachers/', blank=True, null=True)
-    subject = models.CharField('Лауазымы / Пәні', max_length=150)
+    subject = models.CharField('Лауазымы / Пәні', max_length=150, blank=True)
     experience = models.PositiveIntegerField('Тәжірибесі (жыл)', default=0)
     description = models.TextField('Сипаттама', blank=True)
     order = models.PositiveIntegerField('Реттілік', default=0)
