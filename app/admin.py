@@ -371,8 +371,27 @@ class TimetableItemAdmin(SimpleItemAdmin):
 
 
 @admin.register(TarbieItem)
-class TarbieItemAdmin(SimpleItemAdmin):
-    pass
+class TarbieItemAdmin(admin.ModelAdmin):
+    list_display = ('title', 'order', 'created_at')
+    list_editable = ('order',)
+    search_fields = ('title', 'description')
+    fieldsets = (
+        ('Negizgi aqparat', {
+            'fields': ('title', 'description', 'order'),
+        }),
+        ('2 Foto', {
+            'fields': ('image1', 'image2'),
+            'description': '1-shi zhane 2-shi fotony zhyktey alasyz.',
+        }),
+        ('Fayl zhykteu', {
+            'fields': ('file',),
+            'description': 'PDF, Word, PPTX fayl zhyktey alasyz.',
+        }),
+        ('Google Drive silteme', {
+            'fields': ('link',),
+            'description': 'Google Drive nemese basqa silteme URL-in osy jerge qoyyңyz.',
+        }),
+    )
 
 
 @admin.register(BastauyshItem)

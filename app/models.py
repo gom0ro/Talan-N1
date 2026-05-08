@@ -579,8 +579,11 @@ class TarbieItem(models.Model):
     image1 = models.ImageField('1-shi Foto', upload_to='tarbie_oryn/', blank=True, null=True)
     image2 = models.ImageField('2-shi Foto', upload_to='tarbie_oryn/', blank=True, null=True)
     file = models.FileField('Fayl (PDF, Word, PPTX)', upload_to='tarbie_oryn/files/', blank=True, null=True)
+    link = models.URLField('Google Drive / Silteme (URL)', blank=True,
+                           help_text='Google Drive siltemesin osy jerge qoyyңyz. Mysal: https://drive.google.com/...')
     order = models.PositiveIntegerField('Rettіlіk', default=0)
     created_at = models.DateTimeField('Qosylghan uaqyty', auto_now_add=True)
+
 
     class Meta:
         verbose_name = 'Tarbie orynbasary'
