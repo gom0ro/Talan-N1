@@ -6,7 +6,10 @@ from django.contrib import messages
 from .models import (
     News, NewsCategory, Teacher, GalleryAlbum,
     DocumentCategory, Document, Page, Slider, Club,
-    Article, InstagramReel, LibraryCategory, LibraryBook
+    Article, InstagramReel, LibraryCategory, LibraryBook,
+    MethodoItem, MethodoCategory, ZhetistikItem,
+    TimetableItem, TarbieItem, BastauyshItem,
+    ParentsMeetingItem
 )
 from .forms import ContactForm
 
@@ -49,7 +52,7 @@ def kitapkhana(request):
 
 
 def kitapkhana_category(request, slug):
-    """Белгілі бір санаттағы кітаптар тізімі"""
+    """Belgiyli bir sanattagi kitaptar tizimi"""
     category = get_object_or_404(LibraryCategory, slug=slug)
     books = category.books.filter(is_published=True)
     context = {
@@ -57,6 +60,49 @@ def kitapkhana_category(request, slug):
         'books': books,
     }
     return render(request, 'about/kitapkhana_category.html', context)
+
+
+def methodo_page(request, category_slug, template_name):
+    """Generic view for methodo pages"""
+    items = MethodoItem.objects.filter(category__slug=category_slug).order_by('order', '-created_at')
+    return render(request, template_name, {'items': items})
+
+
+def magistr(request):
+    return methodo_page(request, 'magistr', 'about/magistr.html')
+
+
+def sanat(request):
+    return methodo_page(request, 'sanat', 'about/sanat.html')
+
+
+def zhetekshiler(request):
+    return methodo_page(request, 'zhetekshiler', 'about/zhetekshiler.html')
+
+
+def zhetistik(request):
+    items = ZhetistikItem.objects.all().order_by('order', '-created_at')
+    return render(request, 'about/zhetistik.html', {'items': items})
+
+
+def timetable_511(request):
+    items = TimetableItem.objects.all().order_by('order', '-created_at')
+    return render(request, 'about/timetable_511.html', {'items': items})
+
+
+def tarbie_orynbasary(request):
+    items = TarbieItem.objects.all().order_by('order', '-created_at')
+    return render(request, 'about/tarbie_orynbasary.html', {'items': items})
+
+
+def bastauysh_synyp(request):
+    items = BastauyshItem.objects.all().order_by('order', '-created_at')
+    return render(request, 'about/bastauysh_synyp.html', {'items': items})
+
+
+def parents_meeting(request):
+    items = ParentsMeetingItem.objects.all().order_by('order', '-created_at')
+    return render(request, 'pages/parents_meeting.html', {'items': items})
 
 
 # ── Жаңалықтар ──────────────────────────────────────────────

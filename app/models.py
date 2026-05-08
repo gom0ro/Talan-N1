@@ -464,3 +464,165 @@ class InstagramReel(models.Model):
 
     def __str__(self):
         return self.title or f"Рилс #{self.pk}"
+
+
+class MethodoCategory(models.Model):
+    """Әдістемелік жұмыстар, Жетістіктер, Бірлестіктер санаттары"""
+    name = models.CharField('Санат атауы (мысалы: Жетістіктер, Жетекшілер)', max_length=150)
+    slug = models.SlugField('URL', max_length=170, unique=True, blank=True)
+    order = models.PositiveIntegerField('Реттілік', default=0)
+
+    class Meta:
+        verbose_name = 'Әдістемелік санат'
+        verbose_name_plural = '1. Әдістемелік санаттар'
+        ordering = ['order', 'name']
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(unidecode(self.name))
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+
+class MethodoItem(models.Model):
+    """Әдістемелік материалдар мен Жетістіктер (Документ, PPTX, Сурет т.б.)"""
+    category = models.ForeignKey(MethodoCategory, on_delete=models.CASCADE, related_name='items', verbose_name='Бірлестік санаты')
+    title = models.CharField('Аты / Тақырыбы', max_length=255)
+    description = models.TextField('Сипаттама', blank=True)
+    image = models.ImageField('1-ші Сурет (фото)', upload_to='methodo/images/', blank=True, null=True)
+    image2 = models.ImageField('2-ші Сурет (фото)', upload_to='methodo/images/', blank=True, null=True)
+    file = models.FileField('Документ (PPTX, Word, RAR)', upload_to='methodo/files/', blank=True, null=True, help_text='Word, PPTX, RAR немесе кез-келген құжат')
+    order = models.PositiveIntegerField('Реттілік', default=0)
+    created_at = models.DateTimeField('Қосылған уақыты', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Материал немесе Жетістік'
+        verbose_name_plural = '2. Материалдар мен Жетістіктер'
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return self.title
+
+
+# ── Proxy модельдер: әр санат өз бетінде admin-да ─────────────
+
+class MagistrItem(MethodoItem):
+    """Педагогика ғылымдарының магистрі — proxy"""
+    class Meta:
+        proxy = True
+        verbose_name = 'Педагогика ғылымдарының магистрі'
+        verbose_name_plural = 'Педагогика ғылымдарының магистрі'
+
+
+class SanatItem(MethodoItem):
+    """Біліктілік санат — proxy"""
+    class Meta:
+        proxy = True
+        verbose_name = 'Біліктілік санат'
+        verbose_name_plural = 'Біліктілік санат'
+
+
+class ZhetekshilerItem(MethodoItem):
+    """Өдістемелік бірлестік жетекшілері — proxy"""
+    class Meta:
+        proxy = True
+        verbose_name = 'Өдістемелік бірлестік жетекшілері'
+        verbose_name_plural = 'Өдістемелік бірлестік жетекшілері'
+
+
+
+class ZhetistikItem(models.Model):
+    """Жетістіктер — 2 фотосы бар жазба"""
+    title = models.CharField('Тақырыбы / Аты', max_length=255)
+    description = models.TextField('Сипаттама', blank=True)
+    image1 = models.ImageField('1-ші Фото', upload_to='zhetistik/', blank=True, null=True)
+    image2 = models.ImageField('2-ші Фото', upload_to='zhetistik/', blank=True, null=True)
+    file = models.FileField('Документ (PDF, Word, PPTX)', upload_to='zhetistik/files/', blank=True, null=True,
+                            help_text='PDF, Word, PPTX немесе кез-келген құжат')
+    order = models.PositiveIntegerField('Реттілік', default=0)
+    created_at = models.DateTimeField('Қосылған уақыты', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Жетістік'
+        verbose_name_plural = 'Жетістіктер'
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return self.title
+
+
+class TimetableItem(models.Model):
+    """Sabaq kestesi 5-11 synyp"""
+    title = models.CharField('Taqyryby', max_length=255)
+    description = models.TextField('Sipattama', blank=True)
+    image1 = models.ImageField('1-shi Foto/Keste', upload_to='timetable/', blank=True, null=True)
+    image2 = models.ImageField('2-shi Foto/Keste', upload_to='timetable/', blank=True, null=True)
+    file = models.FileField('Fayl (PDF, Word)', upload_to='timetable/files/', blank=True, null=True)
+    order = models.PositiveIntegerField('Rettіlіk', default=0)
+    created_at = models.DateTimeField('Qosylghan uaqyty', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Sabaq kestesi'
+        verbose_name_plural = '5-11 Synyp sabaq kestesi'
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return self.title
+
+
+class TarbieItem(models.Model):
+    """Tarbie orynbasary"""
+    title = models.CharField('Taqyryby', max_length=255)
+    description = models.TextField('Sipattama', blank=True)
+    image1 = models.ImageField('1-shi Foto', upload_to='tarbie_oryn/', blank=True, null=True)
+    image2 = models.ImageField('2-shi Foto', upload_to='tarbie_oryn/', blank=True, null=True)
+    file = models.FileField('Fayl (PDF, Word, PPTX)', upload_to='tarbie_oryn/files/', blank=True, null=True)
+    order = models.PositiveIntegerField('Rettіlіk', default=0)
+    created_at = models.DateTimeField('Qosylghan uaqyty', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Tarbie orynbasary'
+        verbose_name_plural = 'Tarbie orynbasary'
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return self.title
+
+
+class BastauyshItem(models.Model):
+    """Bastauysh synyp"""
+    title = models.CharField('Taqyryby', max_length=255)
+    description = models.TextField('Sipattama', blank=True)
+    image1 = models.ImageField('1-shi Foto', upload_to='bastauysh/', blank=True, null=True)
+    image2 = models.ImageField('2-shi Foto', upload_to='bastauysh/', blank=True, null=True)
+    file = models.FileField('Fayl (PDF, Word, PPTX)', upload_to='bastauysh/files/', blank=True, null=True)
+    order = models.PositiveIntegerField('Rettіlіk', default=0)
+    created_at = models.DateTimeField('Qosylghan uaqyty', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Bastauysh synyp'
+        verbose_name_plural = 'Bastauysh synyp'
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return self.title
+
+
+class ParentsMeetingItem(models.Model):
+    title = models.CharField('Taqyryby', max_length=255)
+    description = models.TextField('Sipattama', blank=True)
+    image1 = models.ImageField('1-shi Foto', upload_to='parents_meeting/', blank=True, null=True)
+    image2 = models.ImageField('2-shi Foto', upload_to='parents_meeting/', blank=True, null=True)
+    file = models.FileField('Fayl (PDF, Word, PPTX)', upload_to='parents_meeting/files/', blank=True, null=True)
+    order = models.PositiveIntegerField('Rettіlіk', default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Ata-analar zhinalysy'
+        verbose_name_plural = 'Ata-analar zhinalysy'
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return self.title

@@ -14,50 +14,71 @@
         <li class="breadcrumb-item active">Әкімшілік персонал</li>
       </ol>
     </nav>
-    <div class="header-divider" data-aos="fade-up"></div>
     <h1 class="page-header-title" data-aos="fade-up">Біздің әкімшілік персонал</h1>
     <p class="page-header-desc" data-aos="fade-up" data-aos-delay="100">Тәжірибелі ұстаздар ұжымы</p>
   </div>
 </section>
 
 <!-- ─── TEACHERS GRID ────────────────────────────────────── -->
-<section class="section-padding"> 
+<section class="section-padding bg-light">
   <div class="container">
     {% if teachers %}
     <div class="row g-4">
       {% for teacher in teachers %}
       <div class="col-sm-6 col-lg-4 col-xl-3" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}0">
-        <a href="{% url 'app:teacher_detail' teacher.slug %}" class="teacher-card-link">
-          <div class="teacher-card">
-            <div class="teacher-photo">
+        <a href="{% url 'app:teacher_detail' teacher.slug %}" class="text-decoration-none d-block h-100">
+          <div class="teacher-modern-card bg-white rounded-4 border overflow-hidden h-100"
+            style="transition: all 0.3s ease;">
+
+            <!-- Photo Area -->
+            <div class="position-relative overflow-hidden" style="height: 260px; background: #f1f5f9;">
               {% if teacher.photo %}
-              <img src="{{ teacher.photo.url }}" alt="{{ teacher.name }}">
+              <img src="{{ teacher.photo.url }}" alt="{{ teacher.name }}" class="w-100 h-100"
+                style="object-fit: cover; transition: transform 0.4s ease;">
               {% else %}
-              <div class="teacher-photo-placeholder">
-                <i class="bi bi-person"></i>
+              <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-primary bg-opacity-10">
+                <i class="bi bi-person-fill text-primary" style="font-size: 5rem; opacity: 0.4;"></i>
               </div>
               {% endif %}
             </div>
-            <div class="teacher-info">
-              <h5>{{ teacher.name }}</h5>
-              <span class="teacher-subject">{{ teacher.subject }}</span>
-              <span class="teacher-exp">
-                <i class="bi bi-briefcase me-1"></i>{{ teacher.experience }} жыл тәжірибе
-              </span>
+
+            <!-- Info Area -->
+            <div class="p-4">
+              <h5 class="fw-bold text-dark mb-1" style="font-size: 1rem; line-height: 1.3;">{{ teacher.name }}</h5>
+              <div class="d-flex align-items-center gap-1 text-muted" style="font-size: 0.82rem;">
+                <i class="bi bi-briefcase"></i>
+
+              </div>
             </div>
+
           </div>
         </a>
       </div>
       {% endfor %}
     </div>
     {% else %}
-    <div class="empty-state" data-aos="fade-up">
-      <i class="bi bi-people"></i>
-      <h4>Әкімшілік персонал тізімі бос</h4>
-      <p>Ақпарат жақын арада қосылады</p>
+    <div class="text-center py-5" data-aos="fade-up">
+      <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10 mb-4"
+        style="width: 90px; height: 90px; font-size: 2.5rem; color: var(--primary);">
+        <i class="bi bi-people"></i>
+      </div>
+      <h4 class="fw-bold text-dark">Әкімшілік персонал тізімі бос</h4>
+      <p class="text-muted">Ақпарат жақын арада қосылады</p>
     </div>
     {% endif %}
   </div>
 </section>
+
+<style>
+  .teacher-modern-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1) !important;
+    border-color: rgba(37, 99, 235, 0.3) !important;
+  }
+
+  .teacher-modern-card:hover img {
+    transform: scale(1.05);
+  }
+</style>
 
 {% endblock %}

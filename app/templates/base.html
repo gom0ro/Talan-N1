@@ -97,7 +97,6 @@
               <li><a href="{% url 'app:teacher_list' %}">Әкімшілік персонал</a></li>
               <li><a href="{% url 'app:documents' %}">Құжаттар</a></li>
               <li><a href="{% url 'app:history' %}">Мектеп тарихы</a></li>
-              <li><a href="{% url 'app:administration' %}">Мектеп әкімшілігі</a></li>
               <li><a href="{% url 'app:kitapkhana' %}">Кітапхана</a></li>
               <li><a href="{% url 'app:askhana' %}">Мектеп асханасы</a></li>
             </ul>
@@ -182,6 +181,12 @@
           </div>
           <div class="collapse" id="sub-mad">
             <ul class="sidebar-submenu">
+              <li class="mb-1">
+                <a href="{% url 'app:bastauysh_synyp' %}" class="fw-semibold" style="color:#7eb8f7;">
+                  <i class="bi bi-book me-1"></i> Бастауыш сынып
+                </a>
+              </li>
+              <li class="border-top mt-1 pt-1"><span class="text-white-50 small px-2">СЫНЫПТАР</span></li>
               <li><a href="{% url 'app:mad_a' %}">0 «А» сыныбы</a></li>
               <li><a href="{% url 'app:mad_ae' %}">0 «Ә» сыныбы</a></li>
               <li><a href="{% url 'app:mad_b' %}">0 «Б» сыныбы</a></li>
@@ -231,7 +236,7 @@
           </div>
           <div class="collapse" id="sub-students">
             <ul class="sidebar-submenu">
-              <li><a href="{% url 'app:timetable' %}">Сабақ кестесі</a></li>
+              <li><a href="{% url 'app:timetable_511' %}">Сабақ кестесі</a></li>
               <li><a href="{% url 'app:rules' %}">Тәртіп ережесі</a></li>
               <li><a href="{% url 'app:achievements' %}">Оқушылар жетістіктері</a></li>
               <li><a href="{% url 'app:career' %}">Кәсіптік бағдар беру</a></li>
@@ -240,7 +245,7 @@
         </div>
         <div class="sidebar-item">
           <a href="{% url 'app:zhaz_2024' %}" class="sidebar-link">
-            <span><i class="bi bi-sun me-2"></i> ЖАЗ—2024</span>
+            <span><i class="bi bi-sun me-2"></i> ЖАЗ—2026</span>
           </a>
         </div>
         <div class="sidebar-item">

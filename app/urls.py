@@ -49,16 +49,19 @@ urlpatterns = [
     path('about/askhana/', TemplateView.as_view(template_name='about/askhana.html'), name='askhana'),
     
     # Әдістемелік жұмыстар (жеке HTML беттер)
-    path('method/magistr/', TemplateView.as_view(template_name='about/magistr.html'), name='magistr'),
-    path('method/sanat/', TemplateView.as_view(template_name='about/sanat.html'), name='sanat'),
-    path('method/zhetekshiler/', TemplateView.as_view(template_name='about/zhetekshiler.html'), name='zhetekshiler'),
-    path('method/zhetistik/', TemplateView.as_view(template_name='about/zhetistik.html'), name='zhetistik'),
+    path('method/magistr/', views.magistr, name='magistr'),
+    path('method/sanat/', views.sanat, name='sanat'),
+    path('method/zhetekshiler/', views.zhetekshiler, name='zhetekshiler'),
+    path('method/zhetistik/', views.zhetistik, name='zhetistik'),
+    path('method/timetable-511/', views.timetable_511, name='timetable_511'),
+    path('method/tarbie-orynbasary/', views.tarbie_orynbasary, name='tarbie_orynbasary'),
+    path('method/bastauysh-synyp/', views.bastauysh_synyp, name='bastauysh_synyp'),
 
     # Үйірмелер
     path('club/<slug:slug>/', views.club_detail, name='club_detail'),
 
     # Қалған мануалдық HTML беттер
-    path('parents-meeting/', TemplateView.as_view(template_name='pages/parents_meeting.html'), name='parents_meeting'),
+    path('parents-meeting/', views.parents_meeting, name='parents_meeting'),
     path('school-rules/', TemplateView.as_view(template_name='pages/school_rules.html'), name='school_rules'),
     path('med-kyzmet/', TemplateView.as_view(template_name='pages/med_kyzmet.html'), name='med_kyzmet'),
     path('psikholog/', TemplateView.as_view(template_name='pages/psikholog.html'), name='psikholog'),

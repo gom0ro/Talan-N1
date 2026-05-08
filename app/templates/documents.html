@@ -20,69 +20,109 @@
 </section>
 
 <!-- ─── DOCUMENTS LIST ───────────────────────────────────── -->
-<section class="section-padding">
+<section class="section-padding bg-light">
   <div class="container">
     {% if categories %}
     {% for category in categories %}
-    <div class="document-category-block" data-aos="fade-up">
-      <h3 class="document-category-title">
-        <i class="bi bi-folder2-open me-2"></i>{{ category.name }}
-      </h3>
+    <div class="mb-5" data-aos="fade-up">
+
+      <!-- Category Title -->
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <div class="d-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary"
+          style="width: 48px; height: 48px; font-size: 1.4rem; flex-shrink: 0;">
+          <i class="bi bi-folder2-open"></i>
+        </div>
+        <h3 class="fw-bold text-dark mb-0" style="font-size: 1.4rem;">{{ category.name }}</h3>
+      </div>
+
       {% if category.documents.all %}
-      <div class="document-list">
+      <div class="d-flex flex-column gap-3">
         {% for doc in category.documents.all %}
-        <div class="document-item">
-          <div class="document-icon">
+        <div class="doc-card bg-white rounded-4 border p-4 d-flex flex-column flex-md-row align-items-md-center gap-3"
+          style="transition: all 0.25s ease;">
+
+          <!-- File Type Icon -->
+          <div class="doc-icon-box rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+            style="width: 56px; height: 56px; font-size: 1.7rem;
+            {% if doc.file_type == 'word' %}background: #e8f0fe; color: #2b579a;
+            {% elif doc.file_type == 'pdf' %}background: #fdecea; color: #d32f2f;
+            {% elif doc.file_type == 'excel' %}background: #e6f4ea; color: #217346;
+            {% elif doc.file_type == 'powerpoint' %}background: #fdecea; color: #d24726;
+            {% elif doc.file_type == 'image' %}background: #f0effe; color: #6366f1;
+            {% elif doc.file_type == 'archive' %}background: #fef9e7; color: #f59e0b;
+            {% elif doc.file_type == 'link' %}background: #e0f0ff; color: #2563eb;
+            {% else %}background: #f1f5f9; color: #64748b;{% endif %}">
             {% if doc.file_type == 'word' %}
-              <i class="bi bi-file-earmark-word-fill" style="color: #2b579a;"></i>
+              <i class="bi bi-file-earmark-word-fill"></i>
             {% elif doc.file_type == 'pdf' %}
-              <i class="bi bi-file-earmark-pdf-fill" style="color: #d32f2f;"></i>
+              <i class="bi bi-file-earmark-pdf-fill"></i>
             {% elif doc.file_type == 'excel' %}
-              <i class="bi bi-file-earmark-excel-fill" style="color: #217346;"></i>
+              <i class="bi bi-file-earmark-excel-fill"></i>
             {% elif doc.file_type == 'powerpoint' %}
-              <i class="bi bi-file-earmark-ppt-fill" style="color: #d24726;"></i>
+              <i class="bi bi-file-earmark-ppt-fill"></i>
             {% elif doc.file_type == 'image' %}
-              <i class="bi bi-file-earmark-image-fill" style="color: #6366f1;"></i>
+              <i class="bi bi-file-earmark-image-fill"></i>
             {% elif doc.file_type == 'archive' %}
-              <i class="bi bi-file-earmark-zip-fill" style="color: #f59e0b;"></i>
+              <i class="bi bi-file-earmark-zip-fill"></i>
             {% elif doc.file_type == 'link' %}
-              <i class="bi bi-link-45deg" style="color: #2563eb;"></i>
+              <i class="bi bi-link-45deg"></i>
             {% else %}
-              <i class="bi bi-file-earmark-fill" style="color: #64748b;"></i>
+              <i class="bi bi-file-earmark-fill"></i>
             {% endif %}
           </div>
-          <div class="document-info">
-            <h5>{{ doc.title }}</h5>
+
+          <!-- Doc Info -->
+          <div class="flex-grow-1">
+            <h5 class="fw-bold text-dark mb-1" style="font-size: 1rem;">{{ doc.title }}</h5>
             {% if doc.description %}
-            <p class="text-muted small mb-0">{{ doc.description }}</p>
+            <p class="text-muted mb-1" style="font-size: 0.88rem; line-height: 1.4;">{{ doc.description }}</p>
             {% endif %}
-            <small>{{ doc.uploaded_at|date:"d.m.Y" }}</small>
+            <small class="text-muted" style="font-size: 0.8rem;">
+              <i class="bi bi-calendar3 me-1"></i>{{ doc.uploaded_at|date:"d.m.Y" }}
+            </small>
           </div>
-          {% if doc.file %}
-          <a href="{{ doc.file.url }}" target="_blank" class="btn btn-sm btn-outline-custom" download>
-            <i class="bi bi-download me-1"></i> Жүктеу
-          </a>
-          {% elif doc.link %}
-          <a href="{{ doc.link }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-custom">
-            <i class="bi bi-box-arrow-up-right me-1"></i> Ашу
-          </a>
-          {% endif %}
+
+          <!-- Action Button -->
+          <div class="flex-shrink-0">
+            {% if doc.file %}
+            <a href="{{ doc.file.url }}" target="_blank" class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm" download>
+              <i class="bi bi-cloud-arrow-down me-1"></i> Жүктеу
+            </a>
+            {% elif doc.link %}
+            <a href="{{ doc.link }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm rounded-pill px-4 shadow-sm">
+              <i class="bi bi-box-arrow-up-right me-1"></i> Ашу
+            </a>
+            {% endif %}
+          </div>
+
         </div>
         {% endfor %}
       </div>
       {% else %}
-      <p class="text-muted">Бұл санатта құжаттар жоқ</p>
+      <p class="text-muted fst-italic ps-2">Бұл санатта құжаттар жоқ</p>
       {% endif %}
+
     </div>
     {% endfor %}
     {% else %}
-    <div class="empty-state" data-aos="fade-up">
-      <i class="bi bi-file-earmark-text"></i>
-      <h4>Құжаттар жоқ</h4>
-      <p>Құжаттар жақын арада қосылады</p>
+    <div class="text-center py-5" data-aos="fade-up">
+      <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10 mb-4"
+        style="width: 90px; height: 90px; font-size: 2.5rem; color: var(--primary);">
+        <i class="bi bi-file-earmark-text"></i>
+      </div>
+      <h4 class="fw-bold text-dark">Құжаттар жоқ</h4>
+      <p class="text-muted">Құжаттар жақын арада қосылады</p>
     </div>
     {% endif %}
   </div>
 </section>
+
+<style>
+  .doc-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.07) !important;
+    border-color: rgba(37,99,235,0.25) !important;
+  }
+</style>
 
 {% endblock %}
