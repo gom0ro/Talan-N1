@@ -6,15 +6,12 @@ from .models import (
     Article, ArticleImage,
     PsychologyArticle, SocialArticle, MedicalArticle, GuardianArticle,
     InstagramReel, LibraryCategory, LibraryBook,
-    MethodoCategory, MethodoItem,
+    MethodoCategory, MethodoItem, ZhetistikItem,
     MagistrItem, SanatItem, ZhetekshilerItem,
-    ZhetistikItem,
     TimetableItem, TarbieItem, BastauyshItem,
     ParentsMeetingItem,
 )
 
-
-# Admin site settings
 admin.site.site_header = 'Talant No1 Mektep'
 admin.site.site_title = 'Talant No1 Admin'
 admin.site.index_title = 'Basqaru paneli'
@@ -25,14 +22,20 @@ admin.site.index_title = 'Basqaru paneli'
 class NewsInline(admin.StackedInline):
     model = News
     extra = 0
-    fields = ('title', 'image', 'is_published')
+    fields = ('title', 'image', 'is_published', 'created_at')
+    readonly_fields = ('created_at',)
     show_change_link = True
 
 
 @admin.register(NewsCategory)
 class NewsCategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug')
+    list_display = ('name', 'slug', 'news_count')
     prepopulated_fields = {'slug': ('name',)}
+    inlines = [NewsInline]
+
+    @admin.display(description='Zhanaly saны')
+    def news_count(self, obj):
+        return obj.news.count()
 
 
 @admin.register(News)
@@ -60,6 +63,7 @@ class NewsAdmin(admin.ModelAdmin):
 @admin.register(Teacher)
 class TeacherAdmin(admin.ModelAdmin):
     list_display = ('name', 'subject', 'experience', 'order')
+    list_filter = ('subject',)
     search_fields = ('name', 'subject')
     prepopulated_fields = {'slug': ('name',)}
     list_editable = ('order',)
@@ -75,9 +79,13 @@ class GalleryImageInline(admin.TabularInline):
 
 @admin.register(GalleryAlbum)
 class GalleryAlbumAdmin(admin.ModelAdmin):
-    list_display = ('title', 'created_at')
+    list_display = ('title', 'image_count', 'created_at')
     prepopulated_fields = {'slug': ('title',)}
     inlines = [GalleryImageInline]
+
+    @admin.display(description='Sureтter sany')
+    def image_count(self, obj):
+        return obj.images.count()
 
 
 # ── Documents ─────────────────────────────────────────────────
@@ -118,6 +126,7 @@ class PageAdmin(admin.ModelAdmin):
 class SliderAdmin(admin.ModelAdmin):
     list_display = ('title', 'order', 'is_active')
     list_editable = ('order', 'is_active')
+    list_filter = ('is_active',)
 
 
 # ── Contact ───────────────────────────────────────────────────
@@ -138,26 +147,41 @@ class ContactMessageAdmin(admin.ModelAdmin):
 
 class ClubScheduleInline(admin.TabularInline):
     model = ClubSchedule
+    verbose_name = "Sabaq kestesi"
+    verbose_name_plural = "Sabaq kestesi"
     extra = 1
 
 
 class ClubMemberInline(admin.TabularInline):
     model = ClubMember
+    verbose_name = "Qatysusy"
+    verbose_name_plural = "Qatysuсhylar"
     extra = 1
 
 
 class ClubImageInline(admin.TabularInline):
     model = ClubImage
+    verbose_name = "Foto"
+    verbose_name_plural = "Galereya"
     extra = 3
 
 
 @admin.register(Club)
 class ClubAdmin(admin.ModelAdmin):
-    list_display = ('name', 'order')
+    list_display = ('name', 'member_count', 'order')
     prepopulated_fields = {'slug': ('name',)}
     list_editable = ('order',)
     search_fields = ('name', 'content')
+    fieldsets = (
+        ('Ujiyrme turaly', {
+            'fields': ('name', 'slug', 'content', 'image', 'order'),
+        }),
+    )
     inlines = [ClubImageInline, ClubScheduleInline, ClubMemberInline]
+
+    @admin.display(description='Qatysuсhylar')
+    def member_count(self, obj):
+        return obj.members.count()
 
 
 # ── Articles ──────────────────────────────────────────────────
@@ -170,20 +194,34 @@ class ArticleImageInline(admin.TabularInline):
 
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
-    list_display = ('title', 'section', 'is_published', 'created_at')
-    list_filter = ('section', 'is_published')
+    list_display = ('title', 'section', 'author', 'is_published', 'created_at')
+    list_filter = ('section', 'is_published', 'created_at')
     search_fields = ('title', 'content')
     prepopulated_fields = {'slug': ('title',)}
     list_editable = ('is_published',)
+    date_hierarchy = 'created_at'
+    list_per_page = 20
+    fieldsets = (
+        ('Negizgi aqparat', {
+            'fields': ('title', 'slug', 'section', 'author', 'content', 'image'),
+        }),
+        ('Baptaular', {
+            'fields': ('is_published',),
+            'classes': ('collapse',),
+        }),
+    )
     inlines = [ArticleImageInline]
 
 
 class SectionArticleAdmin(admin.ModelAdmin):
     section_key = None
-    list_display = ('title', 'is_published', 'created_at')
+    list_display = ('title', 'author', 'is_published', 'created_at')
+    list_filter = ('is_published', 'created_at')
     search_fields = ('title', 'content')
     prepopulated_fields = {'slug': ('title',)}
     list_editable = ('is_published',)
+    date_hierarchy = 'created_at'
+    list_per_page = 20
     inlines = [ArticleImageInline]
     fieldsets = (
         ('Negizgi aqparat', {
@@ -262,7 +300,7 @@ class InstagramReelAdmin(admin.ModelAdmin):
     list_editable = ('is_active', 'order')
 
 
-# ── Metodicheskie raboty (proxy models) ──────────────────────
+# ── Methodo (proxy models) ────────────────────────────────────
 
 class BaseMethodoItemAdmin(admin.ModelAdmin):
     category_slug = None
@@ -303,7 +341,7 @@ class BaseMethodoItemAdmin(admin.ModelAdmin):
 @admin.register(MagistrItem)
 class MagistrItemAdmin(BaseMethodoItemAdmin):
     category_slug = 'magistr'
-    category_name = 'Pedagogika ghylymdarynyn magistri'
+    category_name = 'Pedagogika magistri'
 
 
 @admin.register(SanatItem)
@@ -340,11 +378,7 @@ class ZhetistikItemAdmin(admin.ModelAdmin):
     )
 
 
-# ── Sabaq kestesi 5-11 synyp ──────────────────────────────────
-
-def make_simple_admin(fieldsets_extra=None):
-    pass
-
+# ── Simple pages admin ────────────────────────────────────────
 
 class SimpleItemAdmin(admin.ModelAdmin):
     list_display = ('title', 'order', 'created_at')
@@ -381,7 +415,6 @@ class TarbieItemAdmin(admin.ModelAdmin):
         }),
         ('2 Foto', {
             'fields': ('image1', 'image2'),
-            'description': '1-shi zhane 2-shi fotony zhyktey alasyz.',
         }),
         ('Fayl zhykteu', {
             'fields': ('file',),
@@ -389,7 +422,7 @@ class TarbieItemAdmin(admin.ModelAdmin):
         }),
         ('Google Drive silteme', {
             'fields': ('link',),
-            'description': 'Google Drive nemese basqa silteme URL-in osy jerge qoyyңyz.',
+            'description': 'Google Drive nemese basqa silteme URL-in osy jerge qoyynyz.',
         }),
     )
 
