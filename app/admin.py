@@ -74,7 +74,7 @@ class TeacherAdmin(admin.ModelAdmin):
 class GalleryImageInline(admin.TabularInline):
     model = GalleryImage
     extra = 3
-    fields = ('image', 'caption')
+    fields = ('image', 'instagram_link', 'caption')
 
 
 @admin.register(GalleryAlbum)

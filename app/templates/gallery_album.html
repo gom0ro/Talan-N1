@@ -5,11 +5,180 @@
 
 {% block extra_head %}
 <style>
+  /* ─── ULTRA PREMIUM ALBUM STYLES ─── */
+  :root {
+    --gallery-bg: #0b1120;
+    --card-bg: rgba(255, 255, 255, 0.03);
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .album-wrapper {
+    background-color: var(--gallery-bg);
+    color: #fff;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .page-header {
+    background: radial-gradient(circle at 50% -20%, #1e293b 0%, #0b1120 70%);
+    padding: 140px 0 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .page-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.2;
+    z-index: 1;
+  }
+
+  .page-header-title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .page-header-desc {
+    color: #94a3b8;
+    font-size: 1.15rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .breadcrumb-item a { color: rgba(255,255,255,0.6); text-decoration: none; }
+  .breadcrumb-item.active { color: #60a5fa; }
+  .breadcrumb-item + .breadcrumb-item::before { color: rgba(255,255,255,0.4); }
+
+  /* Photo Card */
+  .gallery-photo-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    height: 100%;
+    display: block;
+    text-decoration: none;
+  }
+
+  .gallery-photo-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(96, 165, 250, 0.4);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 30px rgba(59,130,246,0.2);
+  }
+
+  .photo-img-wrapper {
+    position: relative;
+    height: 280px;
+    overflow: hidden;
+  }
+
+  .photo-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+
+  .gallery-photo-card:hover .photo-img-wrapper img {
+    transform: scale(1.08);
+  }
+
+  .photo-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(11, 17, 32, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .gallery-photo-card:hover .photo-overlay {
+    opacity: 1;
+  }
+  .photo-overlay i {
+    font-size: 2rem;
+    color: #fff;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(8px);
+    width: 60px; height: 60px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    transform: scale(0.8);
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .gallery-photo-card:hover .photo-overlay i {
+    transform: scale(1);
+  }
+
+  .caption-bar {
+    padding: 16px;
+    background: rgba(11, 17, 32, 0.9);
+    border-top: 1px solid var(--border-color);
+    color: #e2e8f0;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  /* Instagram Embed Wrapper */
+  .insta-wrapper {
+    height: 400px;
+    width: 100%;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .insta-overlay-btn {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(217,70,239,0.1), rgba(59,130,246,0.1));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+  .insta-overlay-btn:hover {
+    background: linear-gradient(135deg, rgba(217,70,239,0.2), rgba(59,130,246,0.2));
+  }
+  .insta-icon {
+    font-size: 3rem;
+    background: -webkit-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 4px 10px rgba(220, 39, 67, 0.4));
+  }
+  .insta-text {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  }
+
+  /* Lightbox */
   .lightbox-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.92);
+    background: rgba(11, 17, 32, 0.95);
+    backdrop-filter: blur(10px);
     z-index: 9999;
     justify-content: center;
     align-items: center;
@@ -19,69 +188,107 @@
   .lightbox-overlay img {
     max-width: 90vw;
     max-height: 90vh;
-    border-radius: 12px;
+    border-radius: 16px;
     box-shadow: 0 20px 60px rgba(0,0,0,.5);
+    border: 1px solid rgba(255,255,255,0.1);
   }
   .lightbox-close {
     position: absolute;
-    top: 20px; right: 30px;
+    top: 30px; right: 40px;
     color: #fff;
-    font-size: 2rem;
+    font-size: 2.5rem;
     cursor: pointer;
     z-index: 10000;
+    transition: transform 0.3s;
   }
+  .lightbox-close:hover { transform: rotate(90deg); color: #60a5fa; }
 </style>
 {% endblock %}
 
 {% block content %}
+<div class="album-wrapper">
 
-<!-- ─── PAGE HEADER ──────────────────────────────────────── -->
-<section class="page-header page-header-sm">
-  <div class="container">
-    <nav aria-label="breadcrumb" data-aos="fade-down">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'app:index' %}">Басты бет</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'app:gallery' %}">Галерея</a></li>
-        <li class="breadcrumb-item active">{{ album.title }}</li>
-      </ol>
-    </nav>
-    <h1 class="page-header-title" data-aos="fade-up">{{ album.title }}</h1>
-    {% if album.description %}
-    <p class="page-header-desc" data-aos="fade-up">{{ album.description }}</p>
-    {% endif %}
-  </div>
-</section>
+  <!-- ─── PAGE HEADER ──────────────────────────────────────── -->
+  <section class="page-header">
+    <div class="container position-relative" style="z-index:2;">
+      <nav aria-label="breadcrumb" data-aos="fade-down">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'app:index' %}">Басты бет</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'app:gallery' %}">Галерея</a></li>
+          <li class="breadcrumb-item active">{{ album.title }}</li>
+        </ol>
+      </nav>
+      <h1 class="page-header-title" data-aos="fade-up">{{ album.title }}</h1>
+      {% if album.description %}
+      <p class="page-header-desc" data-aos="fade-up" data-aos-delay="100">{{ album.description }}</p>
+      {% endif %}
+    </div>
+  </section>
 
-<!-- ─── ALBUM PHOTOS ─────────────────────────────────────── -->
-<section class="section-padding">
-  <div class="container">
-    {% if album.images.all %}
-    <div class="row g-3">
-      {% for photo in album.images.all %}
-      <div class="col-6 col-md-4 col-lg-3" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}0">
-        <div class="gallery-photo" onclick="openLightbox('{{ photo.image.url }}')">
-          <img src="{{ photo.image.url }}" alt="{{ photo.caption }}">
-          {% if photo.caption %}
-          <div class="gallery-caption">{{ photo.caption }}</div>
+  <!-- ─── ALBUM PHOTOS & VIDEOS ─────────────────────────────────────── -->
+  <section class="py-5" style="background: var(--gallery-bg); position: relative; z-index:2;">
+    <div class="container">
+      {% if album.images.all %}
+      <div class="row g-4">
+        {% for photo in album.images.all %}
+        
+          {% if photo.instagram_link %}
+          <!-- Instagram Video Card -->
+          <div class="col-sm-6 col-md-4 col-lg-3" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}0">
+            <div class="insta-wrapper">
+              <a href="{{ photo.instagram_link }}" target="_blank" class="insta-overlay-btn">
+                <i class="bi bi-instagram insta-icon"></i>
+                <span class="insta-text">Instagram Видео</span>
+                <span style="font-size:0.8rem; opacity:0.8; margin-top:5px;">Көру үшін басыңыз</span>
+              </a>
+              {% if photo.caption %}
+              <div class="caption-bar mt-auto" style="position:relative; z-index:2;">
+                <i class="bi bi-play-circle me-2 text-info"></i> {{ photo.caption }}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          {% else %}
+          <!-- Standard Image Card -->
+          <div class="col-sm-6 col-md-4 col-lg-3" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}0">
+            <div class="gallery-photo-card" onclick="openLightbox('{% if photo.image %}{{ photo.image.url }}{% endif %}')">
+              <div class="photo-img-wrapper">
+                {% if photo.image %}
+                <img src="{{ photo.image.url }}" alt="{{ photo.caption }}">
+                {% else %}
+                <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#1e293b;"><i class="bi bi-image text-muted" style="font-size:3rem;"></i></div>
+                {% endif %}
+                <div class="photo-overlay">
+                  <i class="bi bi-arrows-fullscreen"></i>
+                </div>
+              </div>
+              {% if photo.caption %}
+              <div class="caption-bar">
+                {{ photo.caption }}
+              </div>
+              {% endif %}
+            </div>
+          </div>
           {% endif %}
-        </div>
+          
+        {% endfor %}
       </div>
-      {% endfor %}
-    </div>
-    {% else %}
-    <div class="empty-state">
-      <i class="bi bi-image"></i>
-      <h4>Суреттер жоқ</h4>
-    </div>
-    {% endif %}
+      {% else %}
+      <div class="text-center py-5" style="border: 1px dashed var(--border-color); border-radius: 20px;">
+        <i class="bi bi-image" style="font-size: 4rem; color: #475569;"></i>
+        <h4 class="mt-3 text-light">Бұл альбомда әлі материал жоқ</h4>
+      </div>
+      {% endif %}
 
-    <div class="mt-4" data-aos="fade-up">
-      <a href="{% url 'app:gallery' %}" class="btn btn-outline-custom">
-        <i class="bi bi-arrow-left me-2"></i> Альбомдарға оралу
-      </a>
+      <div class="mt-5" data-aos="fade-up">
+        <a href="{% url 'app:gallery' %}" class="btn" style="background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 50px; padding: 10px 24px;">
+          <i class="bi bi-arrow-left me-2"></i> Альбомдарға оралу
+        </a>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
+
+</div>
 
 <!-- ─── LIGHTBOX ─────────────────────────────────────────── -->
 <div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()">
@@ -94,6 +301,7 @@
 {% block extra_js %}
 <script>
   function openLightbox(src) {
+    if(!src) return;
     document.getElementById('lightbox-img').src = src;
     document.getElementById('lightbox').classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -101,6 +309,7 @@
   function closeLightbox() {
     document.getElementById('lightbox').classList.remove('active');
     document.body.style.overflow = '';
+    setTimeout(() => { document.getElementById('lightbox-img').src = ''; }, 300);
   }
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeLightbox();

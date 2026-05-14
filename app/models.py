@@ -103,7 +103,8 @@ class GalleryImage(models.Model):
         GalleryAlbum, on_delete=models.CASCADE,
         related_name='images', verbose_name='Альбом'
     )
-    image = models.ImageField('Сурет', upload_to='gallery/photos/')
+    image = models.ImageField('Сурет', upload_to='gallery/photos/', blank=True, null=True)
+    instagram_link = models.URLField('Instagram видео сілтемесі', blank=True, null=True, help_text='Егер суреттің орнына Инстаграм видео қойғыңыз келсе, осында сілтемені жазыңыз')
     caption = models.CharField('Тақырыбы', max_length=200, blank=True)
     uploaded_at = models.DateTimeField('Жүктелген уақыты', auto_now_add=True)
 

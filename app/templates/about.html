@@ -3,147 +3,382 @@
 
 {% block title %}Біз туралы — Talant №1{% endblock %}
 
+{% block extra_head %}
+<style>
+  /* ─── ULTRA PREMIUM ABOUT STYLES ─── */
+  :root {
+    --about-bg: #0b1120;
+    --card-bg: rgba(255, 255, 255, 0.03);
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .about-wrapper {
+    background-color: var(--about-bg);
+    color: #fff;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .page-header {
+    background: radial-gradient(circle at 50% -20%, #1e293b 0%, #0b1120 70%);
+    padding: 160px 0 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .page-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.2;
+    z-index: 1;
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(0,0,0,0) 70%);
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .premium-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+    padding: 8px 24px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    backdrop-filter: blur(12px);
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    position: relative;
+    z-index: 2;
+  }
+
+  .premium-badge i { color: #60a5fa; }
+
+  .page-header-title {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    color: #fff;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 2;
+  }
+  .page-header-title span {
+    background: linear-gradient(135deg, #60a5fa 0%, #c084fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .page-header-desc {
+    color: #94a3b8;
+    font-size: 1.15rem;
+    position: relative;
+    z-index: 2;
+    max-width: 500px;
+  }
+
+  .breadcrumb-item a { color: rgba(255,255,255,0.6); text-decoration: none; }
+  .breadcrumb-item.active { color: #60a5fa; }
+  .breadcrumb-item + .breadcrumb-item::before { color: rgba(255,255,255,0.4); }
+
+  /* Content Sections */
+  .section-padding { padding: 80px 0; position: relative; z-index: 2; }
+  
+  .about-image-grid {
+    border-radius: 28px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+    position: relative;
+  }
+  .about-main-img {
+    width: 100%; height: auto; display: block;
+    filter: brightness(0.9);
+  }
+
+  .section-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    color: #f8fafc;
+    margin-bottom: 20px;
+  }
+  
+  .about-content-text p, .about-text p {
+    color: #cbd5e1;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Values Cards */
+  .value-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 40px 30px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    transition: all 0.4s ease;
+    height: 100%;
+  }
+  .value-card:hover {
+    transform: translateY(-10px);
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(96,165,250,0.3);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  }
+  .value-icon {
+    width: 80px; height: 80px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+    font-size: 2rem;
+    color: #60a5fa;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .value-card h4 {
+    color: #f8fafc;
+    font-weight: 800;
+    margin-bottom: 16px;
+  }
+  .value-card p {
+    color: #94a3b8;
+    margin: 0;
+  }
+
+  /* Teacher Cards */
+  .teacher-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    transition: all 0.4s ease;
+    display: block;
+    text-decoration: none;
+    height: 100%;
+  }
+  .teacher-card:hover {
+    transform: translateY(-10px);
+    border-color: rgba(96,165,250,0.3);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  }
+  .teacher-img-wrap {
+    height: 280px;
+    overflow: hidden;
+    background: #1e293b;
+    position: relative;
+  }
+  .teacher-img-wrap img {
+    width: 100%; height: 100%; object-fit: cover; object-position: top;
+    filter: brightness(0.9);
+    transition: transform 0.6s ease;
+  }
+  .teacher-card:hover .teacher-img-wrap img {
+    transform: scale(1.08);
+  }
+  .teacher-info {
+    padding: 24px;
+  }
+  .teacher-info h6 {
+    color: #f8fafc;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .teacher-info p {
+    color: #94a3b8;
+    margin-bottom: 0;
+    font-size: 0.85rem;
+  }
+
+  .btn-premium {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50px;
+    padding: 12px 28px;
+    font-weight: 600;
+    backdrop-filter: blur(8px);
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-premium:hover {
+    background: rgba(96,165,250,0.2);
+    border-color: #60a5fa;
+    color: #fff;
+    transform: translateY(-3px);
+  }
+</style>
+{% endblock %}
+
 {% block content %}
+<div class="about-wrapper">
 
-<!-- ─── PAGE HEADER ──────────────────────────────────────── -->
-<section class="page-header">
-  <div class="container">
-    <nav aria-label="breadcrumb" data-aos="fade-down">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'app:index' %}">Басты бет</a></li>
-        <li class="breadcrumb-item active">Біз туралы</li>
-      </ol>
-    </nav>
-    <h1 class="page-header-title" data-aos="fade-up">Біз туралы</h1>
-    <p class="page-header-desc" data-aos="fade-up" data-aos-delay="100">Мектебіміз туралы толық ақпарат</p>
-  </div>
-</section>
+  <!-- ─── PAGE HEADER ──────────────────────────────────────── -->
+  <section class="page-header">
+    <div class="hero-glow"></div>
+    <div class="container position-relative">
+      
+      <div class="premium-badge" data-aos="fade-down">
+        <i class="bi bi-building"></i>
+        Talant №1
+      </div>
 
-<!-- ─── ABOUT CONTENT ────────────────────────────────────── -->
-<section class="section-padding">
-  <div class="container">
-    <div class="row g-5 align-items-center">
-      <div class="col-lg-6" data-aos="fade-right">
-        <div class="about-image-grid">
-          {% if page and page.image %}
-          <img src="{{ page.image.url }}" alt="Мектеп" class="about-main-img">
+      <nav aria-label="breadcrumb" data-aos="fade-down" data-aos-delay="50" style="margin-bottom: 10px;">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="{% url 'app:index' %}">Басты бет</a></li>
+          <li class="breadcrumb-item active">Біз туралы</li>
+        </ol>
+      </nav>
+      
+      <h1 class="page-header-title" data-aos="fade-up" data-aos-delay="100">
+        Мектеп <span>туралы</span>
+      </h1>
+      <p class="page-header-desc" data-aos="fade-up" data-aos-delay="200">
+        Мектебіміздің тарихы, мақсаты және білім берудегі басты құндылықтарымыз.
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── ABOUT CONTENT ────────────────────────────────────── -->
+  <section class="section-padding">
+    <div class="container">
+      <div class="row g-5 align-items-center">
+        <div class="col-lg-6" data-aos="fade-right">
+          <div class="about-image-grid">
+            {% if page and page.image %}
+            <img src="{{ page.image.url }}" alt="Мектеп" class="about-main-img">
+            {% else %}
+            <img src="{% static 'img/Талант копия.png' %}" alt="Мектеп" class="about-main-img">
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-lg-6" data-aos="fade-left">
+          {% if page %}
+          <div class="premium-badge" style="margin-bottom: 15px;"><i class="bi bi-clock-history"></i> Тарих</div>
+          <h2 class="section-title">{{ page.title }}</h2>
+          <div class="about-content-text">
+            {{ page.content|linebreaks }}
+          </div>
           {% else %}
-          <img src="{% static 'img/Талант копия.png' %}" alt="Мектеп" class="about-main-img">
+          <div class="premium-badge" style="margin-bottom: 15px;"><i class="bi bi-clock-history"></i> Тарих</div>
+          <h2 class="section-title">Talant №1</h2>
+          <div class="about-text">
+            <p>
+              Жеке мектептер мемлекеттік бағдарламамен сабақ береді, пәндері мен сабақ бөлімісі де ұқсас.
+              Алайда, бағдарлама мазмұны мен педагогиканың жаңа форматына байланысты қызық идеялар ұсына алады.
+            </p>
+            <p>
+              Білім беру саласында жаңа өзгерістер, ұсыныстар, жаңа модельдерді енгізуге мүмкіндік көп.
+              Пәндердің мазмұнында академиялық еркіндік болады.
+            </p>
+          </div>
           {% endif %}
         </div>
       </div>
-      <div class="col-lg-6" data-aos="fade-left">
-        {% if page %}
-        <span class="section-label">Тарих</span>
-        <h2 class="section-title">{{ page.title }}</h2>
-        <div class="about-content-text">
-          {{ page.content|linebreaks }}
-        </div>
-        {% else %}
-        <span class="section-label">Тарих</span>
-        <h2 class="section-title">Talant №1</h2>
-        <p>
-          Жеке мектептер мемлекеттік бағдарламамен сабақ береді, пәндері мен сабақ бөлімісі де ұқсас.
-          Алайда, бағдарлама мазмұны мен педагогиканың жаңа форматына байланысты қызық идеялар ұсына алады.
-        </p>
-        <p>
-          Білім беру саласында жаңа өзгерістер, ұсыныстар, жаңа модельдерді енгізуге мүмкіндік көп.
-          Пәндердің мазмұнында академиялық еркіндік болады.
-        </p>
-        {% endif %}
-      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ─── MISSION & VALUES ─────────────────────────────────── -->
-<section class="section-padding bg-light-custom">
-  <div class="container">
-    <div class="text-center mb-5" data-aos="fade-up">
-      <span class="section-label">Миссиямыз</span>
-      <h2 class="section-title">Біздің құндылықтарымыз</h2>
+  <!-- ─── MISSION & VALUES ─────────────────────────────────── -->
+  <section class="section-padding" style="background: rgba(255,255,255,0.01); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+    <div class="container">
+      <div class="text-center mb-5" data-aos="fade-up">
+        <div class="premium-badge" style="margin-bottom: 15px;"><i class="bi bi-flag"></i> Миссиямыз</div>
+        <h2 class="section-title">Біздің құндылықтарымыз</h2>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="0">
+          <div class="value-card">
+            <div class="value-icon">
+              <i class="bi bi-lightbulb"></i>
+            </div>
+            <h4>Инновация</h4>
+            <p>Заманауи технологияларды білім беру процесіне белсенді қолданамыз</p>
+          </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+          <div class="value-card">
+            <div class="value-icon">
+              <i class="bi bi-star"></i>
+            </div>
+            <h4>Сапа</h4>
+            <p>Білім берудің жоғары сапасын қамтамасыз етеміз</p>
+          </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+          <div class="value-card">
+            <div class="value-icon">
+              <i class="bi bi-heart"></i>
+            </div>
+            <h4>Тәрбие</h4>
+            <p>Рухани-адамгершілік тәрбиеге ерекше назар аударамыз</p>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="row g-4">
-      <div class="col-md-4" data-aos="fade-up" data-aos-delay="0">
-        <div class="value-card">
-          <div class="value-icon">
-            <i class="bi bi-lightbulb"></i>
-          </div>
-          <h4>Инновация</h4>
-          <p>Заманауи технологияларды білім беру процесіне белсенді қолданамыз</p>
-        </div>
-      </div>
-      <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-        <div class="value-card">
-          <div class="value-icon">
-            <i class="bi bi-star"></i>
-          </div>
-          <h4>Сапа</h4>
-          <p>Білім берудің жоғары сапасын қамтамасыз етеміз</p>
-        </div>
-      </div>
-      <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-        <div class="value-card">
-          <div class="value-icon">
-            <i class="bi bi-heart"></i>
-          </div>
-          <h4>Тәрбие</h4>
-          <p>Рухани-адамгершілік тәрбиеге ерекше назар аударамыз</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+  </section>
 
-<!-- ─── TEACHERS PREVIEW ─────────────────────────────────── -->
-{% if teachers_preview %}
-<section class="section-padding">
-  <div class="container">
-    <div class="text-center mb-5" data-aos="fade-up">
-      <span class="section-label">Ұжым</span>
-      <h2 class="section-title">Біздің әкімшілік персонал</h2>
-    </div>
-    <div class="row g-4">
-      {% for teacher in teachers_preview %}
-      <div class="col-6 col-md-4 col-lg-3" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}00">
-        <a href="{% url 'app:teacher_detail' teacher.slug %}" class="text-decoration-none">
-          <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden" style="transition: transform 0.3s, box-shadow 0.3s;"
-            onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 12px 32px rgba(0,0,0,0.12)';"
-            onmouseout="this.style.transform='';this.style.boxShadow='';">
-            <!-- Сурет — бірдей биіктік -->
-            <div style="height: 280px; overflow: hidden; background: #f4f4f4;">
+  <!-- ─── TEACHERS PREVIEW ─────────────────────────────────── -->
+  {% if teachers_preview %}
+  <section class="section-padding">
+    <div class="container">
+      <div class="text-center mb-5" data-aos="fade-up">
+        <div class="premium-badge" style="margin-bottom: 15px;"><i class="bi bi-people"></i> Ұжым</div>
+        <h2 class="section-title">Әкімшілік персонал</h2>
+      </div>
+      <div class="row g-4">
+        {% for teacher in teachers_preview %}
+        <div class="col-6 col-md-4 col-lg-3" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}00">
+          <a href="{% url 'app:teacher_detail' teacher.slug %}" class="teacher-card">
+            <div class="teacher-img-wrap">
               {% if teacher.photo %}
-              <img src="{{ teacher.photo.url }}" alt="{{ teacher.name }}"
-                style="width: 100%; height: 100%; object-fit: cover; object-position: top;">
+              <img src="{{ teacher.photo.url }}" alt="{{ teacher.name }}">
               {% else %}
-              <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+              <div class="d-flex align-items-center justify-content-center h-100" style="color: #475569;">
                 <i class="bi bi-person-fill" style="font-size: 4rem;"></i>
               </div>
               {% endif %}
             </div>
-            <!-- Мәтін -->
-            <div class="p-3">
-              <h6 class="fw-bold text-dark mb-1" style="font-size: 0.9rem; line-height: 1.3;">{{ teacher.name }}</h6>
+            <div class="teacher-info">
+              <h6>{{ teacher.name }}</h6>
               {% if teacher.subject %}
-              <p class="text-muted mb-0" style="font-size: 0.78rem;">{{ teacher.subject }}</p>
+              <p><i class="bi bi-briefcase me-1"></i> {{ teacher.subject }}</p>
               {% endif %}
               {% if teacher.experience %}
-              <p class="text-muted mb-0" style="font-size: 0.75rem;">{{ teacher.experience }} жыл тәжірибе</p>
+              <p class="mt-1"><i class="bi bi-clock-history me-1"></i> {{ teacher.experience }} жыл тәжірибе</p>
               {% endif %}
             </div>
-          </div>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="text-center mt-5" data-aos="fade-up">
+        <a href="{% url 'app:teacher_list' %}" class="btn-premium">
+          Барлық құрам <i class="bi bi-arrow-right ms-2"></i>
         </a>
       </div>
-      {% endfor %}
     </div>
-    <div class="text-center mt-5" data-aos="fade-up">
-      <a href="{% url 'app:teacher_list' %}" class="btn btn-outline-custom">
-        Барлық әкімшілік персонал <i class="bi bi-arrow-right ms-2"></i>
-      </a>
-    </div>
-  </div>
-</section>
-{% endif %}
+  </section>
+  {% endif %}
 
-
+</div>
 {% endblock %}

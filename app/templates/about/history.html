@@ -3,91 +3,516 @@
 
 {% block title %}Мектеп тарихы — Talant №1{% endblock %}
 
+{% block extra_head %}
+<style>
+  /* ── Floating particles ── */
+  .history-hero {
+    position: relative;
+    background: linear-gradient(135deg, #0a1628 0%, #1a3a5c 50%, #0d2137 100%);
+    overflow: hidden;
+    padding: 100px 0 80px;
+  }
+  .history-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234a90e2' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    animation: bgScroll 20s linear infinite;
+  }
+  @keyframes bgScroll {
+    from { background-position: 0 0; }
+    to { background-position: 60px 60px; }
+  }
+
+  /* Floating balls */
+  .float-ball {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.12;
+    animation: floatBall 8s ease-in-out infinite;
+  }
+  .float-ball:nth-child(1) { width: 300px; height: 300px; background: #3b82f6; top: -80px; right: -60px; animation-delay: 0s; }
+  .float-ball:nth-child(2) { width: 200px; height: 200px; background: #06b6d4; bottom: -50px; left: -40px; animation-delay: 2s; }
+  .float-ball:nth-child(3) { width: 120px; height: 120px; background: #8b5cf6; top: 40%; left: 20%; animation-delay: 4s; }
+  @keyframes floatBall {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-30px) scale(1.05); }
+  }
+
+  /* Hero content */
+  .history-hero .hero-label {
+    display: inline-block;
+    background: rgba(59,130,246,0.2);
+    border: 1px solid rgba(59,130,246,0.4);
+    color: #7eb8ff;
+    padding: 6px 18px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+  }
+  .history-hero h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+  .history-hero h1 span {
+    background: linear-gradient(90deg, #60a5fa, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .history-hero p {
+    color: rgba(255,255,255,0.65);
+    font-size: 1.1rem;
+    max-width: 560px;
+  }
+
+  /* Stats bar */
+  .stat-bar {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+  }
+  .stat-item {
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+  }
+  .stat-num span { color: #60a5fa; }
+  .stat-lbl {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  /* Breadcrumb inside hero */
+  .history-hero .breadcrumb { margin-bottom: 24px; }
+  .history-hero .breadcrumb-item a { color: rgba(255,255,255,0.5); text-decoration: none; }
+  .history-hero .breadcrumb-item.active { color: #7eb8ff; }
+  .history-hero .breadcrumb-item + .breadcrumb-item::before { color: rgba(255,255,255,0.3); }
+
+  /* ── Section styles ── */
+  .history-section { padding: 80px 0; background: #f8fbff; }
+  .history-section:nth-child(even) { background: #fff; }
+
+  /* Intro card */
+  .intro-card {
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 8px 40px rgba(59,130,246,0.08);
+    border: 1px solid rgba(59,130,246,0.1);
+    padding: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .intro-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4);
+  }
+  .intro-card .quote-icon {
+    font-size: 6rem;
+    line-height: 1;
+    color: rgba(59,130,246,0.06);
+    position: absolute;
+    top: 16px;
+    right: 32px;
+    font-family: Georgia, serif;
+  }
+
+  /* Section title */
+  .sec-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 8px;
+  }
+  .sec-title-bar {
+    width: 48px;
+    height: 4px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    border-radius: 2px;
+    margin-bottom: 28px;
+  }
+
+  /* Check list */
+  .check-list { list-style: none; padding: 0; margin: 0; }
+  .check-list li {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid #f1f5f9;
+    align-items: flex-start;
+    transition: background 0.2s;
+  }
+  .check-list li:last-child { border-bottom: none; }
+  .check-list li:hover { background: #f8fbff; border-radius: 12px; padding-left: 10px; }
+  .check-list .icon-wrap {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #dbeafe, #ede9fe);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #3b82f6;
+    font-size: 1rem;
+  }
+  .check-list .item-text { font-size: 0.95rem; color: #475569; line-height: 1.6; }
+  .check-list .item-text strong { color: #1e293b; }
+
+  /* Info cards grid */
+  .info-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 32px 28px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    height: 100%;
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .info-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+    transform-origin: left;
+  }
+  .info-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(59,130,246,0.12); }
+  .info-card:hover::after { transform: scaleX(1); }
+  .info-card .ic-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #dbeafe, #ede9fe);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    color: #3b82f6;
+    margin-bottom: 18px;
+  }
+  .info-card h5 { font-size: 1rem; font-weight: 700; color: #1e293b; margin-bottom: 10px; }
+  .info-card p, .info-card ol { font-size: 0.9rem; color: #64748b; line-height: 1.7; margin: 0; }
+
+  /* Timeline */
+  .timeline { position: relative; padding: 0; list-style: none; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 28px;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, #3b82f6, #8b5cf6, #06b6d4);
+  }
+  .timeline-item {
+    display: flex;
+    gap: 28px;
+    margin-bottom: 36px;
+    align-items: flex-start;
+  }
+  .timeline-dot {
+    width: 58px;
+    min-width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 800;
+    font-size: 0.8rem;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 4px 16px rgba(59,130,246,0.35);
+  }
+  .timeline-body {
+    background: #fff;
+    border-radius: 18px;
+    padding: 24px 28px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+    flex: 1;
+    transition: transform 0.3s;
+  }
+  .timeline-body:hover { transform: translateX(6px); }
+  .timeline-body h6 { font-weight: 700; color: #1e293b; margin-bottom: 6px; font-size: 1rem; }
+  .timeline-body p { color: #64748b; font-size: 0.88rem; margin: 0; line-height: 1.6; }
+
+  /* Floating decorations */
+  .deco-circle {
+    position: absolute;
+    border-radius: 50%;
+    animation: floatBall 10s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-<!-- ─── PAGE HEADER ──────────────────────────────────────── -->
-<section class="page-header">
-  <div class="container">
+
+<!-- ─── HERO ────────────────────────────────────────────────── -->
+<section class="history-hero">
+  <div class="float-ball"></div>
+  <div class="float-ball"></div>
+  <div class="float-ball"></div>
+  <div class="container position-relative" style="z-index:2;">
     <nav aria-label="breadcrumb" data-aos="fade-down">
       <ol class="breadcrumb">
+      
         <li class="breadcrumb-item"><a href="{% url 'app:index' %}">Басты бет</a></li>
         <li class="breadcrumb-item active">Мектеп тарихы</li>
       </ol>
     </nav>
-    <h1 class="page-header-title" data-aos="fade-up">Мектеп тарихы</h1>
-    <p class="page-header-desc" data-aos="fade-up" data-aos-delay="100">Мектептің құрылуы мен дамуы</p>
+    <div class="hero-label" data-aos="fade-up">Біз туралы</div>
+    <h1 data-aos="fade-up" data-aos-delay="100">
+      Мектеп <span>тарихы</span><br>мен дамуы
+    </h1>
+    <p data-aos="fade-up" data-aos-delay="200">
+      Шымкент қаласының заманауи, инновациялық білім ордасы — «№1 Talant» мектебінің ашылуы мен өсу жолы.
+    </p>
+    <div class="stat-bar" data-aos="fade-up" data-aos-delay="300">
+      <div class="stat-item">
+        <div class="stat-num">2022<span>.</span></div>
+        <div class="stat-lbl">Ашылу жылы</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">1200<span>+</span></div>
+        <div class="stat-lbl">Оқушы орны</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">60<span>+</span></div>
+        <div class="stat-lbl">Оқу бөлмесі</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">5</div>
+        <div class="stat-lbl">Қабат</div>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- ─── CONTENT ────────────────────────────────────── -->
-<section class="section-padding">
+<!-- ─── INTRO ──────────────────────────────────────────────── -->
+<section class="history-section">
   <div class="container">
-    <div class="card shadow-sm border-0" data-aos="fade-up" data-aos-delay="200" style="border-radius: 12px; overflow: hidden; background: #fff;">
-      <div class="card-body p-4 p-md-5 fs-6 lh-lg text-secondary">
-        <h2 class="mb-4 text-dark fw-bold">«№1 Talant» жалпы білім беру мектебі — Ашылу тарихы</h2>
-        <p class="mb-4">
-          «№1 Talant» жалпы білім беру мектебі — Шымкент қаласында 2022 жылы ашылған заманауи жекеменшік білім ордасы. Мектептің толық ресми атауы <strong>«№1 TALANT» жалпы білім беру мектебі» жауапкершілігі шектеулі серіктестігі</strong>.
-        </p>
-
-        <h4 class="text-primary mt-5 mb-3 fw-semibold">Ашылу тарихы және құрылымы</h4>
-        <ul class="list-unstyled">
-          <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Құрылуы:</strong> Мектептің заңды тұлға ретінде тіркелген уақыты 2022 жылдың 21 ақпаны.</li>
-          <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Ғимараты:</strong> Мектеп Шымкент қаласы, Әл-Фараби ауданы, Ә. Жангелдин көшесі, №13 ғимаратта орналасқан.</li>
-          <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Қуаттылығы:</strong> 5 қабатты білім ғимараты 1200 оқушыға арналған. Онда 60 оқу бөлмесі мен 48 арнайы кабинет жұмыс істейді.</li>
-        </ul>
-
-        <h4 class="text-primary mt-5 mb-3 fw-semibold">Білім беру бағыты мен ерекшеліктері</h4>
-        <ul class="list-unstyled">
-          <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Инновациялық тәсіл:</strong> Мемлекеттік білім беру стандартын негізге ала отырып, жаңа форматтағы педагогикалық идеяларды қолданады.</li>
-          <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Бағыты:</strong> IT саласы мен жаратылыстану-математикалық бағытқа баса мән берілген.</li>
-          <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Қосымша мүмкіндіктер:</strong> Балаларға музыкалық білім беру, өнерге баулу қарастырылған. Мектепте заманауи асхана, спорт және мәжіліс залдары, тіпті арнайы фотостудия мен продюсерлік орталық жұмыс істейді.</li>
-        </ul>
-
-        <h4 class="text-primary mt-5 mb-3 fw-semibold">Оқу бағдарламасының ерекшеліктері</h4>
-        <p class="mb-3">Мектеп мемлекеттік жалпы білім беру стандартын негізге ала отырып, оны авторлық және заманауи бағыттармен байытқан:</p>
-        <ul class="list-unstyled">
-          <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Тілдік дайындық:</strong> Қазақ және орыс тілінде білім беретін сыныптар бар.</li>
-          <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Жан-жақты дамыту:</strong> Сабақтан тыс уақытта оқушыларға музыкалық білім, фотоөнер және таэквондо мен хореография секілді тегін спорттық үйірмелер ұсынылады.</li>
-          <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>ҰБТ-ға дайындық:</strong> Жоғары сынып оқушылары үшін Ұлттық бірыңғай тестілеуге (ҰБТ) және басқа да ірі мектептерге түсуге арнайы бейіндік дайындық жүргізіледі.</li>
-          <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Күндізгі режим:</strong> Мектепте ата-аналарға ыңғайлы болу үшін балалардың сабақтан кейін де қалып, үй тапсырмаларын орындауына жағдай жасалған (ұзартылған күн топтары).</li>
-        </ul>
-
-        <h4 class="text-primary mt-5 mb-3 fw-semibold">Оқуға қабылдау шарттары мен мерзімдері</h4>
-        <p class="mb-4">Жекеменшік мектеп болғанымен, 1-сыныпқа қабылдау процесі Қазақстанның жалпыға ортақ ережелеріне сүйенеді:</p>
-
-        <div class="row g-4">
-          <div class="col-md-6">
-            <div class="p-4 bg-light rounded-4 h-100 border">
-              <h5 class="fw-bold mb-3"><i class="bi bi-calendar-event text-primary me-2"></i>Құжаттарды қабылдау мерзімі</h5>
-              <p class="mb-2">Оқушыларды қабылдау науқаны жыл сайын әдетте <strong>18 МАУСЫМНАН</strong> басталып (сәуірден немесе маусым айынан), 31 тамызға дейін жалғасады.</p>
-              <p class="mb-0 text-muted small">Орындар саны шектеулі болғандықтан, құжаттарды ертерек өткізу ұсынылады.</p>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="p-4 bg-light rounded-4 h-100 border">
-              <h5 class="fw-bold mb-3"><i class="bi bi-person-badge text-primary me-2"></i>Жас мөлшері</h5>
-              <p class="mb-0">1-сыныпқа балалар 6 жастан бастап (немесе күнтізбелік жыл соңына дейін 6 жасқа толатын балалар) қабылданады.</p>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="p-4 bg-light rounded-4 h-100 border">
-              <h5 class="fw-bold mb-3"><i class="bi bi-laptop text-primary me-2"></i>Өтініш беру тәсілі</h5>
-              <p class="mb-0">Өтінішті egov.kz электронды үкімет порталы арқылы онлайн немесе мектептің өзіне барып қағаз түрінде өткізуге болады.</p>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="p-4 bg-light rounded-4 h-100 border">
-              <h5 class="fw-bold mb-3"><i class="bi bi-folder-check text-primary me-2"></i>Қажетті құжаттар (стандартты)</h5>
-              <ol class="ps-3 mb-0">
-                <li class="mb-1">Баланың туу туралы куәлігі.</li>
-                <li class="mb-1">Ата-анасының немесе заңды өкілінің жеке куәлігі.</li>
-                <li class="mb-1">№065/у (егу картасы) және №026/у-3 (баланың денсаулық паспорты) медициналық анықтамалары.</li>
-                <li class="mb-0">Баланың 3х4 көлеміндегі 2 дана фотосуреті.</li>
-              </ol>
-            </div>
+    <div class="intro-card" data-aos="fade-up">
+      <div class="quote-icon">"</div>
+      <div class="row align-items-center g-5">
+        <div class="col-lg-7">
+          <div class="sec-title">«№1 Talant» жалпы білім беру мектебі</div>
+          <div class="sec-title-bar"></div>
+          <p style="color:#475569; font-size:1rem; line-height:1.9;">
+            Шымкент қаласында <strong>2022 жылы ашылған</strong> заманауи жекеменшік білім ордасы.
+            Мектептің толық ресми атауы —
+            <strong>«№1 TALANT» жалпы білім беру мектебі» жауапкершілігі шектеулі серіктестігі</strong>.
+          </p>
+          <p style="color:#64748b; font-size:0.95rem; line-height:1.8;">
+            Мектеп мемлекеттік жалпы білім беру стандартын негізге ала отырып, жаңа форматтағы
+            педагогикалық идеяларды қолданады. IT саласы мен жаратылыстану-математикалық
+            бағытқа баса мән беріледі.
+          </p>
+        </div>
+        <div class="col-lg-5">
+          <div style="background: linear-gradient(135deg, #eff6ff, #f5f3ff); border-radius: 20px; padding: 32px;">
+            <ul class="check-list">
+              <li>
+                <div class="icon-wrap"><i class="bi bi-building"></i></div>
+                <div class="item-text"><strong>Тіркелуі:</strong> 2022 жылдың 21 ақпаны</div>
+              </li>
+              <li>
+                <div class="icon-wrap"><i class="bi bi-geo-alt"></i></div>
+                <div class="item-text"><strong>Мекенжай:</strong> Ә. Жангелдин к-сі, №13, Шымкент</div>
+              </li>
+              <li>
+                <div class="icon-wrap"><i class="bi bi-layers"></i></div>
+                <div class="item-text"><strong>Ғимарат:</strong> 5 қабат, 1200 орын</div>
+              </li>
+              <li>
+                <div class="icon-wrap"><i class="bi bi-door-open"></i></div>
+                <div class="item-text"><strong>Бөлмелер:</strong> 60 оқу + 48 арнайы кабинет</div>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
     </div>
   </div>
 </section>
+
+<!-- ─── FEATURES ─────────────────────────────────────────────── -->
+<section class="history-section" style="background:#fff;">
+  <div class="container">
+    <div class="text-center mb-5" data-aos="fade-up">
+      <div class="sec-title">Білім беру бағыты мен ерекшеліктері</div>
+      <div class="sec-title-bar mx-auto"></div>
+      <p style="color:#64748b; max-width:560px; margin: 0 auto;">
+        Инновациялық тәсіл мен заманауи инфрақұрылым
+      </p>
+    </div>
+    <ul class="check-list" style="max-width: 760px; margin: 0 auto;" data-aos="fade-up" data-aos-delay="100">
+      <li>
+        <div class="icon-wrap"><i class="bi bi-cpu"></i></div>
+        <div class="item-text">
+          <strong>IT бағыты:</strong> Жаратылыстану-математикалық және IT саласына баса мән берілген заманауи оқыту.
+        </div>
+      </li>
+      <li>
+        <div class="icon-wrap"><i class="bi bi-music-note-beamed"></i></div>
+        <div class="item-text">
+          <strong>Өнер мен спорт:</strong> Музыкалық білім, фотоөнер, таэквондо, хореография — тегін үйірмелер.
+        </div>
+      </li>
+      <li>
+        <div class="icon-wrap"><i class="bi bi-camera-reels"></i></div>
+        <div class="item-text">
+          <strong>Медиа орталық:</strong> Арнайы фотостудия мен продюсерлік орталық жұмыс істейді.
+        </div>
+      </li>
+      <li>
+        <div class="icon-wrap"><i class="bi bi-cup-hot"></i></div>
+        <div class="item-text">
+          <strong>Инфрақұрылым:</strong> Заманауи асхана, спорт залы, мәжіліс залы.
+        </div>
+      </li>
+      <li>
+        <div class="icon-wrap"><i class="bi bi-clock-history"></i></div>
+        <div class="item-text">
+          <strong>Ұзартылған күн:</strong> Сабақтан кейін балалар үй тапсырмаларын орындауы үшін қалуға мүмкіндік бар.
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ─── TIMELINE ──────────────────────────────────────────────── -->
+<section class="history-section">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-5" data-aos="fade-right">
+        <div class="sec-title">Оқу бағдарламасы</div>
+        <div class="sec-title-bar"></div>
+        <p style="color:#64748b; line-height:1.8; font-size:0.95rem;">
+          Мектеп мемлекеттік жалпы білім беру стандартын авторлық және заманауи бағыттармен байытқан.
+        </p>
+        <div style="background: linear-gradient(135deg, #3b82f6, #8b5cf6); border-radius: 20px; padding: 32px; margin-top: 24px; color:#fff;">
+          <i class="bi bi-quote" style="font-size:2rem; opacity:0.6;"></i>
+          <p style="font-size:1.05rem; line-height:1.7; margin:12px 0 0;">
+            Пәндердің мазмұнында академиялық еркіндік болады. Жаңа өзгерістер мен жаңа модельдерді енгізуге мүмкіндік көп.
+          </p>
+        </div>
+      </div>
+      <div class="col-lg-7" data-aos="fade-left" data-aos-delay="100">
+        <ul class="timeline">
+          <li class="timeline-item">
+            <div class="timeline-dot">ТІЛ</div>
+            <div class="timeline-body">
+              <h6>Тілдік дайындық</h6>
+              <p>Қазақ және орыс тілінде білім беретін сыныптар бар. Ағылшын тілін жан-жақты меңгеруге ерекше мән беріледі.</p>
+            </div>
+          </li>
+          <li class="timeline-item">
+            <div class="timeline-dot">ДАМУ</div>
+            <div class="timeline-body">
+              <h6>Жан-жақты дамыту</h6>
+              <p>Сабақтан тыс уақытта музыкалық білім, фотоөнер, таэквондо және хореография секілді тегін спорттық үйірмелер ұсынылады.</p>
+            </div>
+          </li>
+          <li class="timeline-item">
+            <div class="timeline-dot">ҰБТ</div>
+            <div class="timeline-body">
+              <h6>ҰБТ-ға дайындық</h6>
+              <p>Жоғары сынып оқушылары үшін Ұлттық бірыңғай тестілеуге арнайы бейіндік дайындық жүргізіледі.</p>
+            </div>
+          </li>
+          <li class="timeline-item">
+            <div class="timeline-dot">IT</div>
+            <div class="timeline-body">
+              <h6>Технологиялық бағыт</h6>
+              <p>IT саласы мен жаратылыстану-математикалық пәндерге баса мән берілген инновациялық оқу бағдарламасы.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── ADMISSION ─────────────────────────────────────────────── -->
+<section class="history-section" style="background:#fff;">
+  <div class="container">
+    <div class="text-center mb-5" data-aos="fade-up">
+      <div class="sec-title">Оқуға қабылдау шарттары</div>
+      <div class="sec-title-bar mx-auto"></div>
+      <p style="color:#64748b; max-width:560px; margin: 0 auto; font-size:0.95rem;">
+        Жекеменшік мектеп болғанымен, 1-сыныпқа қабылдау процесі Қазақстанның жалпыға ортақ ережелеріне сүйенеді
+      </p>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="0">
+        <div class="info-card">
+          <div class="ic-icon"><i class="bi bi-calendar-event"></i></div>
+          <h5>Қабылдау мерзімі</h5>
+          <p>Науқан жыл сайын <strong>18 маусымнан</strong> басталып, 31 тамызға дейін жалғасады. Орындар шектеулі!</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
+        <div class="info-card">
+          <div class="ic-icon"><i class="bi bi-person-badge"></i></div>
+          <h5>Жас мөлшері</h5>
+          <p>1-сыныпқа балалар <strong>6 жастан бастап</strong> (немесе жыл соңына дейін 6 жасқа толатын) қабылданады.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
+        <div class="info-card">
+          <div class="ic-icon"><i class="bi bi-laptop"></i></div>
+          <h5>Өтініш беру</h5>
+          <p><strong>egov.kz</strong> электронды үкімет порталы арқылы онлайн немесе мектепке барып қағаз түрінде.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
+        <div class="info-card">
+          <div class="ic-icon"><i class="bi bi-folder-check"></i></div>
+          <h5>Қажетті құжаттар</h5>
+          <ol style="padding-left:16px;">
+            <li>Туу туралы куәлік</li>
+            <li>Ата-ана жеке куәлігі</li>
+            <li>Медициналық анықтама</li>
+            <li>2 дана фотосурет (3×4)</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="text-center mt-5" data-aos="fade-up">
+      <a href="{% url 'app:contact' %}" class="btn btn-primary rounded-pill px-5 py-3 fw-semibold"
+        style="background: linear-gradient(135deg, #3b82f6, #8b5cf6); border: none; font-size: 1rem;">
+        <i class="bi bi-envelope me-2"></i>Байланысу
+      </a>
+    </div>
+  </div>
+</section>
+
 {% endblock %}
