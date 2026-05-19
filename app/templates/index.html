@@ -4,262 +4,770 @@
 
 {% block title %}Talant №1 — Басты бет{% endblock %}
 
-{% block content %}
+{% block extra_head %}
+<style>
+  /* ─── SCHOOL PREMIUM INDEX STYLES ─── */
+  :root {
+    --school-primary: #1e40af;
+    /* Deep blue */
+    --school-secondary: #3b82f6;
+    /* Bright blue */
+    --school-accent: #f59e0b;
+    /* Yellow/Gold */
+    --school-bg: #f8fafc;
+    /* Soft background */
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+  }
 
-<!-- ─── HERO SLIDER ──────────────────────────────────────── -->
-<section class="hero-section">
-  {% if sliders %}
-  <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
-    <div class="carousel-indicators">
-      {% for slide in sliders %}
-      {% if forloop.first %}
-      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="{{ forloop.counter0 }}" class="active"
-        aria-current="true" aria-label="Слайд {{ forloop.counter }}"></button>
-      {% else %}
-      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="{{ forloop.counter0 }}"
-        aria-label="Слайд {{ forloop.counter }}"></button>
-      {% endif %}
-      {% endfor %}
-    </div>
-    <div class="carousel-inner">
-      {% for slide in sliders %}
-      <div class="carousel-item {% if forloop.first %}active{% endif %}">
-        <div class="hero-slide" {% if slide.image %}style="background-image: url('{{ slide.image.url }}');" {% endif %}>
-          <div class="hero-overlay"></div>
-          <div class="container h-100 d-flex align-items-center py-5">
-            <div class="hero-content" data-aos="fade-up">
-              <h1 class="hero-title">{{ slide.title }}</h1>
-              {% if slide.subtitle %}
-              <p class="hero-subtitle">{{ slide.subtitle }}</p>
-              {% endif %}
-              <div class="d-flex gap-2 gap-md-3 flex-wrap">
-                {% if slide.link %}
-                <a href="{{ slide.link }}" class="btn-hero">Толығырақ <i class="bi bi-arrow-right ms-2"></i></a>
+  .index-wrapper {
+    background-color: var(--school-bg);
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Decorative Background Shapes */
+  .bg-shape {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    z-index: 0;
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  .bg-shape-1 {
+    width: 400px;
+    height: 400px;
+    background: #bfdbfe;
+    top: 10%;
+    left: -100px;
+  }
+
+  .bg-shape-2 {
+    width: 300px;
+    height: 300px;
+    background: #fef3c7;
+    top: 40%;
+    right: -50px;
+  }
+
+  .bg-shape-3 {
+    width: 500px;
+    height: 500px;
+    background: #dcfce7;
+    bottom: 10%;
+    left: 20%;
+  }
+
+  /* Hero Section */
+  .hero-section {
+    position: relative;
+    padding-top: 80px;
+    z-index: 1;
+  }
+
+  .hero-default,
+  .hero-slide {
+    position: relative;
+    height: 80vh;
+    min-height: 550px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 0 0 50px 50px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(30, 64, 175, 0.1);
+  }
+
+  .hero-default {
+    background: url('{% static "img/11a71e31-9a4b-47f3-a8d1-e87ab7d55976.jpeg" %}') center/cover !important;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    /* Табиғи қараңғы қабат, суреттің өз түсін бұзбайды */
+    background: linear-gradient(to right, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.5) 50%, rgba(15, 23, 42, 0.1) 100%) !important;
+    z-index: 1;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-title {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    color: #ffffff !important;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .hero-title-highlight {
+    color: var(--school-accent);
+  }
+
+  .hero-subtitle {
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
+    color: #f1f5f9 !important;
+    max-width: 650px;
+    margin-bottom: 40px;
+    line-height: 1.6;
+    font-weight: 500;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .btn-school {
+    background: var(--school-accent) !important;
+    color: #fff !important;
+    padding: 16px 36px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-decoration: none;
+    transition: all 0.3s;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3) !important;
+    text-shadow: none !important;
+  }
+
+  .btn-school:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 25px rgba(245, 158, 11, 0.4) !important;
+    background: #d97706 !important;
+  }
+
+  .btn-school-outline {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+    padding: 14px 34px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-decoration: none;
+    transition: all 0.3s;
+    border: 2px solid rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(5px);
+    display: inline-flex;
+    align-items: center;
+    text-shadow: none !important;
+  }
+
+  .btn-school-outline:hover {
+    background: #fff !important;
+    color: var(--school-primary) !important;
+    transform: translateY(-5px);
+  }
+
+  .hero-logo-extra {
+    max-width: 350px;
+    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.3));
+  }
+
+  @keyframes float-gentle {
+
+    0%,
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+      transform: translateY(-15px) rotate(2deg);
+    }
+  }
+
+  .animate-school-float {
+    animation: float-gentle 5s ease-in-out infinite;
+  }
+
+  /* Carousel */
+  .carousel-indicators [data-bs-target] {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin: 0 6px;
+    background-color: rgba(255, 255, 255, 0.4);
+    border: none;
+    transition: all 0.3s;
+  }
+
+  .carousel-indicators .active {
+    background-color: var(--school-accent);
+    transform: scale(1.3);
+  }
+
+  /* Sections */
+  .section-padding {
+    padding: 100px 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    background: #eff6ff;
+    color: var(--school-secondary);
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+  }
+
+  .section-title {
+    font-size: clamp(2.2rem, 4vw, 3rem);
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 20px;
+    line-height: 1.2;
+  }
+
+  .title-highlight {
+    color: var(--school-secondary);
+    position: relative;
+    display: inline-block;
+  }
+
+  .title-highlight::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background: rgba(245, 158, 11, 0.3);
+    border-radius: 10px;
+    z-index: -1;
+  }
+
+  /* About / Features */
+  .school-feature-box {
+    background: #fff;
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    height: 100%;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .school-feature-box:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(37, 99, 235, 0.1);
+    border-color: rgba(37, 99, 235, 0.1);
+  }
+
+  .feature-icon {
+    width: 65px;
+    height: 65px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+
+  .icon-blue {
+    background: #eff6ff;
+    color: #2563eb;
+  }
+
+  .icon-yellow {
+    background: #fef3c7;
+    color: #d97706;
+  }
+
+  .icon-green {
+    background: #f0fdf4;
+    color: #16a34a;
+  }
+
+  .feature-text h4 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 10px;
+  }
+
+  .feature-text p {
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .about-img-wrapper {
+    position: relative;
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  }
+
+  .about-img-wrapper img {
+    width: 100%;
+    height: auto;
+    transition: 0.5s;
+  }
+
+  .about-img-wrapper:hover img {
+    transform: scale(1.05);
+  }
+
+  .experience-badge {
+    position: absolute;
+    bottom: -20px;
+    right: 20px;
+    background: #fff;
+    padding: 20px 30px;
+    border-radius: 20px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 2;
+  }
+
+  .exp-number {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--school-secondary);
+    line-height: 1;
+  }
+
+  .exp-text {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-main);
+    line-height: 1.2;
+  }
+
+  /* News Card */
+  .news-card {
+    background: #fff;
+    border: none;
+    border-radius: 24px;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  }
+
+  .news-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  }
+
+  .news-card-img {
+    height: 220px;
+    background: #e2e8f0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .news-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: 0.6s ease;
+  }
+
+  .news-card:hover .news-card-img img {
+    transform: scale(1.08);
+  }
+
+  .news-badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: var(--school-accent);
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
+  }
+
+  .news-card-body {
+    padding: 25px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .news-card-date {
+    color: var(--school-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .news-card-title a {
+    color: var(--text-main);
+    text-decoration: none;
+    font-size: 1.25rem;
+    font-weight: 800;
+    line-height: 1.4;
+    transition: 0.3s;
+  }
+
+  .news-card-title a:hover {
+    color: var(--school-primary);
+  }
+
+  .news-card-text {
+    color: var(--text-muted);
+    margin-top: 10px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    flex-grow: 1;
+  }
+
+  .news-card-link {
+    color: var(--text-main);
+    text-decoration: none;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.3s;
+    border-bottom: 2px solid transparent;
+  }
+
+  .news-card-link:hover {
+    gap: 12px;
+    color: var(--school-primary);
+    border-bottom-color: var(--school-primary);
+  }
+
+  /* Instagram Reels */
+  .bg-white-section {
+    background: #fff;
+    border-top: 1px solid rgba(0, 0, 0, 0.03);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+  }
+
+  .reel-card {
+    background: #fff;
+    border-radius: 24px;
+    padding: 15px;
+    height: 100%;
+    transition: 0.4s;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.02);
+  }
+
+  .reel-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(217, 70, 239, 0.15);
+    border-color: rgba(217, 70, 239, 0.3);
+  }
+
+  /* CTA Section */
+  .cta-section {
+    background: linear-gradient(135deg, var(--school-primary) 0%, var(--school-secondary) 100%);
+    border-radius: 40px;
+    padding: 70px 40px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(37, 99, 235, 0.2);
+  }
+
+  .cta-section::before {
+    content: '\F1BE';
+    /* bi-book */
+    font-family: 'bootstrap-icons';
+    position: absolute;
+    top: -20px;
+    left: 30px;
+    font-size: 10rem;
+    color: rgba(255, 255, 255, 0.05);
+    transform: rotate(-15deg);
+    pointer-events: none;
+  }
+
+  .cta-section::after {
+    content: '\F4B4';
+    /* bi-mortarboard */
+    font-family: 'bootstrap-icons';
+    position: absolute;
+    bottom: -30px;
+    right: 30px;
+    font-size: 12rem;
+    color: rgba(255, 255, 255, 0.05);
+    transform: rotate(15deg);
+    pointer-events: none;
+  }
+
+  .cta-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 900;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 2;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .cta-desc {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.9);
+    position: relative;
+    z-index: 2;
+    margin-bottom: 30px;
+    font-weight: 500;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="index-wrapper">
+  <div class="bg-shape bg-shape-1"></div>
+  <div class="bg-shape bg-shape-2"></div>
+  <div class="bg-shape bg-shape-3"></div>
+
+  <!-- ─── HERO SLIDER ──────────────────────────────────────── -->
+  <section class="hero-section">
+    {% if sliders %}
+    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="6000">
+      <div class="carousel-indicators">
+        {% for slide in sliders %}
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="{{ forloop.counter0 }}"
+          class="{% if forloop.first %}active{% endif %}" aria-label="Слайд {{ forloop.counter }}"></button>
+        {% endfor %}
+      </div>
+      <div class="carousel-inner">
+        {% for slide in sliders %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+          <div class="hero-slide" {% if slide.image %}style="background-image: url('{{ slide.image.url }}');"{% endif %}>
+            <div class="hero-overlay"></div>
+            <div class="container h-100 d-flex align-items-center py-5">
+              <div class="hero-content" data-aos="fade-up">
+                <h1 class="hero-title">{{ slide.title }}</h1>
+                {% if slide.subtitle %}
+                <p class="hero-subtitle">{{ slide.subtitle }}</p>
                 {% endif %}
-                <a href="{% url 'app:history' %}" class="btn-hero">Біз туралы <i class="bi bi-arrow-right ms-2"></i></a>
-                <a href="{% url 'app:contact' %}" class="btn-hero-outline">Байланыс <i
-                    class="bi bi-telephone ms-2"></i></a>
+                <div class="d-flex gap-3 flex-wrap">
+                  {% if slide.link %}
+                  <a href="{{ slide.link }}" class="btn-school">Толығырақ <i class="bi bi-arrow-right ms-2"></i></a>
+                  {% endif %}
+                  <a href="{% url 'app:history' %}" class="btn-school">Мектеп туралы <i class="bi bi-book ms-2"></i></a>
+                  <a href="{% url 'app:contact' %}" class="btn-school-outline">Байланыс <i
+                      class="bi bi-telephone ms-2"></i></a>
+                </div>
               </div>
             </div>
           </div>
         </div>
+        {% endfor %}
       </div>
-      {% endfor %}
-    </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Алдыңғы</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Келесі</span>
-    </button>
-  </div>
-  {% else %}
-  <!-- Default hero when no sliders -->
-  <div class="hero-slide hero-default">
-    <div class="hero-overlay"></div>
-    <div class="container h-100 d-flex align-items-center">
-      <div class="row w-100 align-items-center">
-        <div class="col-lg-7" data-aos="fade-right">
-          <div class="hero-content text-center text-lg-start">
-            <img src="{% static 'img/Талант копия.png' %}?v=new" alt="Talant Mobile Logo" class="img-fluid d-block d-lg-none mx-auto mb-4 animate-float" style="max-width: 140px;">
-            <h1 class="hero-title">Talant №1</h1>
-            <p class="hero-subtitle">Шымкент қаласындағы заманауи білім беру мекемесі. Болашақ IT мамандарын бірге
-              дайындаймыз.</p>
-            <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
-              <a href="{% url 'app:history' %}" class="btn-hero">Біз туралы <i class="bi bi-arrow-right ms-2"></i></a>
-              <a href="{% url 'app:contact' %}" class="btn-hero-outline">Байланыс <i
-                  class="bi bi-telephone ms-2"></i></a>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-5 d-none d-lg-block" data-aos="fade-left" data-aos-delay="200">
-          <div class="hero-image-box">
-            <img src="{% static 'img/Талант копия.png' %}?v=new" alt="Logo" class="img-fluid hero-logo-extra animate-float">
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  {% endif %}
-</section>
-
-<!-- ─── ABOUT PREVIEW ────────────────────────────────────── -->
-<section class="section-about-preview" data-aos="fade-up" style="padding-top: 60px;">
-  <div class="container">
-    <div class="row align-items-center g-5">
-      <div class="col-lg-6">
-        <div class="about-img-wrapper">
-          <img src="{% static 'img/11a71e31-9a4b-47f3-a8d1-e87ab7d55976.jpeg' %}" alt="Мектеп"
-            class="about-preview-img">
-        </div>
-      </div>
-      <div class="col-lg-6">
-        <span class="section-label">Біз туралы</span>
-        <h2 class="section-title">Заманауи білім — <br><span class="text-gradient">болашақ кепілі</span></h2>
-        <p class="section-desc">
-          Talant №1 — Шымкент қаласындағы заманауи білім беру мекемесі.
-          Мемлекеттік бағдарламамен сабақ бере отырып, жаңа форматтағы педагогикалық
-          идеяларды қолданамыз. Оқушыларға академиялық еркіндік беріп, болашақ мамандығын
-          таңдауға мүмкіндік жасаймыз.
-        </p>
-        <div class="about-features">
-          <div class="about-feature">
-            <i class="bi bi-check-circle-fill"></i>
-            <span>Заманауи оқыту әдістемелері</span>
-          </div>
-          <div class="about-feature">
-            <i class="bi bi-check-circle-fill"></i>
-            <span>IT бағытындағы тереңдетілген бағдарлама</span>
-          </div>
-          <div class="about-feature">
-            <i class="bi bi-check-circle-fill"></i>
-            <span>Тәжірибелі әкімшілік персонал ұжымы</span>
-          </div>
-        </div>
-        <a href="{% url 'app:about' %}" class="btn btn-primary-custom mt-3">
-          Толығырақ <i class="bi bi-arrow-right ms-2"></i>
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ─── LATEST NEWS ──────────────────────────────────────── -->
-<section class="section-news">
-  <div class="container">
-    <div class="text-center mb-5" data-aos="fade-up">
-      <span class="section-label">Жаңалықтар</span>
-      <h2 class="section-title">Соңғы жаңалықтар</h2>
-    </div>
-
-    {% if latest_news %}
-    <div class="row g-4">
-      {% for item in latest_news %}
-      <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:forloop.counter0 }}00">
-        <article class="news-card">
-          <div class="news-card-img">
-            {% if item.image %}
-            <img src="{{ item.image.url }}" alt="{{ item.title }}">
-            {% else %}
-            <div class="news-card-placeholder">
-              <i class="bi bi-newspaper"></i>
-            </div>
-            {% endif %}
-            {% if item.category %}
-            <span class="news-badge">{{ item.category.name }}</span>
-            {% endif %}
-          </div>
-          <div class="news-card-body">
-            <div class="news-card-date">
-              <i class="bi bi-calendar3 me-1"></i>
-              {{ item.created_at|date:"d.m.Y" }}
-            </div>
-            <h3 class="news-card-title">
-              <a href="{% url 'app:news_detail' item.slug %}">{{ item.title }}</a>
-            </h3>
-            <p class="news-card-text">{{ item.text|truncatewords:20 }}</p>
-            <a href="{% url 'app:news_detail' item.slug %}" class="news-card-link">
-              Оқу <i class="bi bi-arrow-right"></i>
-            </a>
-          </div>
-        </article>
-      </div>
-      {% endfor %}
-    </div>
-
-    <div class="text-center mt-5" data-aos="fade-up">
-      <a href="{% url 'app:news_list' %}" class="btn btn-outline-custom">
-        Барлық жаңалықтар <i class="bi bi-arrow-right ms-2"></i>
-      </a>
     </div>
     {% else %}
-    <div class="empty-state" data-aos="fade-up">
-      <i class="bi bi-inbox"></i>
-      <h4>Жаңалықтар жоқ</h4>
-      <p>Жаңалықтар жақын арада жарияланады</p>
-    </div>
-    {% endif %}
-  </div>
-</section>
-
-<!-- ─── INSTAGRAM REELS SECTION ──────────────────────────────── -->
-{% if instagram_reels %}
-<section class="section-padding bg-light">
-  <div class="container">
-    <div class="section-title text-center mb-5" data-aos="fade-up">
-      <h2><i class="bi bi-instagram text-danger me-2"></i> Инстаграмнан видеолар</h2>
-      <p>Біздің мектеп өмірінен қызықты сәттер</p>
-    </div>
-    
-    <div class="row g-4 justify-content-center">
-      {% for reel in instagram_reels %}
-      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:1 }}00">
-        <div class="reel-card shadow-sm rounded overflow-hidden bg-white h-100 p-2 d-flex justify-content-center">
-          {{ reel.embed_code|safe }}
+    <!-- Default hero -->
+    <div class="hero-slide hero-default">
+      <div class="hero-overlay"></div>
+      <div class="container h-100 d-flex align-items-center">
+        <div class="row w-100 align-items-center">
+          <div class="col-lg-7" data-aos="fade-right">
+            <div class="hero-content text-center text-lg-start">
+              <img src="{% static 'img/Талант копия.png' %}?v=new" alt="Talant Logo"
+                class="img-fluid d-block d-lg-none mx-auto mb-4 animate-school-float" style="max-width: 120px;">
+              <h1 class="hero-title">Қош келдіңіздер,<br><span class="hero-title-highlight">Talant №1</span> мектебіне!
+              </h1>
+              <p class="hero-subtitle">Біздің мақсатымыз – заманауи білім беру технологиялары арқылы болашақ IT
+                мамандары мен білімді ұрпақ тәрбиелеу.</p>
+              <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
+                <a href="{% url 'app:history' %}" class="btn-school">Мектеппен танысу <i
+                    class="bi bi-arrow-right ms-2"></i></a>
+                <a href="{% url 'app:contact' %}" class="btn-school-outline">Байланыс <i
+                    class="bi bi-telephone ms-2"></i></a>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-5 d-none d-lg-block text-center" data-aos="fade-left" data-aos-delay="200">
+            <div style="position:relative; z-index:2;">
+              <img src="{% static 'img/Талант копия.png' %}?v=new" alt="Logo"
+                class="img-fluid hero-logo-extra animate-school-float">
+            </div>
+          </div>
         </div>
       </div>
-      {% endfor %}
     </div>
-  </div>
-</section>
-{% endif %}
+    {% endif %}
+  </section>
 
-<!-- ─── CTA SECTION ──────────────────────────────────────── -->
-<section class="cta-section" data-aos="fade-up">
-  <div class="container">
-    <div class="cta-card">
-      <div class="row align-items-center">
-        <div class="col-lg-8">
-          <h2 class="cta-title">Біздің мектепке қосылыңыз!</h2>
-          <p class="cta-desc">Балаңыздың болашағы үшін ең жақсы таңдау жасаңыз</p>
+  <!-- ─── ABOUT & FEATURES ────────────────────────────────────── -->
+  <section class="section-padding">
+    <div class="container">
+      <div class="row align-items-center g-5 mb-5">
+        <div class="col-lg-6" data-aos="fade-right">
+          <div class="about-img-wrapper">
+            <img src="{% static 'img/11a71e31-9a4b-47f3-a8d1-e87ab7d55976.jpeg' %}" alt="Мектеп ғимараты">
+          </div>
         </div>
-        <div class="col-lg-4 text-lg-end">
-          <a href="{% url 'app:contact' %}" class="btn btn-cta">
-            <i class="bi bi-telephone me-2"></i>Байланысу
+        <div class="col-lg-6" data-aos="fade-left">
+          <span class="section-label"><i class="bi bi-star-fill text-warning"></i> Біз туралы</span>
+          <h2 class="section-title">Сапалы білім — <br><span class="title-highlight">жарқын болашақ</span> кепілі</h2>
+          <p class="section-desc">
+            Talant №1 — Шымкент қаласындағы озық білім беру мекемелерінің бірі.
+            Біз оқушыларға тек академиялық білім беріп қана қоймай, олардың шығармашылық
+            және логикалық қабілеттерін дамытуға ерекше көңіл бөлеміз.
+          </p>
+          <a href="{% url 'app:history' %}" class="btn-school mt-3">
+            Толығырақ оқу <i class="bi bi-book ms-2"></i>
           </a>
         </div>
       </div>
+
+      <div class="row g-4 mt-2">
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="0">
+          <div class="school-feature-box">
+            <div class="feature-icon icon-blue"><i class="bi bi-laptop"></i></div>
+            <div class="feature-text">
+              <h4>IT Бағыты</h4>
+              <p>Заманауи компьютерлік сыныптар және бағдарламалау негіздерін тереңдетіп оқыту.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+          <div class="school-feature-box">
+            <div class="feature-icon icon-yellow"><i class="bi bi-award"></i></div>
+            <div class="feature-text">
+              <h4>Білікті Ұстаздар</h4>
+              <p>Жоғары санатты, тәжірибелі әрі креативті педагогтар құрамы.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+          <div class="school-feature-box">
+            <div class="feature-icon icon-green"><i class="bi bi-palette"></i></div>
+            <div class="feature-text">
+              <h4>Үйірмелер</h4>
+              <p>Оқушылардың жан-жақты дамуына арналған түрлі спорттық және өнер үйірмелері.</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-{% endblock %}
+  <!-- ─── LATEST NEWS ──────────────────────────────────────── -->
+  <section class="section-padding bg-white-section">
+    <div class="container">
+      <div class="text-center mb-5" data-aos="fade-up">
+        <span class="section-label"><i class="bi bi-newspaper"></i> Жаңалықтар</span>
+        <h2 class="section-title">Мектебіміздің <span class="title-highlight">соңғы жаңалықтары</span></h2>
+      </div>
 
-{% block extra_js %}
-<script>
-  // Counter Animation
-  document.addEventListener('DOMContentLoaded', () => {
-    const counters = document.querySelectorAll('.stat-number');
-    const speed = 150;
-    let animated = false;
+      {% if latest_news %}
+      <div class="row g-4">
+        {% for item in latest_news %}
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}00">
+          <article class="news-card">
+            <div class="news-card-img">
+              {% if item.image %}
+              <img src="{{ item.image.url }}" alt="{{ item.title }}">
+              {% else %}
+              <div class="d-flex align-items-center justify-content-center h-100 w-100 bg-light text-muted">
+                <i class="bi bi-image" style="font-size: 3rem;"></i>
+              </div>
+              {% endif %}
+              {% if item.category %}
+              <span class="news-badge">{{ item.category.name }}</span>
+              {% endif %}
+            </div>
+            <div class="news-card-body">
+              <div class="news-card-date">
+                <i class="bi bi-calendar-event"></i>
+                {{ item.created_at|date:"d.m.Y" }}
+              </div>
+              <h3 class="news-card-title">
+                <a href="{% url 'app:news_detail' item.slug %}">{{ item.title }}</a>
+              </h3>
+              <p class="news-card-text">{{ item.text|truncatewords:15 }}</p>
+              <a href="{% url 'app:news_detail' item.slug %}" class="news-card-link">
+                Оқу <i class="bi bi-arrow-right ms-1"></i>
+              </a>
+            </div>
+          </article>
+        </div>
+        {% endfor %}
+      </div>
 
-    function animateCounters() {
-      counters.forEach(counter => {
-        const target = +counter.getAttribute('data-target');
-        const count = +counter.innerText;
-        const increment = target / speed;
-        if (count < target) {
-          counter.innerText = Math.ceil(count + increment);
-          requestAnimationFrame(() => animateCounters());
-        } else {
-          counter.innerText = target;
-        }
-      });
-    }
+      <div class="text-center mt-5" data-aos="fade-up">
+        <a href="{% url 'app:news_list' %}" class="btn-school-outline"
+          style="color: var(--school-primary) !important; border-color: var(--school-primary) !important;">
+          Барлық жаңалықтар <i class="bi bi-arrow-right ms-2"></i>
+        </a>
+      </div>
+      {% else %}
+      <div class="text-center py-5" data-aos="fade-up">
+        <i class="bi bi-inbox text-muted mb-3" style="font-size: 3rem; display:block;"></i>
+        <h4>Жаңалықтар жоқ</h4>
+        <p class="text-muted">Жаңалықтар жақын арада жарияланады.</p>
+      </div>
+      {% endif %}
+    </div>
+  </section>
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && !animated) {
-          animated = true;
-          animateCounters();
-        }
-      });
-    }, { threshold: 0.3 });
+  <!-- ─── INSTAGRAM REELS SECTION ──────────────────────────────── -->
+  {% if instagram_reels %}
+  <section class="section-padding">
+    <div class="container">
+      <div class="text-center mb-5" data-aos="fade-up">
+        <span class="section-label" style="background: #fdf4ff; color: #d946ef;"><i class="bi bi-instagram"></i>
+          Instagram</span>
+        <h2 class="section-title">Мектеп <span class="title-highlight">өмірі</span></h2>
+      </div>
 
-    const statsSection = document.querySelector('.stats-strip');
-    if (statsSection) observer.observe(statsSection);
-  });
-</script>
+      <div class="row g-4 justify-content-center">
+        {% for reel in instagram_reels %}
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}00">
+          <div class="reel-card d-flex justify-content-center align-items-center">
+            {{ reel.embed_code|safe }}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- ─── CTA SECTION ──────────────────────────────────────── -->
+  <section class="section-padding" style="padding-top: 40px; padding-bottom: 80px;" data-aos="fade-up">
+    <div class="container">
+      <div class="cta-section">
+        <h2 class="cta-title">Біздің мектепке қосылыңыз!</h2>
+        <p class="cta-desc">Балаңыздың жарқын болашағы үшін ең жақсы таңдау жасаңыз. Толық ақпарат алу үшін бізбен
+          байланысыңыз.</p>
+        <a href="{% url 'app:contact' %}" class="btn-school"
+          style="background: #fff !important; color: var(--school-primary) !important;">
+          <i class="bi bi-telephone-fill me-2"></i> Байланысу
+        </a>
+      </div>
+    </div>
+  </section>
+
+</div>
 {% endblock %}
