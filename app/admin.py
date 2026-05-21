@@ -435,3 +435,48 @@ class BastauyshItemAdmin(SimpleItemAdmin):
 @admin.register(ParentsMeetingItem)
 class ParentsMeetingItemAdmin(SimpleItemAdmin):
     pass
+
+
+# ── Жылдық жоспар және Іс-шаралар ────────────────────────────
+
+from .models import ZhylJospar, IsShara
+
+
+class TarbieFullItemAdmin(admin.ModelAdmin):
+    """Базалық класс: тақырып, сипаттама, 2 фото, файл, сілтеме, реттілік"""
+    list_display = ('title', 'order', 'created_at')
+    list_editable = ('order',)
+    search_fields = ('title', 'description')
+    fieldsets = (
+        ('📝 Негізгі ақпарат', {
+            'fields': ('title', 'description', 'order'),
+        }),
+        ('🖼️ Фотосуреттер', {
+            'fields': ('image1', 'image2'),
+            'description': '1-ші және 2-ші фотоны жүктей аласыз.',
+        }),
+        ('📎 Файл немесе Сілтеме', {
+            'fields': ('file', 'link'),
+            'description': 'Файл жүктеңіз НЕМЕСЕ Google Drive сілтемесін беріңіз.',
+        }),
+    )
+
+
+@admin.register(ZhylJospar)
+class ZhylJosparAdmin(TarbieFullItemAdmin):
+    pass
+
+
+@admin.register(IsShara)
+class IsShareAdmin(TarbieFullItemAdmin):
+    pass
+
+
+# ── Асхана ────────────────────────────────────────────────────
+
+from .models import AskhanaItem
+
+
+@admin.register(AskhanaItem)
+class AskhanaItemAdmin(TarbieFullItemAdmin):
+    pass

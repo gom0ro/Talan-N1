@@ -630,3 +630,69 @@ class ParentsMeetingItem(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class ZhylJospar(models.Model):
+    """Жылдық жоспар — тәрбие жұмыстары"""
+    title = models.CharField('Тақырыбы / Аты', max_length=255)
+    description = models.TextField('Сипаттама', blank=True)
+    image1 = models.ImageField('1-ші Фото', upload_to='zhyl_jospar/', blank=True, null=True)
+    image2 = models.ImageField('2-ші Фото', upload_to='zhyl_jospar/', blank=True, null=True)
+    file = models.FileField('Файл (PDF, Word, PPTX)', upload_to='zhyl_jospar/files/', blank=True, null=True,
+                            help_text='PDF, Word, PPTX немесе кез-келген құжат')
+    link = models.URLField('Сілтеме (Google Drive т.б.)', blank=True,
+                           help_text='Google Drive немесе басқа сілтеме URL')
+    order = models.PositiveIntegerField('Реттілік', default=0)
+    created_at = models.DateTimeField('Қосылған уақыты', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Жылдық жоспар'
+        verbose_name_plural = 'Жылдық жоспар'
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return self.title
+
+
+class IsShara(models.Model):
+    """Іс-шаралар — тәрбие жұмыстары"""
+    title = models.CharField('Тақырыбы / Іс-шара аты', max_length=255)
+    description = models.TextField('Сипаттама', blank=True)
+    image1 = models.ImageField('1-ші Фото', upload_to='is_shara/', blank=True, null=True)
+    image2 = models.ImageField('2-ші Фото', upload_to='is_shara/', blank=True, null=True)
+    file = models.FileField('Файл (PDF, Word, PPTX)', upload_to='is_shara/files/', blank=True, null=True,
+                            help_text='PDF, Word, PPTX немесе кез-келген құжат')
+    link = models.URLField('Сілтеме (Google Drive т.б.)', blank=True,
+                           help_text='Google Drive немесе басқа сілтеме URL')
+    order = models.PositiveIntegerField('Реттілік', default=0)
+    created_at = models.DateTimeField('Қосылған уақыты', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Іс-шара'
+        verbose_name_plural = 'Іс-шаралар'
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return self.title
+
+
+class AskhanaItem(models.Model):
+    """Асхана — тамақтану, мәзір, фото"""
+    title = models.CharField('Тақырыбы / Аты', max_length=255)
+    description = models.TextField('Сипаттама', blank=True)
+    image1 = models.ImageField('1-ші Фото', upload_to='askhana/', blank=True, null=True)
+    image2 = models.ImageField('2-ші Фото', upload_to='askhana/', blank=True, null=True)
+    file = models.FileField('Файл (PDF, Word, PPTX)', upload_to='askhana/files/', blank=True, null=True,
+                            help_text='PDF, Word, PPTX немесе кез-келген құжат')
+    link = models.URLField('Сілтеме (Google Drive т.б.)', blank=True,
+                           help_text='Google Drive немесе басқа сілтеме URL')
+    order = models.PositiveIntegerField('Реттілік', default=0)
+    created_at = models.DateTimeField('Қосылған уақыты', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Асхана'
+        verbose_name_plural = 'Асхана'
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return self.title
