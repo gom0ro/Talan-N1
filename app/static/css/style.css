@@ -551,8 +551,6 @@ a:hover {
   margin-top: 0;
   position: relative;
   z-index: 1;
-  background: #0f172a;
-  /* Қараңғы фон түсі */
 }
 
 .hero-slide {
@@ -565,17 +563,13 @@ a:hover {
   position: relative;
   display: flex;
   align-items: center;
-  background-color: #0f172a;
-  /* Фон түсі - сурет жүктелмесе көрінеді */
 }
 
-/* Егер сурет болмаса, градиент фон */
 .hero-slide:not([style*="background-image"]) {
-  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+  background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
 }
 
 .hero-default {
-  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
   overflow: hidden;
   position: relative;
 }
@@ -587,7 +581,7 @@ a:hover {
   right: -10%;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(37, 99, 235, 0.2) 0%, transparent 70%);
+  background: transparent;
   border-radius: 50%;
   z-index: 1;
   pointer-events: none;
@@ -600,7 +594,7 @@ a:hover {
   left: -10%;
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, transparent 70%);
+  background: transparent;
   border-radius: 50%;
   z-index: 1;
   pointer-events: none;

@@ -696,3 +696,125 @@ class AskhanaItem(models.Model):
 
     def __str__(self):
         return self.title
+
+
+# ── АТА-АНАЛАР бөлімі ─────────────────────────────────────────
+
+class PedQoldau(models.Model):
+    """Педагогикалық қолдау орталығы"""
+    title = models.CharField('Тақырыбы / Аты', max_length=255)
+    description = models.TextField('Сипаттама', blank=True)
+    image1 = models.ImageField('1-ші Фото', upload_to='ped_qoldau/', blank=True, null=True)
+    image2 = models.ImageField('2-ші Фото', upload_to='ped_qoldau/', blank=True, null=True)
+    file = models.FileField('Файл (PDF, Word, PPTX)', upload_to='ped_qoldau/files/', blank=True, null=True)
+    link = models.URLField('Сілтеме (Google Drive т.б.)', blank=True)
+    order = models.PositiveIntegerField('Реттілік', default=0)
+    created_at = models.DateTimeField('Қосылған уақыты', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Педагогикалық қолдау орталығы'
+        verbose_name_plural = 'Педагогикалық қолдау орталығы'
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return self.title
+
+
+class IshkiTartip(models.Model):
+    """Мектептің ішкі тәртіп ережелері"""
+    title = models.CharField('Тақырыбы / Аты', max_length=255)
+    description = models.TextField('Сипаттама', blank=True)
+    image1 = models.ImageField('1-ші Фото', upload_to='ishki_tartip/', blank=True, null=True)
+    image2 = models.ImageField('2-ші Фото', upload_to='ishki_tartip/', blank=True, null=True)
+    file = models.FileField('Файл (PDF, Word, PPTX)', upload_to='ishki_tartip/files/', blank=True, null=True)
+    link = models.URLField('Сілтеме (Google Drive т.б.)', blank=True)
+    order = models.PositiveIntegerField('Реттілік', default=0)
+    created_at = models.DateTimeField('Қосылған уақыты', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Мектептің ішкі тәртіп ережелері'
+        verbose_name_plural = 'Мектептің ішкі тәртіп ережелері'
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return self.title
+
+
+class Profilaktika(models.Model):
+    """Құқықбұзушылықтың алдын алу"""
+    title = models.CharField('Тақырыбы / Аты', max_length=255)
+    description = models.TextField('Сипаттама', blank=True)
+    image1 = models.ImageField('1-ші Фото', upload_to='profilaktika/', blank=True, null=True)
+    image2 = models.ImageField('2-ші Фото', upload_to='profilaktika/', blank=True, null=True)
+    file = models.FileField('Файл (PDF, Word, PPTX)', upload_to='profilaktika/files/', blank=True, null=True)
+    link = models.URLField('Сілтеме (Google Drive т.б.)', blank=True)
+    order = models.PositiveIntegerField('Реттілік', default=0)
+    created_at = models.DateTimeField('Қосылған уақыты', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Құқықбұзушылықтың алдын алу'
+        verbose_name_plural = 'Құқықбұзушылықтың алдын алу'
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return self.title
+
+
+class Parlament(models.Model):
+    """Мектеп парламенті"""
+    title = models.CharField('Тақырыбы / Аты', max_length=255)
+    description = models.TextField('Сипаттама', blank=True)
+    image1 = models.ImageField('1-ші Фото', upload_to='parlament/', blank=True, null=True)
+    image2 = models.ImageField('2-ші Фото', upload_to='parlament/', blank=True, null=True)
+    file = models.FileField('Файл (PDF, Word, PPTX)', upload_to='parlament/files/', blank=True, null=True)
+    link = models.URLField('Сілтеме (Google Drive т.б.)', blank=True)
+    order = models.PositiveIntegerField('Реттілік', default=0)
+    created_at = models.DateTimeField('Қосылған уақыты', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Мектеп парламенті'
+        verbose_name_plural = 'Мектеп парламенті'
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return self.title
+
+
+class AdalUrpaq(models.Model):
+    """Адал ұрпақ"""
+    title = models.CharField('Тақырыбы / Аты', max_length=255)
+    description = models.TextField('Сипаттама', blank=True)
+    image1 = models.ImageField('1-ші Фото', upload_to='adal_urpaq/', blank=True, null=True)
+    image2 = models.ImageField('2-ші Фото', upload_to='adal_urpaq/', blank=True, null=True)
+    file = models.FileField('Файл (PDF, Word, PPTX)', upload_to='adal_urpaq/files/', blank=True, null=True)
+    link = models.URLField('Сілтеме (Google Drive т.б.)', blank=True)
+    order = models.PositiveIntegerField('Реттілік', default=0)
+    created_at = models.DateTimeField('Қосылған уақыты', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Адал ұрпақ'
+        verbose_name_plural = 'Адал ұрпақ'
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return self.title
+
+
+class ZhasUlan(models.Model):
+    """Жас ұлан"""
+    title = models.CharField('Тақырыбы / Аты', max_length=255)
+    description = models.TextField('Сипаттама', blank=True)
+    image1 = models.ImageField('1-ші Фото', upload_to='zhas_ulan/', blank=True, null=True)
+    image2 = models.ImageField('2-ші Фото', upload_to='zhas_ulan/', blank=True, null=True)
+    file = models.FileField('Файл (PDF, Word, PPTX)', upload_to='zhas_ulan/files/', blank=True, null=True)
+    link = models.URLField('Сілтеме (Google Drive т.б.)', blank=True)
+    order = models.PositiveIntegerField('Реттілік', default=0)
+    created_at = models.DateTimeField('Қосылған уақыты', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Жас ұлан'
+        verbose_name_plural = 'Жас ұлан'
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return self.title

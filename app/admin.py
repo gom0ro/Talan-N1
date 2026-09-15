@@ -480,3 +480,38 @@ from .models import AskhanaItem
 @admin.register(AskhanaItem)
 class AskhanaItemAdmin(TarbieFullItemAdmin):
     pass
+
+
+# ── АТА-АНАЛАР бөлімі ────────────────────────────────────────
+
+from .models import PedQoldau, IshkiTartip, Profilaktika, Parlament, AdalUrpaq, ZhasUlan
+
+
+@admin.register(PedQoldau)
+class PedQoldauAdmin(TarbieFullItemAdmin):
+    pass
+
+
+@admin.register(IshkiTartip)
+class IshkiTartipAdmin(TarbieFullItemAdmin):
+    pass
+
+
+@admin.register(Profilaktika)
+class ProfilaktikaAdmin(TarbieFullItemAdmin):
+    pass
+
+
+@admin.register(Parlament)
+class ParlamentAdmin(TarbieFullItemAdmin):
+    pass
+
+
+@admin.register(AdalUrpaq)
+class AdalUrpaqAdmin(TarbieFullItemAdmin):
+    pass
+
+
+@admin.register(ZhasUlan)
+class ZhasUlanAdmin(TarbieFullItemAdmin):
+    pass
