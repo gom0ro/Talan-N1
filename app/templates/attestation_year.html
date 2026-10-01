@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ year.title }} оқу жылы — Аттестация — Talant №1{% endblock %}
+
+{% block content %}
+
+<!-- ─── PAGE HEADER ──────────────────────────────────────── -->
+<section class="page-header">
+  <div class="container">
+    <nav aria-label="breadcrumb" data-aos="fade-down">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'app:index' %}">Басты бет</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'app:attestation' %}">Аттестация</a></li>
+        <li class="breadcrumb-item active">{{ year.title }}</li>
+      </ol>
+    </nav>
+    <h1 class="page-header-title" data-aos="fade-up">Аттестация</h1>
+    <p class="page-header-desc" data-aos="fade-up" data-aos-delay="100">{{ year.title }} оқу жылы</p>
+  </div>
+</section>
+
+<!-- ─── DOCUMENTS ────────────────────────────────────────── -->
+<section class="section-padding bg-light">
+  <div class="container">
+    <div class="d-flex flex-wrap align-items-center gap-3 mb-4" data-aos="fade-up">
+      <div class="d-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary flex-shrink-0"
+        style="width: 48px; height: 48px; font-size: 1.4rem;">
+        <i class="bi bi-calendar3"></i>
+      </div>
+      <h3 class="fw-bold text-dark mb-0" style="font-size: 1.4rem;">{{ year.title }} оқу жылы</h3>
+      <a href="{% url 'app:attestation' %}" class="btn-back-link ms-auto">
+        <i class="bi bi-arrow-left"></i> Барлық жылдар
+      </a>
+    </div>
+
+    {% if documents %}
+    <div class="d-flex flex-column gap-3">
+      {% for doc in documents %}
+      <div class="doc-card bg-white rounded-4 border p-4 d-flex flex-column flex-md-row align-items-md-center gap-3"
+        data-aos="fade-up">
+        <div class="doc-icon-box rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+          style="width: 56px; height: 56px; font-size: 1.7rem;
+          {% if doc.file_type == 'word' %}background: #e8f0fe; color: #2b579a;
+          {% elif doc.file_type == 'pdf' %}background: #fdecea; color: #d32f2f;
+          {% elif doc.file_type == 'excel' %}background: #e6f4ea; color: #217346;
+          {% elif doc.file_type == 'powerpoint' %}background: #fdecea; color: #d24726;
+          {% elif doc.file_type == 'image' %}background: #f0effe; color: #6366f1;
+          {% elif doc.file_type == 'archive' %}background: #fef9e7; color: #f59e0b;
+          {% elif doc.file_type == 'link' %}background: #e0f0ff; color: #2563eb;
+          {% else %}background: #f1f5f9; color: #64748b;{% endif %}">
+          {% if doc.file_type == 'word' %}
+          <i class="bi bi-file-earmark-word-fill"></i>
+          {% elif doc.file_type == 'pdf' %}
+          <i class="bi bi-file-earmark-pdf-fill"></i>
+          {% elif doc.file_type == 'excel' %}
+          <i class="bi bi-file-earmark-excel-fill"></i>
+          {% elif doc.file_type == 'powerpoint' %}
+          <i class="bi bi-file-earmark-ppt-fill"></i>
+          {% elif doc.file_type == 'image' %}
+          <i class="bi bi-file-earmark-image-fill"></i>
+          {% elif doc.file_type == 'archive' %}
+          <i class="bi bi-file-earmark-zip-fill"></i>
+          {% elif doc.file_type == 'link' %}
+          <i class="bi bi-link-45deg"></i>
+          {% else %}
+          <i class="bi bi-file-earmark-fill"></i>
+          {% endif %}
+        </div>
+        <div class="flex-grow-1">
+          <h5 class="fw-bold text-dark mb-1" style="font-size: 1rem;">{{ doc.title }}</h5>
+          {% if doc.description %}
+          <p class="text-muted mb-1" style="font-size: 0.88rem; line-height: 1.4;">{{ doc.description }}</p>
+          {% endif %}
+          <small class="text-muted" style="font-size: 0.8rem;">
+            <i class="bi bi-calendar3 me-1"></i>{{ doc.created_at|date:"d.m.Y" }}
+          </small>
+        </div>
+        <div class="flex-shrink-0">
+          {% if doc.file %}
+          <a href="{{ doc.file.url }}" target="_blank" class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm" download>
+            <i class="bi bi-cloud-arrow-down me-1"></i> Жүктеу
+          </a>
+          {% elif doc.link %}
+          <a href="{{ doc.link }}" target="_blank" rel="noopener noreferrer"
+            class="btn btn-outline-primary btn-sm rounded-pill px-4 shadow-sm">
+            <i class="bi bi-box-arrow-up-right me-1"></i> Ашу
+          </a>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state" data-aos="fade-up">
+      <i class="bi bi-file-earmark-text"></i>
+      <h4>Құжаттар жоқ</h4>
+      <p>Бұл оқу жылына құжаттар жақын арада қосылады</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  .doc-card {
+    transition: all 0.25s ease;
+  }
+
+  .doc-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.07) !important;
+    border-color: rgba(37, 99, 235, 0.25) !important;
+  }
+</style>
+
+{% endblock %}

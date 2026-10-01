@@ -10,6 +10,9 @@ from .models import (
     MagistrItem, SanatItem, ZhetekshilerItem,
     TimetableItem, TarbieItem, BastauyshItem,
     ParentsMeetingItem,
+    ZhylJospar, IsShara, AskhanaItem,
+    PedQoldau, IshkiTartip, Profilaktika, Parlament, AdalUrpaq, ZhasUlan,
+    AttestationYear, AttestationDocument,
 )
 
 admin.site.site_header = 'Talant No1 Mektep'
@@ -439,9 +442,6 @@ class ParentsMeetingItemAdmin(SimpleItemAdmin):
 
 # ── Жылдық жоспар және Іс-шаралар ────────────────────────────
 
-from .models import ZhylJospar, IsShara
-
-
 class TarbieFullItemAdmin(admin.ModelAdmin):
     """Базалық класс: тақырып, сипаттама, 2 фото, файл, сілтеме, реттілік"""
     list_display = ('title', 'order', 'created_at')
@@ -474,18 +474,12 @@ class IsShareAdmin(TarbieFullItemAdmin):
 
 # ── Асхана ────────────────────────────────────────────────────
 
-from .models import AskhanaItem
-
-
 @admin.register(AskhanaItem)
 class AskhanaItemAdmin(TarbieFullItemAdmin):
     pass
 
 
 # ── АТА-АНАЛАР бөлімі ────────────────────────────────────────
-
-from .models import PedQoldau, IshkiTartip, Profilaktika, Parlament, AdalUrpaq, ZhasUlan
-
 
 @admin.register(PedQoldau)
 class PedQoldauAdmin(TarbieFullItemAdmin):
@@ -515,3 +509,51 @@ class AdalUrpaqAdmin(TarbieFullItemAdmin):
 @admin.register(ZhasUlan)
 class ZhasUlanAdmin(TarbieFullItemAdmin):
     pass
+
+
+# ── Аттестация ────────────────────────────────────────────────
+
+class AttestationDocumentInline(admin.TabularInline):
+    model = AttestationDocument
+    extra = 1
+    fields = ('title', 'description', 'file', 'link', 'order')
+    ordering = ('order', '-created_at')
+
+
+@admin.register(AttestationYear)
+class AttestationYearAdmin(admin.ModelAdmin):
+    list_display = ('title', 'document_count', 'order', 'is_active')
+    list_editable = ('order', 'is_active')
+    prepopulated_fields = {'slug': ('title',)}
+    fieldsets = (
+        ('Negizgi aqparat', {
+            'fields': ('title', 'slug', 'order', 'is_active'),
+        }),
+    )
+    inlines = [AttestationDocumentInline]
+
+    @admin.display(description='Qyzmetter sany')
+    def document_count(self, obj):
+        return obj.documents.count()
+
+
+@admin.register(AttestationDocument)
+class AttestationDocumentAdmin(admin.ModelAdmin):
+    list_display = ('title', 'year', 'file_type', 'order', 'created_at')
+    list_display_links = ('title',)
+    list_editable = ('order',)
+    list_filter = ('year',)
+    search_fields = ('title', 'description')
+    fieldsets = (
+        ('Negizgi aqparat', {
+            'fields': ('title', 'year', 'description', 'order'),
+        }),
+        ('Fayl nemese silteme', {
+            'fields': ('file', 'link'),
+            'description': 'Fayl yukteiniz НЕМЕСЕ Google Drive siltemesin beriniz.',
+        }),
+    )
+
+    @admin.display(description='Fayl turi')
+    def file_type(self, obj):
+        return obj.file_type

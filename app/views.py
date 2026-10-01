@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.contrib import messages
 
 from .models import (
@@ -9,7 +9,8 @@ from .models import (
     Article, InstagramReel, LibraryCategory, LibraryBook,
     MethodoItem, MethodoCategory, ZhetistikItem,
     TimetableItem, TarbieItem, BastauyshItem,
-    ParentsMeetingItem
+    ParentsMeetingItem,
+    AttestationYear, AttestationDocument
 )
 from .forms import ContactForm
 
@@ -103,6 +104,30 @@ def bastauysh_synyp(request):
 def parents_meeting(request):
     items = ParentsMeetingItem.objects.all().order_by('order', '-created_at')
     return render(request, 'pages/parents_meeting.html', {'items': items})
+
+
+# ── Аттестация ───────────────────────────────────────────────
+
+def attestation(request):
+    """Аттестация — оқу жылдары тізімі"""
+    years = AttestationYear.objects.filter(is_active=True).annotate(
+        documents_count=Count('documents')
+    )
+    context = {
+        'years': years,
+    }
+    return render(request, 'attestation.html', context)
+
+
+def attestation_year(request, slug):
+    """Аттестация — нақты оқу жылының құжаттары"""
+    year = get_object_or_404(AttestationYear, slug=slug, is_active=True)
+    documents = year.documents.all()
+    context = {
+        'year': year,
+        'documents': documents,
+    }
+    return render(request, 'attestation_year.html', context)
 
 
 # ── Жаңалықтар ──────────────────────────────────────────────

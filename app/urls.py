@@ -76,7 +76,10 @@ urlpatterns = [
     path('career/', TemplateView.as_view(template_name='pages/career.html'), name='career'),
     path('zhaz-2024/', TemplateView.as_view(template_name='pages/zhaz_2024.html'), name='zhaz_2024'),
     path('social-work/', TemplateView.as_view(template_name='pages/social_work.html'), name='social_work'),
-    path('self-assessment/', TemplateView.as_view(template_name='pages/self_assessment.html'), name='self_assessment'),
+    
+    # Аттестация
+    path('attestation/', views.attestation, name='attestation'),
+    path('attestation/<slug:slug>/', views.attestation_year, name='attestation_year'),
     
     # МАД топтары
     path('mad-a/', TemplateView.as_view(template_name='pages/mad_a.html'), name='mad_a'),

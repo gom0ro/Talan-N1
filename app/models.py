@@ -818,3 +818,78 @@ class ZhasUlan(models.Model):
 
     def __str__(self):
         return self.title
+
+
+# ── АТТЕСТАЦИЯ бөлімі ────────────────────────────────────────
+
+class AttestationYear(models.Model):
+    """Аттестация — оқу жылы"""
+    title = models.CharField('Оқу жылы', max_length=50, help_text='Мысалы: 2024-2025')
+    slug = models.SlugField('URL', max_length=60, unique=True, blank=True)
+    order = models.PositiveIntegerField('Реттілік', default=0)
+    is_active = models.BooleanField('Көрсету', default=True)
+
+    class Meta:
+        verbose_name = 'Аттестация оқу жылы'
+        verbose_name_plural = 'Аттестация оқу жылдары'
+        ordering = ['order', 'title']
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(unidecode(self.title))
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.title
+
+
+class AttestationDocument(models.Model):
+    """Аттестация құжаттары (бір оқу жылына тиесілі)"""
+    year = models.ForeignKey(
+        AttestationYear, on_delete=models.CASCADE,
+        related_name='documents', verbose_name='Оқу жылы'
+    )
+    title = models.CharField('Атауы', max_length=255)
+    description = models.TextField('Сипаттамасы', blank=True)
+    file = models.FileField('Файл', upload_to='attestation/', blank=True, null=True,
+                            help_text='PDF, Word, Excel, PPTX немесе басқа файлды жүктеңіз')
+    link = models.URLField('Сілтеме (Google Drive т.б.)', blank=True,
+                           help_text='Файл жүктемей, сыртқы сілтеме беру үшін')
+    order = models.PositiveIntegerField('Реттілік', default=0)
+    created_at = models.DateTimeField('Қосылған уақыты', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Аттестация құжаты'
+        verbose_name_plural = 'Аттестация құжаттары'
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def download_url(self):
+        """Файл немесе сілтемені қайтарады"""
+        if self.file:
+            return self.file.url
+        return self.link or '#'
+
+    @property
+    def file_type(self):
+        """Файл түрін анықтау (иконка үшін)"""
+        if self.file and self.file.name:
+            name = self.file.name.lower()
+            if name.endswith(('.doc', '.docx')):
+                return 'word'
+            elif name.endswith('.pdf'):
+                return 'pdf'
+            elif name.endswith(('.xls', '.xlsx')):
+                return 'excel'
+            elif name.endswith(('.ppt', '.pptx')):
+                return 'powerpoint'
+            elif name.endswith(('.jpg', '.jpeg', '.png', '.gif', '.webp')):
+                return 'image'
+            elif name.endswith(('.zip', '.rar', '.7z')):
+                return 'archive'
+        if self.link:
+            return 'link'
+        return 'file'

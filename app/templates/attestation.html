@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Аттестация — Talant №1{% endblock %}
+
+{% block content %}
+
+<!-- ─── PAGE HEADER ──────────────────────────────────────── -->
+<section class="page-header">
+  <div class="container">
+    <nav aria-label="breadcrumb" data-aos="fade-down">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'app:index' %}">Басты бет</a></li>
+        <li class="breadcrumb-item active">Аттестация</li>
+      </ol>
+    </nav>
+    <h1 class="page-header-title" data-aos="fade-up">Аттестация</h1>
+    <p class="page-header-desc" data-aos="fade-up" data-aos-delay="100">Оқу жылдары бойынша құжаттар</p>
+  </div>
+</section>
+
+<!-- ─── YEARS ────────────────────────────────────────────── -->
+<section class="section-padding bg-light">
+  <div class="container">
+    {% if years %}
+    <div class="row g-4">
+      {% for year in years %}
+      <div class="col-md-6 col-lg-4" data-aos="fade-up">
+        <a href="{% url 'app:attestation_year' year.slug %}" class="text-decoration-none">
+          <div class="year-card bg-white rounded-4 border p-4 h-100 shadow-sm">
+            <div class="d-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary mb-3"
+              style="width: 56px; height: 56px; font-size: 1.6rem;">
+              <i class="bi bi-calendar3"></i>
+            </div>
+            <h5 class="fw-bold text-dark mb-2">{{ year.title }}</h5>
+            <p class="text-muted mb-3" style="font-size: 0.9rem;">
+              <i class="bi bi-file-earmark-text me-1"></i>
+              {{ year.documents_count }} құжат
+            </p>
+            <span class="btn btn-outline-primary btn-sm rounded-pill px-4">
+              Көру <i class="bi bi-arrow-right ms-1"></i>
+            </span>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5" data-aos="fade-up">
+      <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10 mb-4"
+        style="width: 90px; height: 90px; font-size: 2.5rem; color: var(--primary);">
+        <i class="bi bi-clipboard-check"></i>
+      </div>
+      <h4 class="fw-bold text-dark">Оқу жылдары жоқ</h4>
+      <p class="text-muted">Құжаттар жақын арада қосылады</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  .year-card {
+    transition: all 0.25s ease;
+  }
+
+  .year-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.07) !important;
+    border-color: rgba(37, 99, 235, 0.25) !important;
+  }
+</style>
+
+{% endblock %}

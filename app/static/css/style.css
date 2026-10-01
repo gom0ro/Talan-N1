@@ -988,6 +988,54 @@ a:hover {
   box-shadow: var(--shadow-primary);
 }
 
+/* ─── BACK BUTTON ─────────────────────────────────────────── */
+.btn-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: var(--white);
+  color: var(--primary);
+  border: 1px solid rgba(37, 99, 235, .18);
+  border-radius: var(--radius-full);
+  padding: 9px 20px 9px 17px;
+  font-weight: 600;
+  font-size: .9rem;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.btn-back-link i {
+  font-size: 1rem;
+  transition: transform .3s cubic-bezier(.4, 0, .2, 1);
+}
+
+.btn-back-link:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-primary);
+}
+
+.btn-back-link:hover i {
+  transform: translateX(-4px);
+}
+
+.btn-back-link:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, .3);
+  outline-offset: 2px;
+}
+
+@media (max-width: 575.98px) {
+  .btn-back-link {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 /* ─── NEWS CARDS ────────────────────────────────────────── */
 .news-card {
   background: var(--white);
