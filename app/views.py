@@ -10,7 +10,7 @@ from .models import (
     MethodoItem, MethodoCategory, ZhetistikItem,
     TimetableItem, TarbieItem, BastauyshItem,
     ParentsMeetingItem,
-    AttestationYear, AttestationDocument
+    AttestationYear, AttestationCategory, AttestationDocument
 )
 from .forms import ContactForm
 
@@ -109,15 +109,15 @@ def parents_meeting(request):
 # ── Аттестация ───────────────────────────────────────────────
 
 def attestation(request):
-    """Аттестация — оқу жылдары тізімі"""
-    years = AttestationYear.objects.filter(is_active=True).annotate(
-        documents_count=Count(
-            'categories__documents',
-            filter=Q(categories__is_active=True),
-        )
+    """Аттестация — санаттар тізімі (оқу жылы атауымен)"""
+    categories = (
+        AttestationCategory.objects
+        .filter(is_active=True, year__is_active=True)
+        .select_related('year')
+        .annotate(documents_count=Count('documents'))
     )
     context = {
-        'years': years,
+        'categories': categories,
     }
     return render(request, 'attestation.html', context)
 

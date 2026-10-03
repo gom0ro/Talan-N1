@@ -250,6 +250,26 @@
     document.addEventListener('keydown', function (event) {
       if (event.key === 'Escape' && !modal.hidden) closeViewer();
     });
+
+    /* ─── Якорь арқылы нақты санатты ашу (#att-block-<id>) ── */
+    function openFromHash() {
+      var id = window.location.hash.slice(1);
+      if (!id) return;
+      var block = document.getElementById(id);
+      if (!block) return;
+
+      var targetBtn = block.querySelector('.att-cat-btn');
+      var targetPanel = block.querySelector('.att-panel');
+      if (!targetBtn || !targetPanel) return;
+
+      if (targetBtn.getAttribute('aria-expanded') !== 'true') targetBtn.click();
+
+      var top = block.getBoundingClientRect().top + window.pageYOffset - 24;
+      window.scrollTo({ top: top, behavior: 'smooth' });
+    }
+
+    window.addEventListener('hashchange', openFromHash);
+    openFromHash();
   })();
 </script>
 {% endblock %}

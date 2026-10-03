@@ -867,10 +867,6 @@ class AttestationCategory(models.Model):
     def __str__(self):
         return self.name
 
-    @property
-    def documents_count(self):
-        return self.documents.count()
-
 
 class AttestationDocument(models.Model):
     """Аттестация құжаттары (бір санатқа тиесілі)"""

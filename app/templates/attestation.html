@@ -15,29 +15,33 @@
       </ol>
     </nav>
     <h1 class="page-header-title" data-aos="fade-up">Аттестация</h1>
-    <p class="page-header-desc" data-aos="fade-up" data-aos-delay="100">Оқу жылдары бойынша құжаттар</p>
+    <p class="page-header-desc" data-aos="fade-up" data-aos-delay="100">Құжаттар санаттары</p>
   </div>
 </section>
 
-<!-- ─── YEARS ────────────────────────────────────────────── -->
+<!-- ─── CATEGORIES ───────────────────────────────────────── -->
 <section class="section-padding bg-light">
   <div class="container">
-    {% if years %}
+    {% if categories %}
     <div class="row g-4">
-      {% for year in years %}
-      <div class="col-md-6 col-lg-4" data-aos="fade-up">
-        <a href="{% url 'app:attestation_year' year.slug %}" class="text-decoration-none">
-          <div class="year-card bg-white rounded-4 border p-4 h-100 shadow-sm">
-            <div class="d-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary mb-3"
+      {% for category in categories %}
+      <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}50">
+        <a href="{% url 'app:attestation_year' category.year.slug %}#att-block-{{ category.pk }}"
+          class="text-decoration-none">
+          <div class="att-cat-card bg-white rounded-4 border p-4 h-100 shadow-sm">
+            <div class="d-flex align-items-center justify-content-center rounded-3 mb-3 att-cat-card-icon"
               style="width: 56px; height: 56px; font-size: 1.6rem;">
-              <i class="bi bi-calendar3"></i>
+              <i class="bi bi-folder2-open"></i>
             </div>
-            <h5 class="fw-bold text-dark mb-2">{{ year.title }}</h5>
+            <h5 class="fw-bold text-dark mb-2">{{ category.name }}</h5>
+            <p class="text-muted mb-3" style="font-size: 0.9rem;">
+              <i class="bi bi-calendar3 me-1"></i>{{ category.year.title }}
+            </p>
             <p class="text-muted mb-3" style="font-size: 0.9rem;">
               <i class="bi bi-file-earmark-text me-1"></i>
-              {{ year.documents_count }} құжат
+              {{ category.documents_count }} құжат
             </p>
-            <span class="btn btn-outline-primary btn-sm rounded-pill px-4">
+            <span class="att-cat-card-btn">
               Көру <i class="bi bi-arrow-right ms-1"></i>
             </span>
           </div>
@@ -51,7 +55,7 @@
         style="width: 90px; height: 90px; font-size: 2.5rem; color: var(--primary);">
         <i class="bi bi-clipboard-check"></i>
       </div>
-      <h4 class="fw-bold text-dark">Оқу жылдары жоқ</h4>
+      <h4 class="fw-bold text-dark">Санаттар жоқ</h4>
       <p class="text-muted">Құжаттар жақын арада қосылады</p>
     </div>
     {% endif %}
@@ -59,14 +63,36 @@
 </section>
 
 <style>
-  .year-card {
+  .att-cat-card {
     transition: all 0.25s ease;
   }
 
-  .year-card:hover {
+  .att-cat-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.07) !important;
     border-color: rgba(37, 99, 235, 0.25) !important;
+  }
+
+  .att-cat-card-icon {
+    background: rgba(26, 115, 232, 0.1);
+    color: #1a73e8;
+  }
+
+  .att-cat-card-btn {
+    display: inline-block;
+    color: #1a73e8;
+    border: 1px solid rgba(26, 115, 232, 0.35);
+    border-radius: 50px;
+    padding: 6px 22px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.25s ease;
+  }
+
+  .att-cat-card:hover .att-cat-card-btn {
+    background: #1a73e8;
+    border-color: #1a73e8;
+    color: #fff;
   }
 </style>
 
