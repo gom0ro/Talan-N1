@@ -579,18 +579,19 @@ class AttestationYearAdmin(admin.ModelAdmin):
 
 @admin.register(AttestationCategory)
 class AttestationCategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'type', 'year', 'node_count', 'order', 'is_open', 'is_active')
+    list_display = ('name', 'type', 'node_count', 'order', 'is_open', 'is_active')
     list_display_links = ('name',)
     list_editable = ('type', 'order', 'is_open', 'is_active')
-    list_filter = ('type', 'year', 'is_active')
+    list_filter = ('type', 'is_active')
     search_fields = ('name',)
+    exclude = ('year',)
     fieldsets = (
         ('Blok turi', {
             'fields': ('type',),
             'description': TYPE_HELP,
         }),
         ('Negizgi aqparat', {
-            'fields': ('name', 'year', 'order'),
+            'fields': ('name', 'order'),
         }),
         ('Baptaular', {
             'fields': ('is_open', 'is_active'),
@@ -599,6 +600,15 @@ class AttestationCategoryAdmin(admin.ModelAdmin):
         }),
     )
     inlines = [AttestationNodeInline]
+
+    def save_model(self, request, obj, form, change):
+        """«Оқу жылы» өрісі формада көрсетілмейді — әдепкі жылмен толтырылады."""
+        if not obj.year_id:
+            obj.year = (
+                AttestationYear.objects.filter(is_active=True).first()
+                or AttestationYear.objects.first()
+            )
+        super().save_model(request, obj, form, change)
 
     @admin.display(description='Elementter sany')
     def node_count(self, obj):
