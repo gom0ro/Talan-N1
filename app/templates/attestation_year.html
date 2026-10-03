@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load attestation_tags %}
 
 {% block title %}{{ year.title }} оқу жылы — Аттестация — Talant №1{% endblock %}
 
@@ -70,10 +71,18 @@
                     {% endif %}
                   </td>
                   <td class="att-col-action">
-                    {% if doc.file or doc.link %}
-                    <a href="{{ doc.download_url }}" target="_blank" rel="noopener noreferrer"
-                      class="att-open-btn" title="{{ doc.title }}">
+                    {% doc_is_embeddable doc as embeddable %}
+                    {% if embeddable %}
+                    {% doc_embed_url doc request as embed_url %}
+                    <button type="button" class="att-open-btn" data-att-view data-title="{{ doc.title }}"
+                      data-url="{{ embed_url }}" data-type="{{ doc.file_type }}"
+                      data-raw="{{ doc.file.url }}" title="{{ doc.title }}">
                       <i class="bi bi-eye me-1"></i> Ашу
+                    </button>
+                    {% elif doc.link %}
+                    <a href="{{ doc.link }}" target="_blank" rel="noopener noreferrer"
+                      class="att-open-btn" title="{{ doc.title }}">
+                      <i class="bi bi-box-arrow-up-right me-1"></i> Ашу
                     </a>
                     {% else %}
                     <span class="text-muted small">Файл жоқ</span>
@@ -104,6 +113,26 @@
 
   </div>
 </section>
+
+<!-- ─── DOCUMENT VIEWER MODAL ──────────────────────────────── -->
+<div class="att-modal" id="attModal" hidden>
+  <div class="att-modal-backdrop" data-att-close></div>
+  <div class="att-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="attModalTitle">
+    <div class="att-modal-head">
+      <h5 class="att-modal-title" id="attModalTitle">Құжат</h5>
+      <div class="att-modal-actions">
+        <a class="att-modal-dl" id="attModalDownload" href="#" target="_blank" rel="noopener noreferrer">
+          <i class="bi bi-download"></i><span class="d-none d-sm-inline ms-1">Жүктеу</span>
+        </a>
+        <button type="button" class="att-modal-x" data-att-close aria-label="Жабу">&times;</button>
+      </div>
+    </div>
+    <div class="att-modal-body">
+      <iframe class="att-modal-frame" id="attModalFrame" title="Құжат көрінісі" loading="lazy"></iframe>
+      <img class="att-modal-image" id="attModalImage" alt="Құжат көрінісі" hidden>
+    </div>
+  </div>
+</div>
 
 {% endblock %}
 
@@ -163,6 +192,63 @@
         if (!btn || !panel) return;
         if (btn.getAttribute('aria-expanded') === 'true') panel.style.maxHeight = 'none';
       });
+    });
+
+    /* ─── Құжатты модаль терезеде көрсету ─────────────────── */
+    var modal = document.getElementById('attModal');
+    if (!modal) return;
+
+    var frame = document.getElementById('attModalFrame');
+    var image = document.getElementById('attModalImage');
+    var modalTitle = document.getElementById('attModalTitle');
+    var download = document.getElementById('attModalDownload');
+    var lastFocused = null;
+
+    function openViewer(trigger) {
+      var url = trigger.getAttribute('data-url');
+      if (!url) return;
+
+      lastFocused = trigger;
+      modalTitle.textContent = trigger.getAttribute('data-title') || 'Құжат';
+      download.href = trigger.getAttribute('data-raw') || url;
+
+      var isImage = trigger.getAttribute('data-type') === 'image';
+      if (isImage) {
+        image.src = url;
+        image.hidden = false;
+        frame.hidden = true;
+      } else {
+        frame.src = url;
+        frame.hidden = false;
+        image.hidden = true;
+      }
+
+      modal.hidden = false;
+      document.body.classList.add('att-modal-open');
+      modal.querySelector('.att-modal-x').focus();
+    }
+
+    function closeViewer() {
+      modal.hidden = true;
+      document.body.classList.remove('att-modal-open');
+      /* iframe-ті тастау — жүктелуді тоқтатып, серверді босатады */
+      frame.removeAttribute('src');
+      image.removeAttribute('src');
+      if (lastFocused) lastFocused.focus();
+    }
+
+    document.querySelectorAll('[data-att-view]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        openViewer(btn);
+      });
+    });
+
+    modal.querySelectorAll('[data-att-close]').forEach(function (el) {
+      el.addEventListener('click', closeViewer);
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && !modal.hidden) closeViewer();
     });
   })();
 </script>
