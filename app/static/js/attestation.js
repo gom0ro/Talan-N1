@@ -62,13 +62,6 @@
     btn.type = 'button';
     btn.setAttribute('aria-expanded', cfg.open ? 'true' : 'false');
 
-    if (cfg.year) {
-      var year = el('span', 'att-cat-year');
-      year.appendChild(icon('calendar3'));
-      year.appendChild(document.createTextNode(' ' + cfg.year));
-      btn.appendChild(year);
-    }
-
     btn.appendChild(el('span', 'att-cat-name', cfg.title));
 
     if (cfg.meta) btn.appendChild(el('span', 'att-cat-meta', cfg.meta));
@@ -517,7 +510,6 @@
           host.appendChild(createAccordion({
             variant: 'blue',
             title: block.categoryTitle,
-            year: block.yearTitle,
             open: block.isOpen,
             render: function () {
               return content;
@@ -527,12 +519,6 @@
           /* 1 түрде кесте тікелей, аккордеонсыз */
           var wrapper = el('div', 'att-block');
           var heading = el('div', 'att-cat-btn att-cat-btn--static');
-          if (block.yearTitle) {
-            var year = el('span', 'att-cat-year');
-            year.appendChild(icon('calendar3'));
-            year.appendChild(document.createTextNode(' ' + block.yearTitle));
-            heading.appendChild(year);
-          }
           heading.appendChild(el('span', 'att-cat-name', block.categoryTitle));
           var meta = el('span', 'att-cat-meta');
           var docs = flattenDocs(block.nodes || []);
