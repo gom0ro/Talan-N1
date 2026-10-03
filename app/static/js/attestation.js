@@ -7,6 +7,7 @@
      2 — Жылдар бойынша екі деңгейлі аккордеон
      3 — Жаңаша ашылатын аккордеондар (ячейка ішінде)
      4 — Терең сатылар кестесі (3 деңгей)
+     5 — Стандартты кесте, бірақ санат тақырыбы ашылып-жабылады
 
    Дерек: JSON массиві — { type, categoryTitle, isOpen, yearTitle, nodes[] }
    ══════════════════════════════════════════════════════════════ */
@@ -245,6 +246,13 @@
     return standardTable(nodes);
   }
 
+  /* ─── 5-ТҮРІ: АШЫЛЫП-ЖАБЫЛАТЫН СТАНДАРТТЫ КЕСТЕ ─────────
+     1-түрдің дәл өзі. Айырмашылығы тек санат тақырыбының
+     ашылып-жабылуы (init ішінде көк аккордеонмен қапталады). */
+  function renderType5(block, nodes) {
+    return standardTable(nodes);
+  }
+
   /* ─── 2-ТҮРІ: ЖЫЛДАР БОЙЫНША ЕКІ ДЕҢГЕЙЛІ АККОРДЕОН ── */
 
   function renderType2(block, nodes) {
@@ -421,7 +429,8 @@
     1: renderType1,
     2: renderType2,
     3: renderType3,
-    4: renderType4
+    4: renderType4,
+    5: renderType5
   };
 
   function renderBlock(block) {
@@ -504,7 +513,19 @@
         var host = el('div', 'att-block-host');
         host.id = 'att-block-' + block.id;
 
-        if (block.type === 2 || block.type === 3 || block.type === 4) {
+        if (block.type === 5) {
+          /* 5 түр — 1 түрдің дәл өзі, бірақ ашылып-жабылады */
+          var content5 = renderBlock(block);
+          host.appendChild(createAccordion({
+            variant: 'blue',
+            title: block.categoryTitle,
+            meta: flattenDocs(block.nodes || []).length + ' құжат',
+            open: block.isOpen,
+            render: function () {
+              return content5;
+            }
+          }));
+        } else if (block.type === 2 || block.type === 3 || block.type === 4) {
           /* 2–4 түрде санаттың өзі көк аккордеон болады */
           var content = renderBlock(block);
           host.appendChild(createAccordion({

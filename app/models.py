@@ -856,11 +856,13 @@ class AttestationCategory(models.Model):
     TYPE_YEARS = 2
     TYPE_CELL = 3
     TYPE_DEEP = 4
+    TYPE_COLLAPSIBLE = 5
     TYPE_CHOICES = [
         (TYPE_STANDARD, 'Стандартная таблица'),
         (TYPE_YEARS, 'Таблица по годам'),
         (TYPE_CELL, 'Таблица с вложенными годами в ячейке'),
         (TYPE_DEEP, 'Многоуровневая таблица'),
+        (TYPE_COLLAPSIBLE, 'Стандартная таблица (раскрывающаяся)'),
     ]
 
     year = models.ForeignKey(
@@ -899,6 +901,7 @@ class AttestationCategory(models.Model):
           2 — жылдар бойынша кесте     nodes → жыл тобы → құжаттар
           3 — жаңаша ашылатын кесте   nodes → жол → топ → құжаттар
           4 — терең сатылар кестесі    nodes → жол → бөлім → жыл → құжат
+          5 — стандартты кесте         nodes тікелей құжаттар (2–4 сияқты ашылып-жабылады)
         """
         return {
             'id': self.pk,
