@@ -1,3 +1,8 @@
+import os
+import time
+import uuid
+
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.text import slugify
 from unidecode import unidecode
@@ -847,11 +852,26 @@ class AttestationCategory(models.Model):
     """Аттестация — санат (аккордеон блогы), мысалы «ЖАЛПЫ СИПАТТАМА»"""
     DEFAULT_NAME = 'ЖАЛПЫ СИПАТТАМА'
 
+    TYPE_STANDARD = 1
+    TYPE_YEARS = 2
+    TYPE_CELL = 3
+    TYPE_DEEP = 4
+    TYPE_CHOICES = [
+        (TYPE_STANDARD, 'Стандартная таблица'),
+        (TYPE_YEARS, 'Таблица по годам'),
+        (TYPE_CELL, 'Таблица с вложенными годами в ячейке'),
+        (TYPE_DEEP, 'Многоуровневая таблица'),
+    ]
+
     year = models.ForeignKey(
         AttestationYear, on_delete=models.CASCADE,
         related_name='categories', verbose_name='Оқу жылы'
     )
     name = models.CharField('Атауы', max_length=200, help_text='Мысалы: ЖАЛПЫ СИПАТТАМА')
+    type = models.PositiveSmallIntegerField(
+        'Блок түрі', choices=TYPE_CHOICES, default=TYPE_STANDARD,
+        help_text='Сайттағы кесте түрін анықтайды'
+    )
     order = models.PositiveIntegerField('Реттілік', default=0)
     is_open = models.BooleanField(
         'Ашық күйінде', default=False,
@@ -866,6 +886,216 @@ class AttestationCategory(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_type_display(self):
+        return dict(self.TYPE_CHOICES).get(self.type, self.type)
+
+    def to_dict(self):
+        """
+        JS рендерерге берілетін толық блок JSON-ы.
+
+        type бойынша рендерер әр түрлі макет салады:
+          1 — стандартты кесте          nodes тікелей құжаттар
+          2 — жылдар бойынша кесте     nodes → жыл тобы → құжаттар
+          3 — жаңаша ашылатын кесте   nodes → жол → топ → құжаттар
+          4 — терең сатылар кестесі    nodes → жол → бөлім → жыл → құжат
+        """
+        return {
+            'id': self.pk,
+            'type': self.type,
+            'categoryTitle': self.name,
+            'isOpen': self.is_open,
+            'yearTitle': self.year.title,
+            'nodes': [node.to_dict() for node in self.active_root_nodes],
+        }
+
+    @property
+    def active_root_nodes(self):
+        attached = getattr(self, 'prefetched_nodes', None)
+        if attached is not None:
+            return attached
+        return self.nodes.filter(parent__isnull=True, is_active=True)
+
+
+# ── Аттестация: PDF жүктеу көмекшілері ────────────────────────
+
+PDF_MAX_SIZE = 50 * 1024 * 1024  # 50 МБ
+
+
+def validate_pdf_file(value):
+    """
+    Тек PDF қабылдайды: кеңейтімі, өлшемі (50 МБ) және
+    файл қолтаңбасы («%PDF») тексеріледі.
+    """
+    if not value:
+        return
+    name = (getattr(value, 'name', '') or '').lower()
+    if not name.endswith('.pdf'):
+        raise ValidationError('Тек PDF форматындағы файлды жүктеуге болады.')
+    if value.size > PDF_MAX_SIZE:
+        raise ValidationError('Файл өлшемі 50 МБ-тан аспауы керек.')
+    try:
+        value.seek(0)
+        header = value.read(5)
+        value.seek(0)
+    except (AttributeError, ValueError):
+        return
+    if header and header[:4] != b'%PDF':
+        raise ValidationError('Файл PDF құрылымына сәйкес келмейді.')
+
+
+def attestation_upload_to(instance, filename):
+    """Қайталанбайтын атау: attestation/doc_<уақыт>_<uuid>.pdf"""
+    ext = os.path.splitext(filename)[1].lower() or '.pdf'
+    stamp = int(time.time())
+    unique = uuid.uuid4().hex[:8]
+    return f'attestation/doc_{stamp}_{unique}{ext}'
+
+
+class AttestationNodeQuerySet(models.QuerySet):
+    """Бір сұраудан ағаш жинауға көмектесетін queryset"""
+
+    def attach_tree(self):
+        """
+        Барлық элементті бір сұрақпен оқып, түбелдік түйіндерді
+        {category_id: [node, ...]} түрінде қайтарады.
+
+        Әр түйінге `prefetched_children` және `prefetched_nodes`
+        тіркеледі, сондықтан to_dict() қайта сұрақ жібермейді.
+        """
+        nodes = list(self)
+        by_id = {}
+        for node in nodes:
+            node.prefetched_children = []
+            by_id[node.pk] = node
+
+        roots = []
+        for node in nodes:
+            parent = by_id.get(node.parent_id)
+            if parent is None:
+                roots.append(node)
+            else:
+                parent.prefetched_children.append(node)
+
+        by_category = {}
+        for node in roots:
+            by_category.setdefault(node.category_id, []).append(node)
+        return by_category
+
+
+class AttestationNode(models.Model):
+    """
+    Аттестация блогының мазмұны — рекурсивтік ағаш.
+
+    Бір ғана модель барлық 4 блок түріне қызмет етеді:
+      item     — жол немесе бөлім тақырыбы (жоғарғы деңгей)
+      group    — жыл / топ / бөлім (ішкі аккордеон)
+      document — файлға сүйленетін құжат
+    """
+    KIND_ITEM = 'item'
+    KIND_GROUP = 'group'
+    KIND_DOCUMENT = 'document'
+    KIND_CHOICES = [
+        (KIND_ITEM, 'Тақырып (жол / бөлім)'),
+        (KIND_GROUP, 'Топ (жыл / бөлім)'),
+        (KIND_DOCUMENT, 'Құжат (файл)'),
+    ]
+
+    category = models.ForeignKey(
+        AttestationCategory, on_delete=models.CASCADE,
+        related_name='nodes', verbose_name='Санат'
+    )
+    parent = models.ForeignKey(
+        'self', on_delete=models.CASCADE, related_name='children',
+        null=True, blank=True, verbose_name='Ата-атасы'
+    )
+    kind = models.CharField(
+        'Түрі', max_length=20, choices=KIND_CHOICES, default=KIND_DOCUMENT
+    )
+    title = models.CharField('Атауы', max_length=255)
+    subtitle = models.CharField(
+        'Қосымша мәтін', max_length=150, blank=True,
+        help_text='Мысалы жылдар аралығы: 2024–2027'
+    )
+    file = models.FileField(
+        'Файл (PDF)', upload_to=attestation_upload_to,
+        validators=[validate_pdf_file], blank=True, null=True,
+        help_text='Тек PDF форматы, өлшемі 50 МБ-тан аспайды.'
+    )
+    link = models.URLField('Сілтеме', blank=True)
+    order = models.PositiveIntegerField('Реттілік', default=0)
+    is_open = models.BooleanField('Ашық күйінде', default=False)
+    is_active = models.BooleanField('Көрсету', default=True)
+
+    objects = AttestationNodeQuerySet.as_manager()
+
+    class Meta:
+        verbose_name = 'Аттестация элементі'
+        verbose_name_plural = 'Аттестация элементтері'
+        ordering = ['order', 'id']
+
+    def __str__(self):
+        prefix = '— ' if self.parent_id else ''
+        return f'{prefix}{self.title}'
+
+    @property
+    def download_url(self):
+        if self.file:
+            return self.file.url
+        return self.link or ''
+
+    @property
+    def file_url(self):
+        """Клиентке арналған файл сілтемесі (/media/... немесе сыртқы URL)"""
+        return self.download_url
+
+    @property
+    def has_file(self):
+        return bool(self.file or self.link)
+
+    @property
+    def file_type(self):
+        """Файл түрін анықтау (көрсетуге арналған)"""
+        if self.file and self.file.name:
+            name = self.file.name.lower()
+            if name.endswith(('.doc', '.docx')):
+                return 'word'
+            elif name.endswith('.pdf'):
+                return 'pdf'
+            elif name.endswith(('.xls', '.xlsx')):
+                return 'excel'
+            elif name.endswith(('.ppt', '.pptx')):
+                return 'powerpoint'
+            elif name.endswith(('.jpg', '.jpeg', '.png', '.gif', '.webp')):
+                return 'image'
+            elif name.endswith(('.zip', '.rar', '.7z')):
+                return 'archive'
+        if self.link:
+            return 'link'
+        return 'file'
+
+    def to_dict(self):
+        """JS рендерерге берілетін JSON құрылымы"""
+        return {
+            'id': self.pk,
+            'title': self.title,
+            'subtitle': self.subtitle,
+            'kind': self.kind,
+            'isOpen': self.is_open,
+            'fileUrl': self.download_url,
+            'file_url': self.file_url,
+            'fileType': self.file_type,
+            'hasFile': self.has_file,
+            'children': [child.to_dict() for child in self.active_children],
+        }
+
+    @property
+    def active_children(self):
+        """Алдын ала жүктелген ағаш болмаса — дерекқордан оқиды"""
+        attached = getattr(self, 'prefetched_children', None)
+        if attached is not None:
+            return attached
+        return self.children.filter(is_active=True)
 
 
 class AttestationDocument(models.Model):

@@ -20,28 +20,20 @@
   </div>
 </section>
 
-<!-- ─── CATEGORIES (ACCORDION) ────────────────────────────── -->
+<!-- ─── CATEGORIES (UNIVERSAL RENDERER) ──────────────────── -->
 <section class="section-padding bg-light">
   <div class="container">
-
-    <div class="d-flex flex-wrap align-items-center gap-3 mb-4" data-aos="fade-up">
-      <div class="d-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary flex-shrink-0"
-        style="width: 48px; height: 48px; font-size: 1.4rem;">
-        <i class="bi bi-calendar3"></i>
-      </div>
-      <h3 class="fw-bold text-dark mb-0" style="font-size: 1.4rem;">{{ year.title }} оқу жылы</h3>
-      <a href="{% url 'app:attestation' %}" class="btn-back-link ms-auto">
-        <i class="bi bi-arrow-left"></i> Барлық санаттар
-      </a>
-    </div>
-
-    {% include 'attestation/_blocks.html' with show_year=False %}
-
+    <a href="{% url 'app:attestation' %}" class="btn-back-link mb-4 d-inline-block">
+      <i class="bi bi-arrow-left"></i> Барлық санаттар
+    </a>
+    <div data-att-root data-att-payload="{{ blocks_json }}"></div>
   </div>
 </section>
+
+{% include 'attestation/_modal.html' %}
 
 {% endblock %}
 
 {% block extra_js %}
-{% include 'attestation/_blocks_js.html' %}
+<script src="{% static 'js/attestation.js' %}?v=15"></script>
 {% endblock %}

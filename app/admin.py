@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib import admin
 from .models import (
     NewsCategory, News, Teacher, GalleryAlbum, GalleryImage,
@@ -12,7 +13,7 @@ from .models import (
     ParentsMeetingItem,
     ZhylJospar, IsShara, AskhanaItem,
     PedQoldau, IshkiTartip, Profilaktika, Parlament, AdalUrpaq, ZhasUlan,
-    AttestationYear, AttestationCategory, AttestationDocument,
+    AttestationYear, AttestationCategory, AttestationNode,
 )
 
 admin.site.site_header = 'Talant No1 Mektep'
@@ -513,18 +514,52 @@ class ZhasUlanAdmin(TarbieFullItemAdmin):
 
 # ── Аттестация ────────────────────────────────────────────────
 
-class AttestationDocumentInline(admin.TabularInline):
-    model = AttestationDocument
+TYPE_HELP = """
+Төрт түр бар — таңдаған түрі сайттағы кесте құрылымын анықтайды:
+
+1. Стандартты кесте — тізімделген құжаттар бір кестеде.
+2. Жылдар бойынша кесте — әр жылға жеке сұр аккордеон, ішінде кесте.
+3. Жаңаша ашылатын аккордеон — кесте жолдарының үшінші бағасында
+   жыл/топ аккордеондары, ашылғанда файлдар тізімі.
+4. Терең сатылар кесте — төрт баған, үшіншісінде бөлім → жыл → файл.
+
+1-түрде элементтер тікелей «Құжат» болады.
+2-түрде: жыл (Топ) → құжат.
+3-түрде: тақырып (жол) → жыл (Топ) → құжат.
+4-түрде: тақырып (жол) → бөлім (Топ) → жыл (Топ) → құжат.
+"""
+
+
+class AttestationNodeForm(forms.ModelForm):
+    """Құжат файлын жүктеу өрісі — браузер тек PDF таңдайды."""
+
+    class Meta:
+        model = AttestationNode
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        widget = self.fields['file'].widget
+        widget.attrs['accept'] = 'application/pdf,.pdf'
+        existing = getattr(widget, 'attrs', {}).get('class', '')
+        widget.attrs['class'] = (existing + ' att-pdf-input').strip()
+
+
+class AttestationNodeInline(admin.TabularInline):
+    """Санаттың жоғарғы деңгейіндегі элементтер (1-түрде — құжаттар)"""
+    model = AttestationNode
+    form = AttestationNodeForm
     extra = 1
-    fields = ('order', 'title', 'file', 'link')
-    ordering = ('order', '-created_at')
-    verbose_name = 'Qyzmet'
-    verbose_name_plural = 'Qyzmetter'
+    fk_name = 'category'
+    fields = ('order', 'kind', 'title', 'subtitle', 'file', 'link', 'is_open', 'is_active')
+    ordering = ('order', 'id')
+    verbose_name = 'Element'
+    verbose_name_plural = 'Elementter'
 
 
 @admin.register(AttestationYear)
 class AttestationYearAdmin(admin.ModelAdmin):
-    list_display = ('title', 'category_count', 'document_count', 'order', 'is_active')
+    list_display = ('title', 'category_count', 'node_count', 'order', 'is_active')
     list_editable = ('order', 'is_active')
     prepopulated_fields = {'slug': ('title',)}
     fieldsets = (
@@ -537,56 +572,72 @@ class AttestationYearAdmin(admin.ModelAdmin):
     def category_count(self, obj):
         return obj.categories.count()
 
-    @admin.display(description='Qyzmetter sany')
-    def document_count(self, obj):
-        return AttestationDocument.objects.filter(category__year=obj).count()
+    @admin.display(description='Elementter sany')
+    def node_count(self, obj):
+        return AttestationNode.objects.filter(category__year=obj).count()
 
 
 @admin.register(AttestationCategory)
 class AttestationCategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'year', 'document_count', 'order', 'is_open', 'is_active')
+    list_display = ('name', 'type', 'year', 'node_count', 'order', 'is_open', 'is_active')
     list_display_links = ('name',)
-    list_editable = ('order', 'is_open', 'is_active')
-    list_filter = ('year', 'is_active')
+    list_editable = ('type', 'order', 'is_open', 'is_active')
+    list_filter = ('type', 'year', 'is_active')
     search_fields = ('name',)
     fieldsets = (
+        ('Blok turi', {
+            'fields': ('type',),
+            'description': TYPE_HELP,
+        }),
         ('Negizgi aqparat', {
             'fields': ('name', 'year', 'order'),
         }),
         ('Baptaular', {
             'fields': ('is_open', 'is_active'),
             'classes': ('collapse',),
-            'description': '«Ashыq kuyinde» — bel beti ashylganda ushul blok tuldegi kuyde bolady.',
+            'description': '«Ashыq kuyinde» — kelganda ushul blok tuldegi kuyde bolady.',
         }),
     )
-    inlines = [AttestationDocumentInline]
+    inlines = [AttestationNodeInline]
 
-    @admin.display(description='Qyzmetter sany')
-    def document_count(self, obj):
-        return obj.documents.count()
+    @admin.display(description='Elementter sany')
+    def node_count(self, obj):
+        return obj.nodes.count()
 
 
-@admin.register(AttestationDocument)
-class AttestationDocumentAdmin(admin.ModelAdmin):
-    list_display = ('order', 'title', 'category', 'year_title', 'file_type', 'created_at')
+@admin.register(AttestationNode)
+class AttestationNodeAdmin(admin.ModelAdmin):
+    """Терең деңгейдегі элементтер осында басқарылады"""
+    form = AttestationNodeForm
+    list_display = ('order', 'title', 'kind', 'category', 'parent', 'level', 'has_file')
     list_display_links = ('title',)
-    list_editable = ('order',)
-    list_filter = ('category', 'category__year')
-    search_fields = ('title', 'description')
+    list_editable = ('order', 'kind')
+    list_filter = ('category', 'kind', 'is_active')
+    search_fields = ('title', 'subtitle')
+    autocomplete_fields = ('category',)
     fieldsets = (
         ('Negizgi aqparat', {
-            'fields': ('order', 'title', 'category', 'description'),
+            'fields': ('order', 'category', 'parent', 'kind', 'title', 'subtitle'),
         }),
         ('Fayl nemese silteme', {
             'fields': ('file', 'link'),
-            'description': 'Fayl yukteiniz НЕМЕСЕ Google Drive siltemesin beriniz.',
+            'description': 'Fayl yukteiniz НЕМЕСЕ сыртқы silteme beriniz.',
+        }),
+        ('Baptaular', {
+            'fields': ('is_open', 'is_active'),
+            'classes': ('collapse',),
         }),
     )
 
-    @admin.display(description='Oku zhyl')
-    def year_title(self, obj):
-        return obj.category.year.title
+    @admin.display(description='Deнгей')
+    def level(self, obj):
+        depth = 0
+        parent = obj.parent
+        while parent is not None:
+            depth += 1
+            parent = parent.parent
+        return depth
 
-    @admin.display(description='Fayl turi')
-    def file_type(self, obj):
-        return obj.file_type
+    @admin.display(boolean=True, description='Fayl bar')
+    def has_file(self, obj):
+        return obj.has_file

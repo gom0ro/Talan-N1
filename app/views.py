@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.contrib import messages
+import json
 
 from .models import (
     News, NewsCategory, Teacher, GalleryAlbum,
@@ -10,7 +11,7 @@ from .models import (
     MethodoItem, MethodoCategory, ZhetistikItem,
     TimetableItem, TarbieItem, BastauyshItem,
     ParentsMeetingItem,
-    AttestationYear, AttestationCategory, AttestationDocument
+    AttestationYear, AttestationCategory, AttestationNode
 )
 from .forms import ContactForm
 
@@ -108,32 +109,35 @@ def parents_meeting(request):
 
 # ── Аттестация ───────────────────────────────────────────────
 
+def _attestation_context(categories):
+    """Санаттарға элементтер ағашын бір сұрақпен жауып, JSON жасайды"""
+    by_category = AttestationNode.objects.filter(is_active=True).attach_tree()
+    for category in categories:
+        category.prefetched_nodes = by_category.get(category.pk, [])
+    return {
+        'categories': categories,
+        'blocks_json': json.dumps(
+            [c.to_dict() for c in categories], ensure_ascii=False
+        ),
+    }
+
+
 def attestation(request):
     """Аттестация — санаттар тізімі (оқу жылы атауымен)"""
     categories = (
         AttestationCategory.objects
         .filter(is_active=True, year__is_active=True)
         .select_related('year')
-        .prefetch_related('documents')
     )
-    context = {
-        'categories': categories,
-    }
-    return render(request, 'attestation.html', context)
+    return render(request, 'attestation.html', _attestation_context(categories))
 
 
 def attestation_year(request, slug):
-    """Аттестация — санаттар (аккордеон) және олардың құжаттары"""
+    """Аттестация — нақты оқу жылының санаттары"""
     year = get_object_or_404(AttestationYear, slug=slug, is_active=True)
-    categories = (
-        year.categories
-        .filter(is_active=True)
-        .prefetch_related('documents')
-    )
-    context = {
-        'year': year,
-        'categories': categories,
-    }
+    categories = year.categories.filter(is_active=True).select_related('year')
+    context = _attestation_context(categories)
+    context['year'] = year
     return render(request, 'attestation_year.html', context)
 
 

@@ -19,15 +19,17 @@
   </div>
 </section>
 
-<!-- ─── CATEGORIES (ACCORDION) ────────────────────────────── -->
+<!-- ─── CATEGORIES (UNIVERSAL RENDERER) ──────────────────── -->
 <section class="section-padding bg-light">
   <div class="container">
-    {% include 'attestation/_blocks.html' with show_year=True %}
+    <div data-att-root data-att-payload="{{ blocks_json }}"></div>
   </div>
 </section>
+
+{% include 'attestation/_modal.html' %}
 
 {% endblock %}
 
 {% block extra_js %}
-{% include 'attestation/_blocks_js.html' %}
+<script src="{% static 'js/attestation.js' %}?v=15"></script>
 {% endblock %}

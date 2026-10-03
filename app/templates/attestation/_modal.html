@@ -1,0 +1,21 @@
+{% comment %}
+Аттестация блогын көрсету терезесі (құжат ішінде ашылады).
+{% endcomment %}
+<div class="att-modal" id="attModal" hidden>
+  <div class="att-modal-backdrop" data-att-close></div>
+  <div class="att-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="attModalTitle">
+    <div class="att-modal-head">
+      <h5 class="att-modal-title" id="attModalTitle">Құжат</h5>
+      <div class="att-modal-actions">
+        <a class="att-modal-dl" id="attModalDownload" href="#" target="_blank" rel="noopener noreferrer">
+          <i class="bi bi-download"></i><span class="d-none d-sm-inline ms-1">Жүктеу</span>
+        </a>
+        <button type="button" class="att-modal-x" data-att-close aria-label="Жабу">&times;</button>
+      </div>
+    </div>
+    <div class="att-modal-body">
+      <iframe class="att-modal-frame" id="attModalFrame" title="Құжат көрінісі" loading="lazy"></iframe>
+      <img class="att-modal-image" id="attModalImage" alt="Құжат көрінісі" hidden>
+    </div>
+  </div>
+</div>
