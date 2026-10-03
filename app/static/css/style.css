@@ -1967,6 +1967,16 @@ a:hover {
   background: rgba(255, 255, 255, .2);
 }
 
+.att-cat-year {
+  flex: 0 0 auto;
+  font-size: .8rem;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, .16);
+  border: 1px solid rgba(255, 255, 255, .3);
+}
+
 .att-cat-arrow {
   flex: 0 0 auto;
   font-size: 1.1rem;
@@ -2092,6 +2102,10 @@ a:hover {
 
   .att-cat-meta {
     order: 3;
+  }
+
+  .att-cat-year {
+    order: 4;
   }
 
   .att-panel-inner {

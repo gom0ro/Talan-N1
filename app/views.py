@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
-from django.db.models import Q, Count
+from django.db.models import Q
 from django.contrib import messages
 
 from .models import (
@@ -114,7 +114,7 @@ def attestation(request):
         AttestationCategory.objects
         .filter(is_active=True, year__is_active=True)
         .select_related('year')
-        .annotate(documents_count=Count('documents'))
+        .prefetch_related('documents')
     )
     context = {
         'categories': categories,
