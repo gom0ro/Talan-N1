@@ -843,11 +843,40 @@ class AttestationYear(models.Model):
         return self.title
 
 
-class AttestationDocument(models.Model):
-    """Аттестация құжаттары (бір оқу жылына тиесілі)"""
+class AttestationCategory(models.Model):
+    """Аттестация — санат (аккордеон блогы), мысалы «ЖАЛПЫ СИПАТТАМА»"""
+    DEFAULT_NAME = 'ЖАЛПЫ СИПАТТАМА'
+
     year = models.ForeignKey(
         AttestationYear, on_delete=models.CASCADE,
-        related_name='documents', verbose_name='Оқу жылы'
+        related_name='categories', verbose_name='Оқу жылы'
+    )
+    name = models.CharField('Атауы', max_length=200, help_text='Мысалы: ЖАЛПЫ СИПАТТАМА')
+    order = models.PositiveIntegerField('Реттілік', default=0)
+    is_open = models.BooleanField(
+        'Ашық күйінде', default=False,
+        help_text='Бет ашылғанда блок түбелдегі күйде болады'
+    )
+    is_active = models.BooleanField('Көрсету', default=True)
+
+    class Meta:
+        verbose_name = 'Аттестация санаты'
+        verbose_name_plural = 'Аттестация санаттары'
+        ordering = ['order', 'name']
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def documents_count(self):
+        return self.documents.count()
+
+
+class AttestationDocument(models.Model):
+    """Аттестация құжаттары (бір санатқа тиесілі)"""
+    category = models.ForeignKey(
+        AttestationCategory, on_delete=models.CASCADE,
+        related_name='documents', verbose_name='Санат'
     )
     title = models.CharField('Атауы', max_length=255)
     description = models.TextField('Сипаттамасы', blank=True)
@@ -855,7 +884,10 @@ class AttestationDocument(models.Model):
                             help_text='PDF, Word, Excel, PPTX немесе басқа файлды жүктеңіз')
     link = models.URLField('Сілтеме (Google Drive т.б.)', blank=True,
                            help_text='Файл жүктемей, сыртқы сілтеме беру үшін')
-    order = models.PositiveIntegerField('Реттілік', default=0)
+    order = models.PositiveIntegerField(
+        'Реттік нөмір', default=0,
+        help_text='0 болса — реті автоматты (1, 2, 3...)'
+    )
     created_at = models.DateTimeField('Қосылған уақыты', auto_now_add=True)
 
     class Meta:

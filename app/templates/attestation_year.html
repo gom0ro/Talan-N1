@@ -20,9 +20,10 @@
   </div>
 </section>
 
-<!-- ─── DOCUMENTS ────────────────────────────────────────── -->
+<!-- ─── CATEGORIES (ACCORDION) ────────────────────────────── -->
 <section class="section-padding bg-light">
   <div class="container">
+
     <div class="d-flex flex-wrap align-items-center gap-3 mb-4" data-aos="fade-up">
       <div class="d-flex align-items-center justify-content-center rounded-3 bg-primary bg-opacity-10 text-primary flex-shrink-0"
         style="width: 48px; height: 48px; font-size: 1.4rem;">
@@ -34,83 +35,135 @@
       </a>
     </div>
 
-    {% if documents %}
-    <div class="d-flex flex-column gap-3">
-      {% for doc in documents %}
-      <div class="doc-card bg-white rounded-4 border p-4 d-flex flex-column flex-md-row align-items-md-center gap-3"
-        data-aos="fade-up">
-        <div class="doc-icon-box rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
-          style="width: 56px; height: 56px; font-size: 1.7rem;
-          {% if doc.file_type == 'word' %}background: #e8f0fe; color: #2b579a;
-          {% elif doc.file_type == 'pdf' %}background: #fdecea; color: #d32f2f;
-          {% elif doc.file_type == 'excel' %}background: #e6f4ea; color: #217346;
-          {% elif doc.file_type == 'powerpoint' %}background: #fdecea; color: #d24726;
-          {% elif doc.file_type == 'image' %}background: #f0effe; color: #6366f1;
-          {% elif doc.file_type == 'archive' %}background: #fef9e7; color: #f59e0b;
-          {% elif doc.file_type == 'link' %}background: #e0f0ff; color: #2563eb;
-          {% else %}background: #f1f5f9; color: #64748b;{% endif %}">
-          {% if doc.file_type == 'word' %}
-          <i class="bi bi-file-earmark-word-fill"></i>
-          {% elif doc.file_type == 'pdf' %}
-          <i class="bi bi-file-earmark-pdf-fill"></i>
-          {% elif doc.file_type == 'excel' %}
-          <i class="bi bi-file-earmark-excel-fill"></i>
-          {% elif doc.file_type == 'powerpoint' %}
-          <i class="bi bi-file-earmark-ppt-fill"></i>
-          {% elif doc.file_type == 'image' %}
-          <i class="bi bi-file-earmark-image-fill"></i>
-          {% elif doc.file_type == 'archive' %}
-          <i class="bi bi-file-earmark-zip-fill"></i>
-          {% elif doc.file_type == 'link' %}
-          <i class="bi bi-link-45deg"></i>
-          {% else %}
-          <i class="bi bi-file-earmark-fill"></i>
-          {% endif %}
-        </div>
-        <div class="flex-grow-1">
-          <h5 class="fw-bold text-dark mb-1" style="font-size: 1rem;">{{ doc.title }}</h5>
-          {% if doc.description %}
-          <p class="text-muted mb-1" style="font-size: 0.88rem; line-height: 1.4;">{{ doc.description }}</p>
-          {% endif %}
-          <small class="text-muted" style="font-size: 0.8rem;">
-            <i class="bi bi-calendar3 me-1"></i>{{ doc.created_at|date:"d.m.Y" }}
-          </small>
-        </div>
-        <div class="flex-shrink-0">
-          {% if doc.file %}
-          <a href="{{ doc.file.url }}" target="_blank" class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm" download>
-            <i class="bi bi-cloud-arrow-down me-1"></i> Жүктеу
-          </a>
-          {% elif doc.link %}
-          <a href="{{ doc.link }}" target="_blank" rel="noopener noreferrer"
-            class="btn btn-outline-primary btn-sm rounded-pill px-4 shadow-sm">
-            <i class="bi bi-box-arrow-up-right me-1"></i> Ашу
-          </a>
-          {% endif %}
+    {% for category in categories %}
+    <div class="att-block{% if category.is_open %} is-open{% endif %}" id="att-block-{{ category.pk }}"
+      data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}00">
+
+      <button type="button" class="att-cat-btn" id="att-btn-{{ category.pk }}"
+        aria-expanded="{% if category.is_open %}true{% else %}false{% endif %}"
+        aria-controls="att-panel-{{ category.pk }}">
+        <span class="att-cat-name">{{ category.name }}</span>
+        <span class="att-cat-meta">{{ category.documents.count }} құжат</span>
+        <i class="bi bi-chevron-down att-cat-arrow" aria-hidden="true"></i>
+      </button>
+
+      <div class="att-panel" id="att-panel-{{ category.pk }}" role="region"
+        aria-labelledby="att-btn-{{ category.pk }}">
+        <div class="att-panel-inner">
+          <div class="att-table-wrap">
+            <table class="att-table">
+              <thead>
+                <tr>
+                  <th class="att-col-num">№</th>
+                  <th>Құжаттар атауы</th>
+                  <th class="att-col-action">Файлды қарау</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for doc in category.documents.all %}
+                <tr>
+                  <td class="att-col-num">{% if doc.order %}{{ doc.order }}{% else %}{{ forloop.counter }}{% endif %}</td>
+                  <td class="att-col-title">
+                    {{ doc.title }}
+                    {% if doc.description %}
+                    <small class="d-block text-muted fw-normal mt-1">{{ doc.description }}</small>
+                    {% endif %}
+                  </td>
+                  <td class="att-col-action">
+                    {% if doc.file or doc.link %}
+                    <a href="{{ doc.download_url }}" target="_blank" rel="noopener noreferrer"
+                      class="att-open-btn" title="{{ doc.title }}">
+                      <i class="bi bi-eye me-1"></i> Ашу
+                    </a>
+                    {% else %}
+                    <span class="text-muted small">Файл жоқ</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="3" class="att-empty">Бұл санатта құжаттар жоқ</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-      {% endfor %}
+
     </div>
-    {% else %}
+    {% empty %}
+
     <div class="empty-state" data-aos="fade-up">
-      <i class="bi bi-file-earmark-text"></i>
-      <h4>Құжаттар жоқ</h4>
-      <p>Бұл оқу жылына құжаттар жақын арада қосылады</p>
+      <i class="bi bi-folder2-open"></i>
+      <h4>Санаттар жоқ</h4>
+      <p>Санаттар админкадан қосылады</p>
     </div>
-    {% endif %}
+
+    {% endfor %}
+
   </div>
 </section>
 
-<style>
-  .doc-card {
-    transition: all 0.25s ease;
-  }
+{% endblock %}
 
-  .doc-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.07) !important;
-    border-color: rgba(37, 99, 235, 0.25) !important;
-  }
-</style>
+{% block extra_js %}
+<script>
+  (function () {
+    var blocks = document.querySelectorAll('.att-block');
 
+    blocks.forEach(function (block) {
+      var btn = block.querySelector('.att-cat-btn');
+      var panel = block.querySelector('.att-panel');
+      if (!btn || !panel) return;
+
+      var openState = btn.getAttribute('aria-expanded') === 'true';
+      block.classList.toggle('is-open', openState);
+      panel.style.maxHeight = openState ? 'none' : '0px';
+
+      btn.addEventListener('click', function () {
+        var isOpen = btn.getAttribute('aria-expanded') === 'true';
+
+        blocks.forEach(function (other) {
+          if (other === block) return;
+          var otherBtn = other.querySelector('.att-cat-btn');
+          var otherPanel = other.querySelector('.att-panel');
+          if (!otherBtn || !otherPanel || otherBtn.getAttribute('aria-expanded') !== 'true') return;
+          otherBtn.setAttribute('aria-expanded', 'false');
+          other.classList.remove('is-open');
+          otherPanel.style.maxHeight = otherPanel.scrollHeight + 'px';
+          requestAnimationFrame(function () {
+            otherPanel.style.maxHeight = '0px';
+          });
+        });
+
+        btn.setAttribute('aria-expanded', String(!isOpen));
+        block.classList.toggle('is-open', !isOpen);
+
+        if (isOpen) {
+          panel.style.maxHeight = panel.scrollHeight + 'px';
+          requestAnimationFrame(function () {
+            panel.style.maxHeight = '0px';
+          });
+        } else {
+          panel.style.maxHeight = panel.scrollHeight + 'px';
+          panel.addEventListener('transitionend', function onEnd(event) {
+            if (event.propertyName !== 'max-height') return;
+            if (btn.getAttribute('aria-expanded') === 'true') panel.style.maxHeight = 'none';
+            panel.removeEventListener('transitionend', onEnd);
+          });
+        }
+      });
+    });
+
+    window.addEventListener('resize', function () {
+      blocks.forEach(function (block) {
+        var btn = block.querySelector('.att-cat-btn');
+        var panel = block.querySelector('.att-panel');
+        if (!btn || !panel) return;
+        if (btn.getAttribute('aria-expanded') === 'true') panel.style.maxHeight = 'none';
+      });
+    });
+  })();
+</script>
 {% endblock %}

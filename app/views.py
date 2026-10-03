@@ -111,7 +111,10 @@ def parents_meeting(request):
 def attestation(request):
     """Аттестация — оқу жылдары тізімі"""
     years = AttestationYear.objects.filter(is_active=True).annotate(
-        documents_count=Count('documents')
+        documents_count=Count(
+            'categories__documents',
+            filter=Q(categories__is_active=True),
+        )
     )
     context = {
         'years': years,
@@ -120,12 +123,16 @@ def attestation(request):
 
 
 def attestation_year(request, slug):
-    """Аттестация — нақты оқу жылының құжаттары"""
+    """Аттестация — санаттар (аккордеон) және олардың құжаттары"""
     year = get_object_or_404(AttestationYear, slug=slug, is_active=True)
-    documents = year.documents.all()
+    categories = (
+        year.categories
+        .filter(is_active=True)
+        .prefetch_related('documents')
+    )
     context = {
         'year': year,
-        'documents': documents,
+        'categories': categories,
     }
     return render(request, 'attestation_year.html', context)
 

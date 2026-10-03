@@ -12,7 +12,7 @@ from .models import (
     ParentsMeetingItem,
     ZhylJospar, IsShara, AskhanaItem,
     PedQoldau, IshkiTartip, Profilaktika, Parlament, AdalUrpaq, ZhasUlan,
-    AttestationYear, AttestationDocument,
+    AttestationYear, AttestationCategory, AttestationDocument,
 )
 
 admin.site.site_header = 'Talant No1 Mektep'
@@ -516,18 +516,47 @@ class ZhasUlanAdmin(TarbieFullItemAdmin):
 class AttestationDocumentInline(admin.TabularInline):
     model = AttestationDocument
     extra = 1
-    fields = ('title', 'description', 'file', 'link', 'order')
+    fields = ('order', 'title', 'file', 'link')
     ordering = ('order', '-created_at')
+    verbose_name = 'Qyzmet'
+    verbose_name_plural = 'Qyzmetter'
 
 
 @admin.register(AttestationYear)
 class AttestationYearAdmin(admin.ModelAdmin):
-    list_display = ('title', 'document_count', 'order', 'is_active')
+    list_display = ('title', 'category_count', 'document_count', 'order', 'is_active')
     list_editable = ('order', 'is_active')
     prepopulated_fields = {'slug': ('title',)}
     fieldsets = (
         ('Negizgi aqparat', {
             'fields': ('title', 'slug', 'order', 'is_active'),
+        }),
+    )
+
+    @admin.display(description='Sanattar sany')
+    def category_count(self, obj):
+        return obj.categories.count()
+
+    @admin.display(description='Qyzmetter sany')
+    def document_count(self, obj):
+        return AttestationDocument.objects.filter(category__year=obj).count()
+
+
+@admin.register(AttestationCategory)
+class AttestationCategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'year', 'document_count', 'order', 'is_open', 'is_active')
+    list_display_links = ('name',)
+    list_editable = ('order', 'is_open', 'is_active')
+    list_filter = ('year', 'is_active')
+    search_fields = ('name',)
+    fieldsets = (
+        ('Negizgi aqparat', {
+            'fields': ('name', 'year', 'order'),
+        }),
+        ('Baptaular', {
+            'fields': ('is_open', 'is_active'),
+            'classes': ('collapse',),
+            'description': '«Ashыq kuyinde» — bel beti ashylganda ushul blok tuldegi kuyde bolady.',
         }),
     )
     inlines = [AttestationDocumentInline]
@@ -539,20 +568,24 @@ class AttestationYearAdmin(admin.ModelAdmin):
 
 @admin.register(AttestationDocument)
 class AttestationDocumentAdmin(admin.ModelAdmin):
-    list_display = ('title', 'year', 'file_type', 'order', 'created_at')
+    list_display = ('order', 'title', 'category', 'year_title', 'file_type', 'created_at')
     list_display_links = ('title',)
     list_editable = ('order',)
-    list_filter = ('year',)
+    list_filter = ('category', 'category__year')
     search_fields = ('title', 'description')
     fieldsets = (
         ('Negizgi aqparat', {
-            'fields': ('title', 'year', 'description', 'order'),
+            'fields': ('order', 'title', 'category', 'description'),
         }),
         ('Fayl nemese silteme', {
             'fields': ('file', 'link'),
             'description': 'Fayl yukteiniz НЕМЕСЕ Google Drive siltemesin beriniz.',
         }),
     )
+
+    @admin.display(description='Oku zhyl')
+    def year_title(self, obj):
+        return obj.category.year.title
 
     @admin.display(description='Fayl turi')
     def file_type(self, obj):
