@@ -1,0 +1,419 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Өдістемелік бірлестік жетекшілері — Talant №1{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* ─── ULTRA PREMIUM TEACHERS LIST STYLES ─── */
+  :root {
+    --page-bg: #0b1120;
+    --card-bg: rgba(255, 255, 255, 0.03);
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .teachers-wrapper {
+    background-color: var(--page-bg);
+    color: #fff;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .page-header {
+    background: radial-gradient(circle at 50% -20%, #1e293b 0%, #0b1120 70%);
+    padding: 160px 0 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .page-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.2;
+    z-index: 1;
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(0,0,0,0) 70%);
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .premium-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+    padding: 8px 24px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    backdrop-filter: blur(12px);
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    position: relative;
+    z-index: 2;
+  }
+
+  .premium-badge i { color: #60a5fa; }
+
+  .page-header-title {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    color: #fff;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 2;
+  }
+  .page-header-title span {
+    background: linear-gradient(135deg, #60a5fa 0%, #c084fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .page-header-desc {
+    color: #94a3b8;
+    font-size: 1.15rem;
+    position: relative;
+    z-index: 2;
+    max-width: 500px;
+  }
+
+  .breadcrumb-item a { color: rgba(255,255,255,0.6); text-decoration: none; }
+  .breadcrumb-item.active { color: #60a5fa; }
+  .breadcrumb-item + .breadcrumb-item::before { color: rgba(255,255,255,0.4); }
+
+  /* Teacher Cards */
+  .section-padding { padding: 80px 0 120px; position: relative; z-index: 2; }
+  
+  .teacher-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 28px;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    height: 100%;
+    position: relative;
+  }
+
+  .teacher-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 28px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .teacher-card:hover {
+    transform: translateY(-16px) scale(1.02);
+    border-color: rgba(96,165,250,0.4);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 40px rgba(59,130,246,0.2);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .teacher-img-wrap {
+    height: 320px;
+    overflow: hidden;
+    background: #1e293b;
+    position: relative;
+    border-radius: 28px 28px 0 0;
+    clip-path: inset(0 0 0 0 round 28px 28px 0 0);
+  }
+  .teacher-img-wrap img {
+    width: 100%; height: 100%; object-fit: cover; object-position: top;
+    filter: brightness(0.9);
+    transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.8s;
+  }
+  .teacher-card:hover .teacher-img-wrap img {
+    transform: scale(1.1);
+    filter: brightness(1.05);
+  }
+
+  .teacher-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(11, 17, 32, 0.95) 0%, rgba(11, 17, 32, 0.2) 60%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .teacher-card:hover .teacher-overlay {
+    opacity: 1;
+  }
+
+  .teacher-view-btn {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transform: translateY(40px) scale(0.8);
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .teacher-card:hover .teacher-view-btn {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+
+  .teacher-info {
+    padding: 32px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .teacher-info h5 {
+    color: #f8fafc;
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+    line-height: 1.4;
+    transition: color 0.3s;
+  }
+  .teacher-card:hover .teacher-info h5 {
+    color: #60a5fa;
+  }
+  .teacher-info p {
+    color: #94a3b8;
+    margin-bottom: 6px;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .teacher-info p i {
+    color: #60a5fa;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 120px 20px;
+    background: rgba(255,255,255,0.02);
+    border: 1px dashed rgba(255,255,255,0.1);
+    border-radius: 32px;
+    backdrop-filter: blur(10px);
+  }
+  .empty-state i {
+    font-size: 5rem;
+    background: linear-gradient(135deg, #60a5fa, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 24px;
+  }
+  .empty-state h4 { color: #f8fafc; font-weight: 800; margin-bottom: 12px; }
+  .empty-state p { color: #94a3b8; font-size: 1.1rem; }
+
+  /* Documents */
+  .docs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+  }
+
+  .doc-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 28px;
+    backdrop-filter: blur(10px);
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .doc-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(96,165,250,0.4);
+    box-shadow: 0 24px 48px rgba(0,0,0,0.45);
+  }
+
+  .doc-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: rgba(16, 150, 72, 0.15);
+    border: 1px solid rgba(16, 150, 72, 0.35);
+    color: #22c55e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    flex-shrink: 0;
+  }
+
+  .doc-card h5 {
+    color: #f8fafc;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .doc-card p {
+    color: #94a3b8;
+    font-size: 0.92rem;
+    margin: 0;
+    flex-grow: 1;
+  }
+
+  .btn-open {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    align-self: flex-start;
+    background-color: #109648;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 26px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .btn-open:hover {
+    background-color: #0d7d3c;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(16, 150, 72, 0.4);
+  }
+
+  .section-title {
+    color: #fff;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 800;
+    margin-bottom: 32px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="teachers-wrapper">
+
+  <!-- ─── PAGE HEADER ──────────────────────────────────────── -->
+  <section class="page-header">
+    <div class="hero-glow"></div>
+    <div class="container position-relative">
+      
+      <nav aria-label="breadcrumb" data-aos="fade-down" data-aos-delay="50" style="margin-bottom: 10px;">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="{% url 'app:index' %}">Басты бет</a></li>
+          <li class="breadcrumb-item active">Әдістемелік бірлестік жетекшілері</li>
+        </ol>
+      </nav>
+      
+      <h1 class="page-header-title" data-aos="fade-up" data-aos-delay="100">
+         Әдістемелік бірлестік <span>жетекшілері</span>
+      </h1>
+      <p class="page-header-desc" data-aos="fade-up" data-aos-delay="200">
+        Бірлестік жетекшілері тізімі
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── TEACHERS GRID ────────────────────────────────────── -->
+  <section class="section-padding">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Мұғалімдер</h2>
+
+      {% if teachers %}
+      <div class="row g-4 g-lg-5">
+        {% for teacher in teachers %}
+        <div class="col-sm-6 col-lg-4 col-xl-3" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}0">
+          <a href="{% url 'app:teacher_detail' teacher.slug %}" class="teacher-card">
+
+            <div class="teacher-img-wrap">
+              {% if teacher.photo %}
+              <img src="{{ teacher.photo.url }}" alt="{{ teacher.name }}">
+              {% else %}
+              <div class="w-100 h-100 d-flex align-items-center justify-content-center" style="background: #1e293b;">
+                <i class="bi bi-person-fill text-muted" style="font-size: 5rem;"></i>
+              </div>
+              {% endif %}
+              
+              <div class="teacher-overlay">
+                <div class="teacher-view-btn">
+                  <i class="bi bi-arrow-right-short" style="font-size: 2rem;"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="teacher-info">
+              <h5>{{ teacher.name }}</h5>
+              {% if teacher.subject %}
+              <p><i class="bi bi-briefcase"></i> {{ teacher.subject }}</p>
+              {% endif %}
+              {% if teacher.experience %}
+              <p><i class="bi bi-clock-history"></i> {{ teacher.experience }} жыл тәжірибе</p>
+              {% endif %}
+            </div>
+
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+
+      {% if documents %}
+      <div class="mt-5">
+        <div class="docs-grid">
+          {% for doc in documents %}
+          <div class="doc-card" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}0">
+            <div class="doc-icon"><i class="bi bi-file-earmark-pdf"></i></div>
+            <h5>{{ doc.title }}</h5>
+            {% if doc.description %}
+            <p style="white-space: pre-wrap;">{{ doc.description }}</p>
+            {% endif %}
+            {% if doc.has_file %}
+            <a href="{{ doc.file_url }}" target="_blank" rel="noopener noreferrer" class="btn-open">
+              <i class="bi bi-box-arrow-up-right"></i> Ашу
+            </a>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+      {% else %}
+      <div class="empty-state" data-aos="fade-up">
+        <i class="bi bi-person-badge"></i>
+        <h4>Персонал тізімі бос</h4>
+        <p>Ақпарат жақын арада толықтырылады.</p>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+</div>
+{% endblock %}

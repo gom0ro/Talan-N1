@@ -11,7 +11,8 @@ from .models import (
     MethodoItem, MethodoCategory, ZhetistikItem,
     TimetableItem, TarbieItem, BastauyshItem,
     ParentsMeetingItem,
-    AttestationYear, AttestationCategory, AttestationNode
+    AttestationYear, AttestationCategory, AttestationNode,
+ZhetekshilerDocument
 )
 from .forms import ContactForm
 
@@ -79,7 +80,12 @@ def sanat(request):
 
 
 def zhetekshiler(request):
-    return methodo_page(request, 'zhetekshiler', 'about/zhetekshiler.html')
+    teachers = Teacher.objects.all()
+    documents = ZhetekshilerDocument.objects.all()
+    return render(request, 'zhetekshiler_list.html', {
+        'teachers': teachers,
+        'documents': documents,
+    })
 
 
 def zhetistik(request):

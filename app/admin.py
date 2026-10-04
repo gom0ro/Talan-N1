@@ -14,6 +14,7 @@ from .models import (
     ZhylJospar, IsShara, AskhanaItem,
     PedQoldau, IshkiTartip, Profilaktika, Parlament, AdalUrpaq, ZhasUlan,
     AttestationYear, AttestationCategory, AttestationNode,
+    ZhetekshilerDocument,
 )
 
 admin.site.site_header = 'Talant No1 Mektep'
@@ -358,6 +359,34 @@ class SanatItemAdmin(BaseMethodoItemAdmin):
 class ZhetekshilerItemAdmin(BaseMethodoItemAdmin):
     category_slug = 'zhetekshiler'
     category_name = 'Odistemeilik birlestik zhetekshileri'
+
+
+class ZhetekshilerDocumentForm(forms.ModelForm):
+    """Тек PDF қабылдайтын форма"""
+
+    class Meta:
+        model = ZhetekshilerDocument
+        fields = ['title', 'description', 'file', 'order']
+        widgets = {
+            'file': forms.ClearableFileInput(attrs={'accept': 'application/pdf'}),
+        }
+
+
+@admin.register(ZhetekshilerDocument)
+class ZhetekshilerDocumentAdmin(admin.ModelAdmin):
+    form = ZhetekshilerDocumentForm
+    list_display = ('title', 'order', 'file', 'created_at')
+    list_editable = ('order',)
+    search_fields = ('title', 'description')
+    fieldsets = (
+        ('Negizgi aqparat', {
+            'fields': ('title', 'description', 'order'),
+        }),
+        ('PDF qujzat', {
+            'fields': ('file',),
+            'description': 'Tek PDF formati, olshemi 50 MB-tan aspai du.',
+        }),
+    )
 
 
 # ── Zhetistikter ──────────────────────────────────────────────

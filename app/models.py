@@ -1124,6 +1124,59 @@ class AttestationDocument(models.Model):
         verbose_name_plural = 'Аттестация құжаттары'
         ordering = ['order', '-created_at']
 
+
+def zhetekshiler_upload_to(instance, filename):
+    """Жетекшілер құжаты: zhetekshiler/doc_<stamp>_<uuid>.pdf"""
+    ext = os.path.splitext(filename)[1].lower() or '.pdf'
+    stamp = int(time.time())
+    unique = uuid.uuid4().hex[:8]
+    return f'zhetekshiler/doc_{stamp}_{unique}{ext}'
+
+
+class ZhetekshilerDocument(models.Model):
+    """Әдістемелік бірлестік жетекшілерінің PDF құжаттары"""
+
+    title = models.CharField('Атауы', max_length=255)
+    description = models.TextField('Сипаттама', blank=True)
+    file = models.FileField(
+        'PDF файлы', upload_to=zhetekshiler_upload_to,
+        validators=[validate_pdf_file], blank=True, null=True,
+        help_text='Тек PDF форматы, өлшемі 50 МБ-тан аспайды.'
+    )
+    order = models.PositiveIntegerField('Реттілік', default=0)
+    created_at = models.DateTimeField('Қосылған уақыты', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Жетекшілер құжаты (PDF)'
+        verbose_name_plural = 'Жетекшілер құжаттары (PDF)'
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def file_url(self):
+        """Клиентке арналған файл сілтемесі"""
+        if not self.file:
+            return ''
+        try:
+            return self.file.url
+        except ValueError:
+            return ''
+
+    @property
+    def has_file(self):
+        return bool(self.file)
+
+    def to_dict(self):
+        return {
+            'id': self.pk,
+            'title': self.title,
+            'description': self.description,
+            'file_url': self.file_url,
+            'has_file': self.has_file,
+        }
+
     def __str__(self):
         return self.title
 
