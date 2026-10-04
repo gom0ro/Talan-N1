@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ item.title }} — Talant №1{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* ─── ULTRA PREMIUM TEACHER DETAIL STYLES ─── */
+  :root {
+    --page-bg: #0b1120;
+    --card-bg: rgba(255, 255, 255, 0.03);
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .detail-wrapper {
+    background-color: var(--page-bg);
+    color: #fff;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .page-header {
+    background: radial-gradient(circle at 50% -20%, #1e293b 0%, #0b1120 70%);
+    padding: 120px 0 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .page-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.2;
+    z-index: 1;
+  }
+
+  .breadcrumb-item a { color: rgba(255,255,255,0.6); text-decoration: none; }
+  .breadcrumb-item.active { color: #60a5fa; }
+  .breadcrumb-item + .breadcrumb-item::before { color: rgba(255,255,255,0.4); }
+
+  .section-padding { padding: 60px 0 100px; position: relative; z-index: 2; }
+
+  /* Teacher Profile Frame */
+  .profile-frame {
+    position: relative;
+    border-radius: 32px;
+    padding: 12px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+    backdrop-filter: blur(20px);
+    box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+    margin-bottom: 24px;
+  }
+
+  .profile-photo {
+    border-radius: 24px;
+    overflow: hidden;
+    position: relative;
+    background: #1e293b;
+    aspect-ratio: 3/4;
+  }
+
+  .profile-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    filter: brightness(0.95);
+  }
+
+  .placeholder-photo {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8rem; color: #475569;
+  }
+
+  /* Text Info */
+  .teacher-name {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 20px;
+    line-height: 1.1;
+  }
+
+  .teacher-desc-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 40px;
+    backdrop-filter: blur(10px);
+    margin-bottom: 40px;
+  }
+
+  .teacher-desc-card h4 {
+    color: #f8fafc;
+    font-weight: 800;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+  }
+
+  .teacher-desc-card p {
+    color: #cbd5e1;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+  .teacher-desc-card p:last-child { margin-bottom: 0; }
+
+  .btn-premium-back {
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 50px;
+    padding: 12px 28px;
+    font-weight: 600;
+    backdrop-filter: blur(8px);
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .btn-premium-back:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: #fff;
+    color: #fff;
+    transform: translateX(-5px);
+  }
+
+  .btn-document {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 28px;
+    font-weight: 600;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+    margin-bottom: 24px;
+  }
+  .btn-document:hover {
+    transform: translateY(-3px);
+    color: #fff;
+    box-shadow: 0 12px 25px rgba(59, 130, 246, 0.6);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detail-wrapper">
+
+  <!-- ─── PAGE HEADER ──────────────────────────────────────── -->
+  <section class="page-header">
+    <div class="container position-relative" style="z-index:2;">
+      <nav aria-label="breadcrumb" data-aos="fade-down">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="{% url 'app:index' %}">Басты бет</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'app:zhetekshiler' %}">Әдістемелік бірлестік жетекшілері</a></li>
+          <li class="breadcrumb-item active">{{ item.title }}</li>
+        </ol>
+      </nav>
+    </div>
+  </section>
+
+  <!-- ─── TEACHER DETAIL ───────────────────────────────────── -->
+  <section class="section-padding">
+    <div class="container">
+      <div class="row g-5 align-items-start">
+        
+        <!-- Left: Photo Frame -->
+        <div class="col-lg-4 col-md-5" data-aos="fade-right">
+          {% if item.image %}
+          <div class="profile-frame">
+            <div class="profile-photo">
+              <img src="{{ item.image.url }}" alt="{{ item.title }}">
+            </div>
+          </div>
+          {% endif %}
+          
+          {% if item.image2 %}
+          <div class="profile-frame">
+            <div class="profile-photo">
+              <img src="{{ item.image2.url }}" alt="{{ item.title }}">
+            </div>
+          </div>
+          {% endif %}
+
+          {% if not item.image and not item.image2 %}
+          <div class="profile-frame">
+            <div class="profile-photo">
+              <div class="placeholder-photo">
+                <i class="bi bi-person-fill"></i>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Right: Content -->
+        <div class="col-lg-8 col-md-7" data-aos="fade-left">
+          <h1 class="teacher-name">{{ item.title }}</h1>
+          
+          {% if item.description %}
+          <div class="teacher-desc-card">
+            <h4>Жалпы ақпарат</h4>
+            {{ item.description|linebreaks }}
+          </div>
+          {% endif %}
+
+          {% if item.file %}
+          <a href="{{ item.file.url }}" target="_blank" class="btn-document">
+            <i class="bi bi-file-earmark-pdf" style="font-size: 1.2rem;"></i> Құжатты ашу / Жүктеу
+          </a>
+          {% endif %}
+
+          <a href="{% url 'app:zhetekshiler' %}" class="btn-premium-back">
+            <i class="bi bi-arrow-left"></i> Тізімге оралу
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</div>
+{% endblock %}

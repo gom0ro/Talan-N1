@@ -348,53 +348,43 @@
     <div class="container">
       <h2 class="section-title" data-aos="fade-up">Мұғалімдер</h2>
 
-            {% if teachers or documents %}
-
-      {% if teachers %}
-      <h2 class="section-title" data-aos="fade-up">Мұғалімдер</h2>
+      {% if items %}
       <div class="row g-4 g-lg-5">
-        {% for teacher in teachers %}
+        {% for item in items %}
         <div class="col-sm-6 col-lg-4 col-xl-3" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}0">
-          <a href="{% url 'app:teacher_detail' teacher.slug %}" class="teacher-card">
+          <a href="{% url 'app:zhetekshiler_detail' item.id %}" class="teacher-card">
+
             <div class="teacher-img-wrap">
-              {% if teacher.photo %}
-              <img src="{{ teacher.photo.url }}" alt="{{ teacher.name }}">
+              {% if item.image %}
+              <img src="{{ item.image.url }}" alt="{{ item.title }}">
+              {% elif item.image2 %}
+              <img src="{{ item.image2.url }}" alt="{{ item.title }}">
               {% else %}
               <div class="w-100 h-100 d-flex align-items-center justify-content-center" style="background: #1e293b;">
                 <i class="bi bi-person-fill text-muted" style="font-size: 5rem;"></i>
               </div>
               {% endif %}
+              
               <div class="teacher-overlay">
-                <div class="teacher-view-btn"><i class="bi bi-arrow-right-short" style="font-size: 2rem;"></i></div>
+                <div class="teacher-view-btn">
+                  <i class="bi bi-arrow-right-short" style="font-size: 2rem;"></i>
+                </div>
               </div>
             </div>
+
             <div class="teacher-info">
-              <h5>{{ teacher.name }}</h5>
-              {% if teacher.subject %}<p><i class="bi bi-briefcase"></i> {{ teacher.subject }}</p>{% endif %}
-              {% if teacher.experience %}<p><i class="bi bi-clock-history"></i> {{ teacher.experience }}   </p>{% endif %}
+              <h5>{{ item.title }}</h5>
+              {% if item.description %}
+              <p style="font-size: 0.9rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; white-space: normal;">
+                <i class="bi bi-info-circle"></i> {{ item.description }}
+              </p>
+              {% endif %}
             </div>
+
           </a>
         </div>
         {% endfor %}
       </div>
-      {% endif %}
-
-      {% if documents %}
-      <div class="mt-5">
-        <h2 class="section-title" data-aos="fade-up">Құжаттар</h2>
-        <div class="docs-grid">
-          {% for doc in documents %}
-          <div class="doc-card" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}0">
-            <div class="doc-icon"><i class="bi bi-file-earmark-pdf"></i></div>
-            <h5>{{ doc.title }}</h5>
-            {% if doc.description %}<p style="white-space: pre-wrap;">{{ doc.description }}</p>{% endif %}
-            {% if doc.has_file %}<a href="{{ doc.file_url }}" target="_blank" rel="noopener noreferrer" class="btn-open"><i class="bi bi-box-arrow-up-right"></i> Ашу</a>{% endif %}
-          </div>
-          {% endfor %}
-        </div>
-      </div>
-      {% endif %}
-
       {% else %}
       <div class="empty-state" data-aos="fade-up">
         <i class="bi bi-person-badge"></i>
@@ -402,21 +392,9 @@
         <p>Ақпарат жақын арада қосылады.</p>
       </div>
       {% endif %}
+
     </div>
   </section>
 
 </div>
-      {% if items %}
-      <div class="mt-5">
-        <h2 class="section-title" data-aos="fade-up">Әдістемелік материалдар</h2>
-        <div class="d-flex flex-column gap-4">
-          {% for item in items %}
-          <div class="bg-white rounded-4 border p-4 shadow-sm text-dark" data-aos="fade-up">
-            <h4 class="fw-bold mb-2">{{ item.title }}</h4>
-            {% if item.description %}<p class="text-muted mb-3" style="white-space: pre-wrap;">{{ item.description }}</p>{% endif %}
-          </div>
-          {% endfor %}
-        </div>
-      </div>
-      {% endif %}
 {% endblock %}

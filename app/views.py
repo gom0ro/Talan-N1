@@ -90,6 +90,11 @@ def zhetekshiler(request):
     })
 
 
+def zhetekshiler_detail(request, item_id):
+    item = get_object_or_404(ZhetekshilerItem, id=item_id)
+    return render(request, 'zhetekshiler_detail.html', {'item': item})
+
+
 def zhetistik(request):
     items = ZhetistikItem.objects.all().order_by('order', '-created_at')
     return render(request, 'about/zhetistik.html', {'items': items})

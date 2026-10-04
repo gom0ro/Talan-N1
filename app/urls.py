@@ -52,6 +52,7 @@ urlpatterns = [
     path('method/magistr/', views.magistr, name='magistr'),
     path('method/sanat/', views.sanat, name='sanat'),
     path('method/zhetekshiler/', views.zhetekshiler, name='zhetekshiler'),
+    path('method/zhetekshiler/<int:item_id>/', views.zhetekshiler_detail, name='zhetekshiler_detail'),
     path('method/zhetistik/', views.zhetistik, name='zhetistik'),
     path('method/timetable-511/', views.timetable_511, name='timetable_511'),
     path('method/tarbie-orynbasary/', views.tarbie_orynbasary, name='tarbie_orynbasary'),
