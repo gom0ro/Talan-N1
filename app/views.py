@@ -8,7 +8,7 @@ from .models import (
     News, NewsCategory, Teacher, GalleryAlbum,
     DocumentCategory, Document, Page, Slider, Club,
     Article, InstagramReel, LibraryCategory, LibraryBook,
-    MethodoItem, MethodoCategory, ZhetistikItem,
+    MethodoItem, MethodoCategory, ZhetistikItem, ZhetekshilerItem,
     TimetableItem, TarbieItem, BastauyshItem,
     ParentsMeetingItem,
     AttestationYear, AttestationCategory, AttestationNode,
@@ -82,9 +82,11 @@ def sanat(request):
 def zhetekshiler(request):
     teachers = Teacher.objects.all()
     documents = ZhetekshilerDocument.objects.all()
+    items = ZhetekshilerItem.objects.all().order_by('order', '-created_at')
     return render(request, 'zhetekshiler_list.html', {
         'teachers': teachers,
         'documents': documents,
+        'items': items,
     })
 
 
