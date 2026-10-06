@@ -101,8 +101,19 @@ class DocumentCategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
 
 
+class DocumentForm(forms.ModelForm):
+    """Тек PDF қабылдайтын форма"""
+    class Meta:
+        model = Document
+        fields = ['title', 'description', 'category', 'file', 'link']
+        widgets = {
+            'file': forms.ClearableFileInput(attrs={'accept': 'application/pdf'}),
+        }
+
+
 @admin.register(Document)
 class DocumentAdmin(admin.ModelAdmin):
+    form = DocumentForm
     list_display = ('title', 'category', 'uploaded_at')
     list_filter = ('category',)
     search_fields = ('title', 'description')

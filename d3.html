@@ -1,0 +1,757 @@
+
+
+<!DOCTYPE html>
+<html lang="kk">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Talant №1 — Шымкент қаласындағы заманауи білім беру мекемесі">
+  <title>Өдістемелік бірлестік жетекшілері — Talant №1</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- AOS Animations -->
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/static/css/style.css?v=17">
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="/static/img/%D0%A2%D0%B0%D0%BB%D0%B0%D0%BD%D1%82%20%D0%BA%D0%BE%D0%BF%D0%B8%D1%8F.png?v=new" type="image/x-icon">
+
+  
+<style>
+  /* ─── ULTRA PREMIUM TEACHERS LIST STYLES ─── */
+  :root {
+    --page-bg: #0b1120;
+    --card-bg: rgba(255, 255, 255, 0.03);
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .teachers-wrapper {
+    background-color: var(--page-bg);
+    color: #fff;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .page-header {
+    background: radial-gradient(circle at 50% -20%, #1e293b 0%, #0b1120 70%);
+    padding: 160px 0 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .page-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.2;
+    z-index: 1;
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(0,0,0,0) 70%);
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .premium-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+    padding: 8px 24px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    backdrop-filter: blur(12px);
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    position: relative;
+    z-index: 2;
+  }
+
+  .premium-badge i { color: #60a5fa; }
+
+  .page-header-title {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    color: #fff;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 2;
+  }
+  .page-header-title span {
+    background: linear-gradient(135deg, #60a5fa 0%, #c084fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .page-header-desc {
+    color: #94a3b8;
+    font-size: 1.15rem;
+    position: relative;
+    z-index: 2;
+    max-width: 500px;
+  }
+
+  .breadcrumb-item a { color: rgba(255,255,255,0.6); text-decoration: none; }
+  .breadcrumb-item.active { color: #60a5fa; }
+  .breadcrumb-item + .breadcrumb-item::before { color: rgba(255,255,255,0.4); }
+
+  /* Teacher Cards */
+  .section-padding { padding: 80px 0 120px; position: relative; z-index: 2; }
+  
+  .teacher-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 28px;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    height: 100%;
+    position: relative;
+  }
+
+  .teacher-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 28px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .teacher-card:hover {
+    transform: translateY(-16px) scale(1.02);
+    border-color: rgba(96,165,250,0.4);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 40px rgba(59,130,246,0.2);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .teacher-img-wrap {
+    height: 320px;
+    overflow: hidden;
+    background: #1e293b;
+    position: relative;
+    border-radius: 28px 28px 0 0;
+    clip-path: inset(0 0 0 0 round 28px 28px 0 0);
+  }
+  .teacher-img-wrap img {
+    width: 100%; height: 100%; object-fit: cover; object-position: top;
+    filter: brightness(0.9);
+    transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.8s;
+  }
+  .teacher-card:hover .teacher-img-wrap img {
+    transform: scale(1.1);
+    filter: brightness(1.05);
+  }
+
+  .teacher-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(11, 17, 32, 0.95) 0%, rgba(11, 17, 32, 0.2) 60%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .teacher-card:hover .teacher-overlay {
+    opacity: 1;
+  }
+
+  .teacher-view-btn {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transform: translateY(40px) scale(0.8);
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .teacher-card:hover .teacher-view-btn {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+
+  .teacher-info {
+    padding: 32px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .teacher-info h5 {
+    color: #f8fafc;
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+    line-height: 1.4;
+    transition: color 0.3s;
+  }
+  .teacher-card:hover .teacher-info h5 {
+    color: #60a5fa;
+  }
+  .teacher-info p {
+    color: #94a3b8;
+    margin-bottom: 6px;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .teacher-info p i {
+    color: #60a5fa;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 120px 20px;
+    background: rgba(255,255,255,0.02);
+    border: 1px dashed rgba(255,255,255,0.1);
+    border-radius: 32px;
+    backdrop-filter: blur(10px);
+  }
+  .empty-state i {
+    font-size: 5rem;
+    background: linear-gradient(135deg, #60a5fa, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 24px;
+  }
+  .empty-state h4 { color: #f8fafc; font-weight: 800; margin-bottom: 12px; }
+  .empty-state p { color: #94a3b8; font-size: 1.1rem; }
+
+  /* Documents */
+  .docs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+  }
+
+  .doc-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 28px;
+    backdrop-filter: blur(10px);
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .doc-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(96,165,250,0.4);
+    box-shadow: 0 24px 48px rgba(0,0,0,0.45);
+  }
+
+  .doc-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: rgba(16, 150, 72, 0.15);
+    border: 1px solid rgba(16, 150, 72, 0.35);
+    color: #22c55e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    flex-shrink: 0;
+  }
+
+  .doc-card h5 {
+    color: #f8fafc;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .doc-card p {
+    color: #94a3b8;
+    font-size: 0.92rem;
+    margin: 0;
+    flex-grow: 1;
+  }
+
+  .btn-open {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    align-self: flex-start;
+    background-color: #109648;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 26px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .btn-open:hover {
+    background-color: #0d7d3c;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(16, 150, 72, 0.4);
+  }
+
+  .section-title {
+    color: #fff;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 800;
+    margin-bottom: 32px;
+  }
+</style>
+
+</head>
+
+<body>
+
+  <!-- ─── NAVBAR ────────────────────────────────────────── -->
+  <nav class="navbar navbar-expand-lg fixed-top" id="mainNavbar">
+    <div class="container">
+      <!-- Logo және Brand (сол жақ) -->
+      <a class="navbar-brand d-flex align-items-center" href="/">
+        <span class="brand-text">Talant <strong>№1</strong></span>
+        <img src="/static/img/%D0%A2%D0%B0%D0%BB%D0%B0%D0%BD%D1%82%20%D0%BA%D0%BE%D0%BF%D0%B8%D1%8F.png?v=new" alt="Logo" width="32" height="32" class="ms-2">
+      </a>
+
+      <!-- Мәзір және Байланыс түймелері (оң жақ) -->
+      <div class="navbar-controls">
+        <a class="btn-nav-contact" href="/contact/">
+          <i class="bi bi-envelope"></i>
+          <span>Байланыс</span>
+        </a>
+        <button class="btn-menu-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
+          aria-controls="offcanvasNavbar" aria-label="Мәзір">
+          <div class="hamburger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <span class="menu-text">МӘЗІР</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ─── SIDEBAR MENU (OFFCANVAS) ────────────────────────── -->
+  <div class="offcanvas offcanvas-start sidebar-offcanvas" tabindex="-1" id="offcanvasNavbar"
+    aria-labelledby="offcanvasNavbarLabel">
+    <div class="offcanvas-header border-bottom">
+      <div class="d-flex align-items-center">
+        <img src="/static/img/%D0%A2%D0%B0%D0%BB%D0%B0%D0%BD%D1%82%20%D0%BA%D0%BE%D0%BF%D0%B8%D1%8F.png?v=new" alt="Logo" width="30" height="30" class="me-2">
+        <h5 class="offcanvas-title fw-bold" id="offcanvasNavbarLabel">Шарлау</h5>
+      </div>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+      <!-- Sidebar Search -->
+      <div class="sidebar-search-container">
+        <form action="/news/" method="GET" class="custom-search-group">
+          <input type="text" name="q" class="form-control" placeholder="Іздеу..." aria-label="Search">
+          <button class="btn" type="submit">
+            <i class="bi bi-search"></i>
+          </button>
+        </form>
+      </div>
+
+      <div class="sidebar-nav-list">
+        <!-- МЕКТЕП ТУРАЛЫ -->
+        <div class="sidebar-item has-submenu">
+          <div class="sidebar-link" data-bs-toggle="collapse" data-bs-target="#sub-about">
+            <span><i class="bi bi-info-circle me-2"></i> МЕКТЕП ТУРАЛЫ</span>
+            <i class="bi bi-chevron-down arrow"></i>
+          </div>
+          <div class="collapse" id="sub-about">
+            <ul class="sidebar-submenu">
+              <li><a href="/about/">Ақпарат</a></li>
+              <li><a href="/teachers/">Әкімшілік персонал</a></li>
+              <li><a href="/documents/">Құжаттар</a></li>
+              <li><a href="/about/history/">Мектеп тарихы</a></li>
+              <li><a href="/about/kitapkhana/">Кітапхана</a></li>
+              <li><a href="/about/askhana/">Мектеп асханасы</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="sidebar-item has-submenu">
+          <div class="sidebar-link" data-bs-toggle="collapse" data-bs-target="#sub-method">
+            <span><i class="bi bi-journal-text me-2"></i> ӘДІСТЕМЕЛІК ЖҰМЫСТАР</span>
+            <i class="bi bi-chevron-down arrow"></i>
+          </div>
+          <div class="collapse" id="sub-method">
+            <ul class="sidebar-submenu">
+              <li><a href="/method/magistr/">Педагогика ғылымдарының магистрі</a></li>
+              <li><a href="/method/sanat/">Біліктілік санат</a></li>
+              <li><a href="/method/zhetekshiler/">Әдістемелік бірлестік жетекшілері</a></li>
+              <li><a href="/method/zhetistik/">Жетістік</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- ТӘРБИЕ ЖҰМЫСТАРЫ -->
+        <div class="sidebar-item has-submenu">
+          <div class="sidebar-link" data-bs-toggle="collapse" data-bs-target="#sub-tarbie">
+            <span><i class="bi bi-heart me-2"></i> ТӘРБИЕ ЖҰМЫСТАРЫ</span>
+            <i class="bi bi-chevron-down arrow"></i>
+          </div>
+          <div class="collapse" id="sub-tarbie">
+            <ul class="sidebar-submenu">
+              <li><a href="/tarbie/birtutas/">Біртұтас тәрбие бағыты</a></li>
+              <li><a href="/tarbie/zhospary/">Жылдық жоспар</a></li>
+              <li><a href="/tarbie/sharalar/">Іс-шаралар</a></li>
+              <li><a href="/method/tarbie-orynbasary/">Тәрбие орынбасары</a></li>
+              <li class="border-top mt-2 pt-2"><span class="text-white-50 small px-2">АТА-АНАЛАР</span></li>
+              <li><a href="/tarbie/ata-analar/">Педагогикалық қолдау орталығы</a></li>
+              <li><a href="/parents-meeting/">Ата-аналар жиналысы</a></li>
+              <li><a href="/school-rules/">Мектептің ішкі тәртіп ережелері</a></li>
+              <li><a href="/tarbie/quqyq/">Құқықбұзушылықтың алдын алу</a></li>
+              <li><a href="/tarbie/parlament/">Мектеп парламенті</a></li>
+              <li><a href="/tarbie/adal-urpaq/">Адал ұрпақ</a></li>
+              <li><a href="/tarbie/zhas-ulan/">Жас ұлан</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="sidebar-item">
+          <a href="/articles/medical/" class="sidebar-link">
+            <span><i class="bi bi-heart-pulse me-2"></i> МЕДИЦИНАЛЫҚ ҚЫЗМЕТ</span>
+          </a>
+        </div>
+        <div class="sidebar-item">
+          <a href="/articles/psychology/" class="sidebar-link">
+            <span><i class="bi bi-person-lines-fill me-2"></i> ПСИХОЛОГ ҚЫЗМЕТІ</span>
+          </a>
+        </div>
+        <div class="sidebar-item">
+          <a href="/articles/guardian/" class="sidebar-link">
+            <span><i class="bi bi-people me-2"></i> ҚАМҚОРШЫЛЫҚ КЕҢЕС</span>
+          </a>
+        </div>
+
+        <!-- ЕРЕКШЕ БІЛІМ БЕРУ -->
+        <div class="sidebar-item has-submenu">
+          <div class="sidebar-link" data-bs-toggle="collapse" data-bs-target="#sub-special">
+            <span><i class="bi bi-person-heart me-2"></i> ЕРЕКШЕ БІЛІМ БЕРУ</span>
+            <i class="bi bi-chevron-down arrow"></i>
+          </div>
+          <div class="collapse" id="sub-special">
+            <ul class="sidebar-submenu">
+              <li><a href="/logoped/">Логопед жұмысы</a></li>
+              <li><a href="/logoped-okushy/">Логопедттің оқушылармен жұмысы</a></li>
+              <li><a href="/defektolog/">Дефектолог жұмысы</a></li>
+              <li><a href="/defektolog-okushy/">Дефектологтың оқушылармен жұмысы</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- БАСТАУЫШ -->
+        <div class="sidebar-item has-submenu">
+          <div class="sidebar-link" data-bs-toggle="collapse" data-bs-target="#sub-mad">
+            <span><i class="bi bi-people-fill me-2"></i> БАСТАУЫШ</span>
+            <i class="bi bi-chevron-down arrow"></i>
+          </div>
+          <div class="collapse" id="sub-mad">
+            <ul class="sidebar-submenu">
+              <li class="mb-1">
+                <a href="/method/bastauysh-synyp/" class="fw-semibold" style="color:#7eb8f7;">
+                  <i class="bi bi-book me-1"></i> Бастауыш сынып
+                </a>
+              </li>
+              <li class="border-top mt-1 pt-1"><span class="text-white-50 small px-2">СЫНЫПТАР</span></li>
+              <li><a href="/mad-a/">0 «А» сыныбы</a></li>
+              <li><a href="/mad-ae/">0 «Ә» сыныбы</a></li>
+              <li><a href="/mad-b/">0 «Б» сыныбы</a></li>
+              <li><a href="/mad-v/">0 «В» сыныбы</a></li>
+              <li><a href="/mad-g/">0 «Г» сыныбы</a></li>
+              <li><a href="/mad-f/">0 «F» сыныбы</a></li>
+              <li><a href="/mad-d/">0 «Д» сыныбы</a></li>
+              <li><a href="/mad-e/">0 «Е» сыныбы</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- ҮЙІРМЕЛЕР -->
+        <div class="sidebar-item has-submenu">
+          <div class="sidebar-link" data-bs-toggle="collapse" data-bs-target="#sub-clubs">
+            <span><i class="bi bi-mortarboard me-2"></i> ҚОСЫМША БІЛІМ БЕРУ</span>
+            <i class="bi bi-chevron-down arrow"></i>
+          </div>
+          <div class="collapse" id="sub-clubs">
+            <ul class="sidebar-submenu">
+              
+              <li><span class="text-muted p-2">Үйірмелер жоқ</span></li>
+              
+            </ul>
+          </div>
+        </div>
+
+        <!-- БАСҚАЛАР -->
+        <div class="sidebar-item">
+          <a href="/news/" class="sidebar-link">
+            <span><i class="bi bi-newspaper me-2"></i> ЖАҢАЛЫҚТАР</span>
+          </a>
+        </div>
+        <div class="sidebar-item">
+          <a href="/gallery/" class="sidebar-link">
+            <span><i class="bi bi-images me-2"></i> ГАЛЕРЕЯ</span>
+          </a>
+        </div>
+        <div class="sidebar-item has-submenu">
+          <div class="sidebar-link" data-bs-toggle="collapse" data-bs-target="#sub-students">
+            <span><i class="bi bi-backpack me-2"></i> ОҚУШЫЛАР ҮШІН</span>
+            <i class="bi bi-chevron-down arrow"></i>
+          </div>
+          <div class="collapse" id="sub-students">
+            <ul class="sidebar-submenu">
+              <li><a href="/method/timetable-511/">Сабақ кестесі</a></li>
+              <li><a href="/rules/">Тәртіп ережесі</a></li>
+              <li><a href="/achievements/">Оқушылар жетістіктері</a></li>
+              <li><a href="/career/">Кәсіптік бағдар беру</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="sidebar-item">
+          <a href="/zhaz-2024/" class="sidebar-link">
+            <span><i class="bi bi-sun me-2"></i> ЖАЗ—2026</span>
+          </a>
+        </div>
+        <div class="sidebar-item">
+          <a href="/articles/social/" class="sidebar-link">
+            <span><i class="bi bi-person-heart me-2"></i> ӘЛЕУМЕТТІК ЖҰМЫС</span>
+          </a>
+        </div>
+        <div class="sidebar-item">
+          <a href="/attestation/" class="sidebar-link">
+            <span><i class="bi bi-clipboard-check me-2"></i> АТТЕСТАЦИЯ</span>
+          </a>
+        </div>
+        <div class="sidebar-item border-top pt-3">
+          <a href="/contact/" class="sidebar-link">
+            <span><i class="bi bi-telephone-outbound me-2"></i> БАЙЛАНЫС</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── FLASH MESSAGES ────────────────────────────────── -->
+  
+
+  <!-- ─── MAIN CONTENT ──────────────────────────────────── -->
+  <main>
+    
+<div class="teachers-wrapper">
+
+  <!-- ─── PAGE HEADER ──────────────────────────────────────── -->
+  <section class="page-header">
+    <div class="hero-glow"></div>
+    <div class="container position-relative">
+      
+      <nav aria-label="breadcrumb" data-aos="fade-down" data-aos-delay="50" style="margin-bottom: 10px;">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="/">Басты бет</a></li>
+          <li class="breadcrumb-item active">Әдістемелік бірлестік жетекшілері</li>
+        </ol>
+      </nav>
+      
+      <h1 class="page-header-title" data-aos="fade-up" data-aos-delay="100">
+         Әдістемелік бірлестік <span>жетекшілері</span>
+      </h1>
+      <p class="page-header-desc" data-aos="fade-up" data-aos-delay="200">
+        Бірлестік жетекшілері тізімі
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── TEACHERS GRID ────────────────────────────────────── -->
+  <section class="section-padding">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Мұғалімдер</h2>
+
+      
+      <div class="empty-state" data-aos="fade-up">
+        <i class="bi bi-person-badge"></i>
+        <h4>Персонал тізімі бос</h4>
+        <p>Ақпарат жақын арада толықтырылады.</p>
+      </div>
+      
+    </div>
+  </section>
+
+</div>
+
+  </main>
+
+  <!-- ─── FOOTER ────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="container">
+        <div class="row g-4">
+          <div class="col-lg-4 col-md-6">
+            <div class="footer-brand d-flex align-items-center mb-3">
+              <img src="/static/img/%D0%A2%D0%B0%D0%BB%D0%B0%D0%BD%D1%82%20%D0%BA%D0%BE%D0%BF%D0%B8%D1%8F.png?v=new" alt="Logo" width="45" height="45" class="me-2">
+              <div>
+                <h5 class="mb-0">Talant №1</h5>
+                <small class="text-muted-light">Шымкент қаласы</small>
+              </div>
+            </div>
+            <p class="footer-desc">
+              Заманауи білім беру технологияларын қолдана отырып,
+              болашақ буынды тәрбиелейтін мектеп.
+            </p>
+            <div class="footer-socials">
+              <a href="#" class="social-link" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+              <a href="#" class="social-link" aria-label="TikTok"><i class="bi bi-tiktok"></i></a>
+              <a href="#" class="social-link" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+              <a href="#" class="social-link" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+            </div>
+          </div>
+
+          <div class="col-lg-2 col-md-6">
+            <h6 class="footer-heading">Навигация</h6>
+            <ul class="footer-links">
+              <li><a href="/">Басты бет</a></li>
+              <li><a href="/about/">Біз туралы</a></li>
+              <li><a href="/news/">Жаңалықтар</a></li>
+              <li><a href="/teachers/">Әкімшілік персонал</a></li>
+              <li><a href="/gallery/">Галерея</a></li>
+            </ul>
+          </div>
+
+          <div class="col-lg-2 col-md-6">
+            <h6 class="footer-heading">Ресурстар</h6>
+            <ul class="footer-links">
+              <li><a href="/documents/">Құжаттар</a></li>
+              <li><a href="/contact/">Байланыс</a></li>
+              <li><a href="/admin/">Админ панель</a></li>
+            </ul>
+          </div>
+
+          <div class="col-lg-4 col-md-6">
+            <h6 class="footer-heading">Байланыс</h6>
+            <ul class="footer-contact">
+              <li><i class="bi bi-geo-alt-fill"></i><span>Шымкент қаласы, С. Жандосов көшесі</span></li>
+              <li><i class="bi bi-telephone-fill"></i><span>+7 (777) 777-77-77</span></li>
+              <li><i class="bi bi-envelope-fill"></i><span>talant1@edu.kz</span></li>
+              <li><i class="bi bi-clock-fill"></i><span>Дс-Жм: 8:00 — 18:30</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <hr class="footer-divider">
+        <div class="footer-bottom text-center">
+          <p>&copy; Talant №1. Барлық құқықтар қорғалған.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ─── SCROLL TO TOP ─────────────────────────────────── -->
+  <button class="scroll-top-btn" id="scrollTopBtn" aria-label="Жоғарыға">
+    <i class="bi bi-arrow-up"></i>
+  </button>
+
+  <!-- ─── FLOATING SOCIAL WIDGET ───────────────────────── -->
+  <div class="floating-social-widget">
+    <a href="#" class="social-btn instagram" aria-label="Instagram">
+      <i class="bi bi-instagram"></i>
+    </a>
+    <a href="#" class="social-btn whatsapp" aria-label="WhatsApp">
+      <i class="bi bi-whatsapp"></i>
+    </a>
+    <a href="#" class="social-btn tiktok" aria-label="TikTok">
+      <i class="bi bi-tiktok"></i>
+    </a>
+  </div>
+
+  <!-- ─── SCRIPTS (кешіктірілген жүктеу) ─────────────────────── -->
+  <script src=" https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // AOS initialization
+      AOS.init({
+        duration: 800,
+        easing: 'ease-out-cubic',
+        once: true,
+        offset: 60,
+      });
+
+      // Navbar scroll effect
+      const navbar = document.getElementById('mainNavbar');
+      if (navbar) {
+        window.addEventListener('scroll', function () {
+          if (window.scrollY > 50) {
+            navbar.classList.add('navbar-scrolled');
+          } else {
+            navbar.classList.remove('navbar-scrolled');
+          }
+        });
+      }
+
+      // Scroll to top button
+      const scrollTopBtn = document.getElementById('scrollTopBtn');
+      if (scrollTopBtn) {
+        window.addEventListener('scroll', function () {
+          if (window.scrollY > 400) {
+            scrollTopBtn.classList.add('visible');
+          } else {
+            scrollTopBtn.classList.remove('visible');
+          }
+        });
+        scrollTopBtn.addEventListener('click', function () {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+    });
+  </script>
+
+  
+
+</body>
+
+</html>

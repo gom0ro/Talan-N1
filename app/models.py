@@ -145,8 +145,11 @@ class Document(models.Model):
     """Құжаттар — файл жүктеу немесе сілтеме беру"""
     title = models.CharField('Атауы', max_length=255)
     description = models.CharField('Сипаттамасы', max_length=500, blank=True)
-    file = models.FileField('Файл', upload_to='documents/', blank=True, null=True,
-                            help_text='Word, PDF, Excel және т.б. файлдарды жүктеңіз')
+    file = models.FileField(
+        'Файл', upload_to='documents/', blank=True, null=True,
+        validators=[],
+        help_text='Тек PDF форматындағы файлды жүктеуге болады. Өлшемі 50 МБ-тан аспауы керек.'
+    )
     link = models.URLField('Сілтеме (URL)', blank=True,
                            help_text='Сыртқы сілтеме — файл жүктемей, тікелей URL беру үшін')
     category = models.ForeignKey(
@@ -172,14 +175,25 @@ class Document(models.Model):
         return self.link or '#'
 
     @property
+    def file_url(self):
+        """file.url немесе link"""
+        if self.file:
+            return self.file.url
+        return self.link or '#'
+
+    @property
+    def has_file(self):
+        return bool(self.file)
+
+    @property
     def file_type(self):
         """Файл түрін анықтау (иконка үшін)"""
         if self.file and self.file.name:
             name = self.file.name.lower()
-            if name.endswith(('.doc', '.docx')):
-                return 'word'
-            elif name.endswith('.pdf'):
+            if name.endswith('.pdf'):
                 return 'pdf'
+            elif name.endswith(('.doc', '.docx')):
+                return 'word'
             elif name.endswith(('.xls', '.xlsx')):
                 return 'excel'
             elif name.endswith(('.ppt', '.pptx')):
@@ -947,6 +961,14 @@ def validate_pdf_file(value):
         raise ValidationError('Файл PDF құрылымына сәйкес келмейді.')
 
 
+def documents_upload_to(instance, filename):
+    """Қайталанбайтын атау: documents/doc_<stamp>_<uuid>.pdf"""
+    ext = os.path.splitext(filename)[1].lower() or '.pdf'
+    stamp = int(time.time())
+    unique = uuid.uuid4().hex[:8]
+    return f'documents/doc_{stamp}_{unique}{ext}'
+
+
 def attestation_upload_to(instance, filename):
     """Қайталанбайтын атау: attestation/doc_<уақыт>_<uuid>.pdf"""
     ext = os.path.splitext(filename)[1].lower() or '.pdf'
@@ -1126,7 +1148,7 @@ class AttestationDocument(models.Model):
 
 
 def zhetekshiler_upload_to(instance, filename):
-    """Жетекшілер құжаты: zhetekshiler/doc_<stamp>_<uuid>.pdf"""
+    """Уникальды атау: zhetekshiler/doc_<stamp>_<uuid>.pdf"""
     ext = os.path.splitext(filename)[1].lower() or '.pdf'
     stamp = int(time.time())
     unique = uuid.uuid4().hex[:8]

@@ -2202,6 +2202,14 @@ a:hover {
   cursor: pointer;
   font-family: inherit;
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  padding: .375rem .75rem;
+  border-radius: 50rem;
+  box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+  font-size: .875rem;
+  transition: background .2s;
 }
 
 .btn-open:hover {

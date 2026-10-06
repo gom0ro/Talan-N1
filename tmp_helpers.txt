@@ -1,0 +1,31 @@
+
+
+def validate_pdf_file(value):
+    """
+    Тек PDF қабылдайды: кеңейтімі, өлшемі (50 МБ) және
+    файл қолтаңбасы («%PDF») тексеріледі.
+    """
+    if not value:
+        return
+    name = (getattr(value, 'name', '') or '').lower()
+    if not name.endswith('.pdf'):
+        raise ValidationError('Тек PDF форматындағы файлды жүктеуге болады.')
+    if value.size > PDF_MAX_SIZE:
+        raise ValidationError('Файл өлшемі 50 МБ-тан аспауы керек.')
+    try:
+        value.seek(0)
+        header = value.read(5)
+        value.seek(0)
+    except (AttributeError, ValueError):
+        return
+    if header and header[:4] != b'%PDF':
+        raise ValidationError('Файл PDF құрылымына сәйкес келмейді.')
+
+
+def documents_upload_to(instance, filename):
+    """Қайталанбайтын атау: documents/doc_<stamp>_<uuid>.pdf"""
+    ext = os.path.splitext(filename)[1].lower() or '.pdf'
+    stamp = int(time.time())
+    unique = uuid.uuid4().hex[:8]
+    return f'documents/doc_{stamp}_{unique}{ext}'
+
