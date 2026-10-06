@@ -85,9 +85,15 @@
           <!-- Action Button -->
           <div class="flex-shrink-0">
             {% if doc.file %}
-            <a href="{{ doc.file.url }}" target="_blank" rel="noopener noreferrer" class="btn-open">
-              <i class="bi bi-box-arrow-up-right me-1"></i> Ашу
-            </a>
+              {% if doc.file_type == 'word' or doc.file_type == 'excel' or doc.file_type == 'powerpoint' %}
+              <a href="https://docs.google.com/viewer?url=https://talant-school.edu.kz{{ doc.file.url }}" target="_blank" rel="noopener noreferrer" class="btn-open">
+                <i class="bi bi-box-arrow-up-right me-1"></i> Ашу
+              </a>
+              {% else %}
+              <a href="{{ doc.file.url }}" target="_blank" rel="noopener noreferrer" class="btn-open">
+                <i class="bi bi-box-arrow-up-right me-1"></i> Ашу
+              </a>
+              {% endif %}
             {% elif doc.link %}
             <a href="{{ doc.link }}" target="_blank" rel="noopener noreferrer" class="btn-open">
               <i class="bi bi-box-arrow-up-right me-1"></i> Ашу
