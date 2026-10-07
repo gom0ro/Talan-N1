@@ -591,6 +591,24 @@ class TimetableItem(models.Model):
     def __str__(self):
         return self.title
 
+    @property
+    def file_type(self):
+        if self.file and self.file.name:
+            name = self.file.name.lower()
+            if name.endswith(('.doc', '.docx')):
+                return 'word'
+            elif name.endswith('.pdf'):
+                return 'pdf'
+            elif name.endswith(('.xls', '.xlsx')):
+                return 'excel'
+            elif name.endswith(('.ppt', '.pptx')):
+                return 'powerpoint'
+            elif name.endswith(('.jpg', '.jpeg', '.png', '.gif')):
+                return 'image'
+            elif name.endswith(('.zip', '.rar', '.7z')):
+                return 'archive'
+        return 'other'
+
 
 class TarbieItem(models.Model):
     """Tarbie orynbasary"""
