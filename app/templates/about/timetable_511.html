@@ -28,12 +28,12 @@
         {% if item.image1 or item.image2 %}
         <div class="row g-3 mb-4">
           {% if item.image1 %}
-          <div class="col-md-6 text-center">
+          <div class="col-sm-6 col-md-4 col-lg-3">
             <img src="{{ item.image1.url }}" alt="{{ item.title }}" class="img-fluid rounded-4 shadow-sm border">
           </div>
           {% endif %}
           {% if item.image2 %}
-          <div class="col-md-6 text-center">
+          <div class="col-sm-6 col-md-4 col-lg-3">
             <img src="{{ item.image2.url }}" alt="{{ item.title }}" class="img-fluid rounded-4 shadow-sm border">
           </div>
           {% endif %}
@@ -41,11 +41,11 @@
         {% endif %}
         {% if item.file %}
           {% if item.file_type == 'word' or item.file_type == 'excel' or item.file_type == 'powerpoint' %}
-          <a href="https://docs.google.com/viewer?url=https://talant-school.edu.kz{{ item.file.url }}" target="_blank" class="btn-open">
+          <a href="https://docs.google.com/viewer?url=https://talant-school.edu.kz{{ item.file.url }}" target="_blank" class="btn-open att-open-btn">
             <i class="bi bi-box-arrow-up-right me-1"></i> Ашу
           </a>
           {% else %}
-          <a href="{{ item.file.url }}" target="_blank" class="btn-open">
+          <a href="{{ item.file.url }}" target="_blank" class="btn-open att-open-btn">
             <i class="bi bi-box-arrow-up-right me-1"></i> Ашу
           </a>
           {% endif %}
