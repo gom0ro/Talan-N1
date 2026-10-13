@@ -583,6 +583,8 @@ class AttestationNodeForm(forms.ModelForm):
         widget.attrs['accept'] = 'application/pdf,.pdf'
         existing = getattr(widget, 'attrs', {}).get('class', '')
         widget.attrs['class'] = (existing + ' att-pdf-input').strip()
+        if 'parent' in self.fields:
+            self.fields['parent'].queryset = AttestationNode.objects.select_related('parent', 'category').all()
 
 
 class AttestationNodeInline(admin.TabularInline):
@@ -664,7 +666,8 @@ class AttestationNodeAdmin(admin.ModelAdmin):
     list_editable = ('order', 'custom_number', 'kind')
     list_filter = ('category', 'kind', 'is_active')
     search_fields = ('title', 'subtitle', 'custom_number')
-    autocomplete_fields = ('category',)
+    autocomplete_fields = ('category', 'parent')
+    list_select_related = ('category', 'parent')
     fieldsets = (
         ('Negizgi aqparat', {
             'fields': ('order', 'custom_number', 'category', 'parent', 'kind', 'title', 'subtitle'),
