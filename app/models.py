@@ -908,6 +908,24 @@ class AttestationCategory(models.Model):
         'Блок түрі', choices=TYPE_CHOICES, default=TYPE_STANDARD,
         help_text='Сайттағы кесте түрін анықтайды'
     )
+    NUMBERING_AUTO = 'auto'
+    NUMBERING_SIMPLE = 'simple'
+    NUMBERING_SUB = 'sub'
+    NUMBERING_NONE = 'none'
+    NUMBERING_CHOICES = [
+        (NUMBERING_AUTO, 'Автоматты түрде'),
+        (NUMBERING_SIMPLE, 'Қарапайым (1, 2, 3...) — подпунктсіз'),
+        (NUMBERING_SUB, 'Тармақталған подпункттер (1, 1.1, 1.2...)'),
+        (NUMBERING_NONE, 'Нөмірсіз (бос қалдыру)'),
+    ]
+
+    numbering_mode = models.CharField(
+        'Нөмірлеу түрі (Формат нумерации)',
+        max_length=20,
+        choices=NUMBERING_CHOICES,
+        default=NUMBERING_AUTO,
+        help_text='Элементтер 1, 2, 3 болып па әлде 1.1, 1.2 болып нөмірленетінін осы жерден бір кнопкамен ауыстырасыз'
+    )
     order = models.PositiveIntegerField('Реттілік', default=0)
     is_open = models.BooleanField(
         'Ашық күйінде', default=False,
@@ -941,6 +959,7 @@ class AttestationCategory(models.Model):
             'id': self.pk,
             'type': self.type,
             'categoryTitle': self.name,
+            'numberingMode': self.numbering_mode,
             'isOpen': self.is_open,
             'yearTitle': self.year.title,
             'nodes': [node.to_dict() for node in self.active_root_nodes],

@@ -619,15 +619,15 @@ class AttestationYearAdmin(admin.ModelAdmin):
 
 @admin.register(AttestationCategory)
 class AttestationCategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'type', 'node_count', 'order', 'is_open', 'is_active')
+    list_display = ('name', 'type', 'numbering_mode', 'node_count', 'order', 'is_open', 'is_active')
     list_display_links = ('name',)
-    list_editable = ('type', 'order', 'is_open', 'is_active')
-    list_filter = ('type', 'is_active')
+    list_editable = ('type', 'numbering_mode', 'order', 'is_open', 'is_active')
+    list_filter = ('type', 'numbering_mode', 'is_active')
     search_fields = ('name',)
     exclude = ('year',)
     fieldsets = (
-        ('Blok turi', {
-            'fields': ('type',),
+        ('Blok turi jane nomirleu formati', {
+            'fields': ('type', 'numbering_mode'),
             'description': TYPE_HELP,
         }),
         ('Negizgi aqparat', {

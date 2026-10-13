@@ -169,11 +169,17 @@
     return btn;
   }
 
-  function getNodeNumber(node, fallbackIndex, prefix) {
+  function getNodeNumber(node, fallbackIndex, prefix, mode) {
+    if (mode === 'none') {
+      return '';
+    }
     if (node && node.customNumber !== undefined && node.customNumber !== null && String(node.customNumber).trim() !== '') {
       return String(node.customNumber).trim();
     }
-    if (prefix) {
+    if (mode === 'simple') {
+      return String(fallbackIndex + 1);
+    }
+    if (prefix && mode !== 'simple') {
       return prefix + '.' + (fallbackIndex + 1);
     }
     return String(fallbackIndex + 1);
@@ -182,7 +188,7 @@
   /* ─── кесте құрастырушылар ────────────────────────────── */
 
   /* Стандартты кесте: № | Құжаттар атауы | Файлды қарау */
-  function standardTable(documents, numPrefix) {
+  function standardTable(documents, numPrefix, mode) {
     var table = el('table', 'att-table');
     var thead = el('thead');
     var headRow = el('tr');
@@ -205,7 +211,7 @@
     documents.forEach(function (node, index) {
       var tr = el('tr');
 
-      var numText = getNodeNumber(node, index, numPrefix);
+      var numText = getNodeNumber(node, index, numPrefix, mode);
       var num = el('td', 'att-col-num', numText);
       tr.appendChild(num);
 
@@ -254,14 +260,14 @@
   /* ─── 1-ТҮРІ: СТАНДАРТТЫ КЕСТЕ ────────────────────────── */
 
   function renderType1(block, nodes) {
-    return standardTable(nodes);
+    return standardTable(nodes, null, block ? block.numberingMode : null);
   }
 
   /* ─── 5-ТҮРІ: АШЫЛЫП-ЖАБЫЛАТЫН СТАНДАРТТЫ КЕСТЕ ─────────
      1-түрдің дәл өзі. Айырмашылығы тек санат тақырыбының
      ашылып-жабылуы (init ішінде көк аккордеонмен қапталады). */
   function renderType5(block, nodes) {
-    return standardTable(nodes);
+    return standardTable(nodes, null, block ? block.numberingMode : null);
   }
 
   /* ─── 2-ТҮРІ: ЖЫЛДАР БОЙЫНША ЕКІ ДЕҢГЕЙЛІ АККОРДЕОН ── */
@@ -277,7 +283,7 @@
         title: yearNode.title,
         open: yearNode.isOpen,
         render: function () {
-          return standardTable(docs);
+          return standardTable(docs, null, block ? block.numberingMode : null);
         }
       }));
     });
@@ -307,9 +313,10 @@
       tbody.appendChild(emptyRow);
     }
 
+    var mode = block ? block.numberingMode : 'auto';
     nodes.forEach(function (rowNode, index) {
       var tr = el('tr');
-      tr.appendChild(el('td', 'att-col-num', getNodeNumber(rowNode, index)));
+      tr.appendChild(el('td', 'att-col-num', getNodeNumber(rowNode, index, null, mode)));
 
       var title = el('td', 'att-col-title');
       title.appendChild(document.createTextNode(rowNode.title));
@@ -371,9 +378,10 @@
       tbody.appendChild(emptyRow);
     }
 
+    var mode4 = block ? block.numberingMode : 'auto';
     nodes.forEach(function (rowNode, index) {
       var tr = el('tr');
-      tr.appendChild(el('td', 'att-col-num', getNodeNumber(rowNode, index)));
+      tr.appendChild(el('td', 'att-col-num', getNodeNumber(rowNode, index, null, mode4)));
 
       var title = el('td', 'att-col-title');
       title.appendChild(document.createTextNode(rowNode.title));
@@ -428,9 +436,10 @@
 
   function renderType6(block, nodes) {
     var wrap = el('div', 'att-stack');
+    var mode = block ? block.numberingMode : 'auto';
 
     nodes.forEach(function (sectionNode, sIndex) {
-      var secNum = getNodeNumber(sectionNode, sIndex);
+      var secNum = getNodeNumber(sectionNode, sIndex, null, mode);
       var secTitle = sectionNode.title;
       // Егер тақырыптың алдында нөмірі жазылмаған болса, қосамыз
       var displayTitle = (secNum && !secTitle.startsWith(secNum)) ? (secNum + '. ' + secTitle) : secTitle;
@@ -444,7 +453,8 @@
           title: displayTitle,
           open: sectionNode.isOpen,
           render: function () {
-            return standardTable([sectionNode], secNum);
+            var rowPrefix = (mode === 'simple') ? null : secNum;
+            return standardTable([sectionNode], rowPrefix, mode);
           }
         }));
       } else {
@@ -461,7 +471,8 @@
               // Екі деңгейлі подпункттер
               var subStack = el('div', 'att-stack');
               children.forEach(function (subNode, subIndex) {
-                var subNum = getNodeNumber(subNode, subIndex, secNum);
+                var subPrefix = (mode === 'simple') ? null : secNum;
+                var subNum = getNodeNumber(subNode, subIndex, subPrefix, mode);
                 var subTitle = subNode.title;
                 var subDisplay = (subNum && !subTitle.startsWith(subNum)) ? (subNum + ' ' + subTitle) : subTitle;
                 var subDocs = (subNode.children && subNode.children.length) ? subNode.children : [subNode];
@@ -471,14 +482,16 @@
                   title: subDisplay,
                   open: subNode.isOpen,
                   render: function () {
-                    return standardTable(subDocs, subNum);
+                    var docPrefix = (mode === 'simple') ? null : subNum;
+                    return standardTable(subDocs, docPrefix, mode);
                   }
                 }));
               });
               return subStack;
             } else {
-              // Тікелей стандартты кесте: нөмірлері 1.1, 1.2...
-              return standardTable(children, secNum);
+              // Тікелей стандартты кесте: нөмірлері 1.1, 1.2... немесе 1, 2, 3 (егер simple болса)
+              var tablePrefix = (mode === 'simple') ? null : secNum;
+              return standardTable(children, tablePrefix, mode);
             }
           }
         }));
