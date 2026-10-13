@@ -189,12 +189,30 @@
 
   /* Стандартты кесте: № | Құжаттар атауы | Файлды қарау */
   function standardTable(documents, numPrefix, mode) {
+    // Егер тізімдегі элементтердің балалары (подпункттері 2.1, 2.2...) бар болса,
+    // құрама нумерациялы (иерархиялық rowspan кестесін) саламыз:
+    // Бағандар: № (Негізгі) | № (Қосалқы 2.1, 2.2) | Құжаттар атауы | Файлды қарау
+    var hasSubItems = documents.some(function (d) { return d.children && d.children.length; });
+
     var table = el('table', 'att-table');
     var thead = el('thead');
     var headRow = el('tr');
-    ['№', 'Құжаттар атауы', 'Файлды қарау'].forEach(function (label, i) {
-      var th = el('th', i === 0 ? 'att-col-num' : (i === 2 ? 'att-col-action' : ''), label);
-      headRow.appendChild(th);
+
+    var headers = hasSubItems
+      ? ['№', '№', 'Құжаттар атауы', 'Файлды қарау']
+      : ['№', 'Құжаттар атауы', 'Файлды қарау'];
+
+    headers.forEach(function (label, i) {
+      var cls = '';
+      if (hasSubItems) {
+        if (i === 0) cls = 'att-col-main-num';
+        else if (i === 1) cls = 'att-col-sub-num';
+        else if (i === 3) cls = 'att-col-action';
+      } else {
+        if (i === 0) cls = 'att-col-num';
+        else if (i === 2) cls = 'att-col-action';
+      }
+      headRow.appendChild(el('th', cls, label));
     });
     thead.appendChild(headRow);
     table.appendChild(thead);
@@ -203,32 +221,78 @@
     if (!documents.length) {
       var emptyRow = el('tr');
       var emptyCell = el('td', 'att-empty', 'Бұл санатта құжаттар жоқ');
-      emptyCell.colSpan = 3;
+      emptyCell.colSpan = hasSubItems ? 4 : 3;
       emptyRow.appendChild(emptyCell);
       tbody.appendChild(emptyRow);
+      table.appendChild(tbody);
+      return wrapTable(table);
     }
 
     documents.forEach(function (node, index) {
-      var tr = el('tr');
+      var mainNum = getNodeNumber(node, index, numPrefix, mode);
+      var subs = node.children && node.children.length ? node.children : null;
 
-      var numText = getNodeNumber(node, index, numPrefix, mode);
-      var num = el('td', 'att-col-num', numText);
-      tr.appendChild(num);
+      if (!subs) {
+        // Жай ғана 1 құжат (подпункті жоқ)
+        var tr = el('tr');
+        var tdMain = el('td', hasSubItems ? 'att-col-main-num' : 'att-col-num', mainNum);
+        tr.appendChild(tdMain);
 
-      var title = el('td', 'att-col-title');
-      title.appendChild(document.createTextNode(node.title));
-      if (node.subtitle) {
-        var sub = el('small', 'att-block-subtitle');
-        sub.textContent = node.subtitle;
-        title.appendChild(sub);
+        if (hasSubItems) {
+          // Қосалқы баған бос немесе дефис
+          tr.appendChild(el('td', 'att-col-sub-num', '—'));
+        }
+
+        var tdTitle = el('td', 'att-col-title');
+        tdTitle.appendChild(document.createTextNode(node.title));
+        if (node.subtitle) {
+          var sub = el('small', 'att-block-subtitle');
+          sub.textContent = node.subtitle;
+          tdTitle.appendChild(sub);
+        }
+        tr.appendChild(tdTitle);
+
+        var tdAction = el('td', 'att-col-action');
+        tdAction.appendChild(createOpenButton(node));
+        tr.appendChild(tdAction);
+
+        tbody.appendChild(tr);
+      } else {
+        // Пункт 2 бөлінеді подпункттерге (2.1, 2.2, 2.3...)
+        // Басты № ұяшығы барлық подпункттерге біріктіріледі (rowspan)
+        subs.forEach(function (subNode, subIdx) {
+          var trSub = el('tr');
+
+          if (subIdx === 0) {
+            var tdMerged = el('td', 'att-col-main-num', mainNum);
+            tdMerged.rowSpan = subs.length;
+            tdMerged.style.verticalAlign = 'middle';
+            tdMerged.style.fontWeight = '700';
+            tdMerged.style.background = '#f8fafc';
+            trSub.appendChild(tdMerged);
+          }
+
+          var subNum = getNodeNumber(subNode, subIdx, mainNum, mode);
+          var tdSubNum = el('td', 'att-col-sub-num', subNum);
+          tdSubNum.style.fontWeight = '600';
+          trSub.appendChild(tdSubNum);
+
+          var tdSubTitle = el('td', 'att-col-title');
+          tdSubTitle.appendChild(document.createTextNode(subNode.title));
+          if (subNode.subtitle) {
+            var s = el('small', 'att-block-subtitle');
+            s.textContent = subNode.subtitle;
+            tdSubTitle.appendChild(s);
+          }
+          trSub.appendChild(tdSubTitle);
+
+          var tdSubAction = el('td', 'att-col-action');
+          tdSubAction.appendChild(createOpenButton(subNode));
+          trSub.appendChild(tdSubAction);
+
+          tbody.appendChild(trSub);
+        });
       }
-      tr.appendChild(title);
-
-      var action = el('td', 'att-col-action');
-      action.appendChild(createOpenButton(node));
-      tr.appendChild(action);
-
-      tbody.appendChild(tr);
     });
 
     table.appendChild(tbody);

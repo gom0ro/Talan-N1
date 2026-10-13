@@ -2159,6 +2159,22 @@ a:hover {
   color: var(--text-light);
 }
 
+.att-col-main-num {
+  width: 60px;
+  text-align: center;
+  font-weight: 700;
+  color: var(--text);
+  border-right: 1px solid var(--border);
+}
+
+.att-col-sub-num {
+  width: 75px;
+  text-align: center;
+  font-weight: 600;
+  color: #1a73e8;
+  border-right: 1px solid var(--border);
+}
+
 .att-col-title {
   min-width: 220px;
   font-weight: 500;
