@@ -591,7 +591,7 @@ class AttestationNodeInline(admin.TabularInline):
     form = AttestationNodeForm
     extra = 1
     fk_name = 'category'
-    fields = ('order', 'custom_number', 'kind', 'title', 'subtitle', 'file', 'link', 'is_open', 'is_active')
+    fields = ('order', 'custom_number', 'parent', 'kind', 'title', 'subtitle', 'file', 'link', 'is_open', 'is_active')
     ordering = ('order', 'id')
     verbose_name = 'Element'
     verbose_name_plural = 'Elementter'
