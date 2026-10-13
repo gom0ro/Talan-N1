@@ -889,12 +889,14 @@ class AttestationCategory(models.Model):
     TYPE_CELL = 3
     TYPE_DEEP = 4
     TYPE_COLLAPSIBLE = 5
+    TYPE_SUB_NUMBERING = 6
     TYPE_CHOICES = [
         (TYPE_STANDARD, 'Стандартная таблица'),
         (TYPE_YEARS, 'Таблица по годам'),
         (TYPE_CELL, 'Таблица с вложенными годами в ячейке'),
         (TYPE_DEEP, 'Многоуровневая таблица'),
         (TYPE_COLLAPSIBLE, 'Стандартная таблица (раскрывающаяся)'),
+        (TYPE_SUB_NUMBERING, 'Блок с подпунктами (1, 1.1, 1.2...)'),
     ]
 
     year = models.ForeignKey(
@@ -1056,6 +1058,10 @@ class AttestationNode(models.Model):
         'Түрі', max_length=20, choices=KIND_CHOICES, default=KIND_DOCUMENT
     )
     title = models.CharField('Атауы', max_length=255)
+    custom_number = models.CharField(
+        '№ (Реттік нөмірі)', max_length=50, blank=True,
+        help_text='Қолмен нөмірлеу (мысалы: 1, 1.1, 1.2, 2.1 немесе бос қалдыру)'
+    )
     subtitle = models.CharField(
         'Қосымша мәтін', max_length=150, blank=True,
         help_text='Мысалы жылдар аралығы: 2024–2027'
@@ -1122,6 +1128,7 @@ class AttestationNode(models.Model):
         return {
             'id': self.pk,
             'title': self.title,
+            'customNumber': self.custom_number,
             'subtitle': self.subtitle,
             'kind': self.kind,
             'isOpen': self.is_open,

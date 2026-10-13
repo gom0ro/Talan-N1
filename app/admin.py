@@ -555,7 +555,7 @@ class ZhasUlanAdmin(TarbieFullItemAdmin):
 # ── Аттестация ────────────────────────────────────────────────
 
 TYPE_HELP = """
-Бес түр бар — таңдаған түрі сайттағы кесте құрылымын анықтайды:
+Алты түр бар — таңдаған түрі сайттағы кесте құрылымын анықтайды:
 
 1. Стандартты кесте — тізімделген құжаттар бір кестеде.
 2. Жылдар бойынша кесте — әр жылға жеке сұр аккордеон, ішінде кесте.
@@ -564,12 +564,9 @@ TYPE_HELP = """
 4. Терең сатылар кесте — төрт баған, үшіншісінде бөлім → жыл → файл.
 5. Ашылатын стандартты кесте — 1-түрдің дәл өзі, айырмашылығы
    санат тақырыбын басу арқылы ашылып-жабылады.
+6. Блок с подпунктами (1, 1.1, 1.2...) — аккордеон бөлімдері, ішінде подпункттер немесе тікелей құжаттар.
 
-1-түрде элементтер тікелей «Құжат» болады.
-2-түрде: жыл (Топ) → құжат.
-3-түрде: тақырып (жол) → жыл (Топ) → құжат.
-4-түрде: тақырып (жол) → бөлім (Топ) → жыл (Топ) → құжат.
-5-түрде: элементтер 1-түрдегідей тікелей «Құжат» болады.
+«№ (Реттік нөмірі)» өрісі арқылы элементтің нөмірін (мысалы: 1, 1.1, 1.2 немесе бос қалдырып) қолмен өзгертуге болады!
 """
 
 
@@ -594,7 +591,7 @@ class AttestationNodeInline(admin.TabularInline):
     form = AttestationNodeForm
     extra = 1
     fk_name = 'category'
-    fields = ('order', 'kind', 'title', 'subtitle', 'file', 'link', 'is_open', 'is_active')
+    fields = ('order', 'custom_number', 'kind', 'title', 'subtitle', 'file', 'link', 'is_open', 'is_active')
     ordering = ('order', 'id')
     verbose_name = 'Element'
     verbose_name_plural = 'Elementter'
@@ -662,15 +659,15 @@ class AttestationCategoryAdmin(admin.ModelAdmin):
 class AttestationNodeAdmin(admin.ModelAdmin):
     """Терең деңгейдегі элементтер осында басқарылады"""
     form = AttestationNodeForm
-    list_display = ('order', 'title', 'kind', 'category', 'parent', 'level', 'has_file')
+    list_display = ('order', 'custom_number', 'title', 'kind', 'category', 'parent', 'level', 'has_file')
     list_display_links = ('title',)
-    list_editable = ('order', 'kind')
+    list_editable = ('order', 'custom_number', 'kind')
     list_filter = ('category', 'kind', 'is_active')
-    search_fields = ('title', 'subtitle')
+    search_fields = ('title', 'subtitle', 'custom_number')
     autocomplete_fields = ('category',)
     fieldsets = (
         ('Negizgi aqparat', {
-            'fields': ('order', 'category', 'parent', 'kind', 'title', 'subtitle'),
+            'fields': ('order', 'custom_number', 'category', 'parent', 'kind', 'title', 'subtitle'),
         }),
         ('Fayl nemese silteme', {
             'fields': ('file', 'link'),

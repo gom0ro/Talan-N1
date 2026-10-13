@@ -169,10 +169,20 @@
     return btn;
   }
 
+  function getNodeNumber(node, fallbackIndex, prefix) {
+    if (node && node.customNumber !== undefined && node.customNumber !== null && String(node.customNumber).trim() !== '') {
+      return String(node.customNumber).trim();
+    }
+    if (prefix) {
+      return prefix + '.' + (fallbackIndex + 1);
+    }
+    return String(fallbackIndex + 1);
+  }
+
   /* ─── кесте құрастырушылар ────────────────────────────── */
 
   /* Стандартты кесте: № | Құжаттар атауы | Файлды қарау */
-  function standardTable(documents) {
+  function standardTable(documents, numPrefix) {
     var table = el('table', 'att-table');
     var thead = el('thead');
     var headRow = el('tr');
@@ -195,7 +205,8 @@
     documents.forEach(function (node, index) {
       var tr = el('tr');
 
-      var num = el('td', 'att-col-num', String(index + 1));
+      var numText = getNodeNumber(node, index, numPrefix);
+      var num = el('td', 'att-col-num', numText);
       tr.appendChild(num);
 
       var title = el('td', 'att-col-title');
@@ -298,7 +309,7 @@
 
     nodes.forEach(function (rowNode, index) {
       var tr = el('tr');
-      tr.appendChild(el('td', 'att-col-num', String(index + 1)));
+      tr.appendChild(el('td', 'att-col-num', getNodeNumber(rowNode, index)));
 
       var title = el('td', 'att-col-title');
       title.appendChild(document.createTextNode(rowNode.title));
@@ -362,7 +373,7 @@
 
     nodes.forEach(function (rowNode, index) {
       var tr = el('tr');
-      tr.appendChild(el('td', 'att-col-num', String(index + 1)));
+      tr.appendChild(el('td', 'att-col-num', getNodeNumber(rowNode, index)));
 
       var title = el('td', 'att-col-title');
       title.appendChild(document.createTextNode(rowNode.title));
@@ -413,6 +424,71 @@
     return stack;
   }
 
+  /* ─── 6-ТҮРІ: БЛОК С ПОДПУНКТАМИ (1 Бөлім, ішінде 1.1, 1.2...) ── */
+
+  function renderType6(block, nodes) {
+    var wrap = el('div', 'att-stack');
+
+    nodes.forEach(function (sectionNode, sIndex) {
+      var secNum = getNodeNumber(sectionNode, sIndex);
+      var secTitle = sectionNode.title;
+      // Егер тақырыптың алдында нөмірі жазылмаған болса, қосамыз
+      var displayTitle = (secNum && !secTitle.startsWith(secNum)) ? (secNum + '. ' + secTitle) : secTitle;
+
+      var children = sectionNode.children || [];
+
+      if (!children.length) {
+        // Егер подпункт болмаса — тікелей өзін 1 құжаттық кесте ретінде немесе қарапайым етіп шығарады
+        wrap.appendChild(createAccordion({
+          variant: 'grey',
+          title: displayTitle,
+          open: sectionNode.isOpen,
+          render: function () {
+            return standardTable([sectionNode], secNum);
+          }
+        }));
+      } else {
+        // Ішкі балалары болса: егер олардың өз балалары бар болса немесе құжаттар болса
+        var hasSubChildren = children.some(function (c) { return c.children && c.children.length; });
+
+        wrap.appendChild(createAccordion({
+          variant: 'grey',
+          title: displayTitle,
+          meta: children.length + ' тармақ',
+          open: sectionNode.isOpen,
+          render: function () {
+            if (hasSubChildren) {
+              // Екі деңгейлі подпункттер
+              var subStack = el('div', 'att-stack');
+              children.forEach(function (subNode, subIndex) {
+                var subNum = getNodeNumber(subNode, subIndex, secNum);
+                var subTitle = subNode.title;
+                var subDisplay = (subNum && !subTitle.startsWith(subNum)) ? (subNum + ' ' + subTitle) : subTitle;
+                var subDocs = (subNode.children && subNode.children.length) ? subNode.children : [subNode];
+
+                subStack.appendChild(createAccordion({
+                  variant: 'grey',
+                  title: subDisplay,
+                  open: subNode.isOpen,
+                  render: function () {
+                    return standardTable(subDocs, subNum);
+                  }
+                }));
+              });
+              return subStack;
+            } else {
+              // Тікелей стандартты кесте: нөмірлері 1.1, 1.2...
+              return standardTable(children, secNum);
+            }
+          }
+        }));
+      }
+    });
+
+    if (!nodes.length) wrap.appendChild(emptyState());
+    return wrap;
+  }
+
   /* ─── бос күй ─────────────────────────────────────────── */
 
   function emptyState() {
@@ -430,7 +506,8 @@
     2: renderType2,
     3: renderType3,
     4: renderType4,
-    5: renderType5
+    5: renderType5,
+    6: renderType6
   };
 
   function renderBlock(block) {
@@ -525,8 +602,8 @@
               return content5;
             }
           }));
-        } else if (block.type === 2 || block.type === 3 || block.type === 4) {
-          /* 2–4 түрде санаттың өзі көк аккордеон болады */
+        } else if (block.type === 2 || block.type === 3 || block.type === 4 || block.type === 6) {
+          /* 2–4 және 6 түрде санаттың өзі көк аккордеон болады */
           var content = renderBlock(block);
           host.appendChild(createAccordion({
             variant: 'blue',
