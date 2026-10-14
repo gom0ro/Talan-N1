@@ -1076,7 +1076,7 @@ class AttestationNode(models.Model):
     kind = models.CharField(
         'Түрі', max_length=20, choices=KIND_CHOICES, default=KIND_DOCUMENT
     )
-    title = models.CharField('Атауы', max_length=255)
+    title = models.CharField('Атауы', max_length=1000)
     custom_number = models.CharField(
         '№ (Реттік нөмірі)', max_length=50, blank=True,
         help_text='Қолмен нөмірлеу (мысалы: 1, 1.1, 1.2, 2.1 немесе бос қалдыру)'
