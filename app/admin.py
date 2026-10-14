@@ -686,7 +686,11 @@ class AttestationNodeAdmin(admin.ModelAdmin):
     def level(self, obj):
         depth = 0
         parent = obj.parent
-        while parent is not None:
+        visited = {obj.pk} if obj.pk else set()
+        while parent is not None and depth < 10:
+            if parent.pk in visited:
+                break
+            visited.add(parent.pk)
             depth += 1
             parent = parent.parent
         return depth
