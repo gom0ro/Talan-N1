@@ -515,10 +515,64 @@
   /* ─── 6-ТҮРІ: БЛОК С ПОДПУНКТАМИ (1 Бөлім, ішінде 1.1, 1.2...) ── */
 
   function renderType6(block, nodes) {
-    // 6-түр: бұл кәдімгі әдемі кесте (Стандартная таблица), бірақ егер
-    // пункттің ішінде подпункттер (2.1, 2.2) болса, оларды біріктіріп шығарады
-    var mode = block ? block.numberingMode : 'sub';
-    return standardTable(nodes, null, mode);
+    var wrap = el('div', 'att-stack');
+    var mode = block ? block.numberingMode : 'auto';
+
+    nodes.forEach(function (sectionNode, sIndex) {
+      var secNum = getNodeNumber(sectionNode, sIndex, null, mode);
+      var secTitle = sectionNode.title;
+      var displayTitle = (secNum && !secTitle.startsWith(secNum)) ? (secNum + '. ' + secTitle) : secTitle;
+
+      var children = sectionNode.children || [];
+
+      if (!children.length) {
+        // Егер подпункт болмаса — тікелей өзін кесте ретінде шығарады
+        wrap.appendChild(createAccordion({
+          variant: 'grey',
+          title: displayTitle,
+          open: sectionNode.isOpen,
+          render: function () {
+            return standardTable([sectionNode], secNum, mode);
+          }
+        }));
+      } else {
+        // Ішкі балалары болса: "X тармақ" белгішесімен ашылатын аккордеон
+        var hasSubChildren = children.some(function (c) { return c.children && c.children.length; });
+
+        wrap.appendChild(createAccordion({
+          variant: 'grey',
+          title: displayTitle,
+          meta: children.length + ' тармақ',
+          open: sectionNode.isOpen,
+          render: function () {
+            if (hasSubChildren) {
+              var subStack = el('div', 'att-stack');
+              children.forEach(function (subNode, subIndex) {
+                var subNum = getNodeNumber(subNode, subIndex, secNum, mode);
+                var subTitle = subNode.title;
+                var subDisplay = (subNum && !subTitle.startsWith(subNum)) ? (subNum + ' ' + subTitle) : subTitle;
+                var subDocs = (subNode.children && subNode.children.length) ? subNode.children : [subNode];
+
+                subStack.appendChild(createAccordion({
+                  variant: 'grey',
+                  title: subDisplay,
+                  open: subNode.isOpen,
+                  render: function () {
+                    return standardTable(subDocs, subNum, mode);
+                  }
+                }));
+              });
+              return subStack;
+            } else {
+              return standardTable(children, secNum, mode);
+            }
+          }
+        }));
+      }
+    });
+
+    if (!nodes.length) wrap.appendChild(emptyState());
+    return wrap;
   }
 
   /* ─── бос күй ─────────────────────────────────────────── */
