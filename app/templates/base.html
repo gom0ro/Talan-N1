@@ -85,6 +85,13 @@
       </div>
 
       <div class="sidebar-nav-list">
+        <!-- АТТЕСТАЦИЯ -->
+        <div class="sidebar-item">
+          <a href="{% url 'app:attestation' %}" class="sidebar-link">
+            <span><i class="bi bi-clipboard-check me-2"></i> АТТЕСТАЦИЯ</span>
+          </a>
+        </div>
+
         <!-- МЕКТЕП ТУРАЛЫ -->
         <div class="sidebar-item has-submenu">
           <div class="sidebar-link" data-bs-toggle="collapse" data-bs-target="#sub-about">
@@ -228,11 +235,6 @@
         <div class="sidebar-item">
           <a href="{% url 'app:article_list' 'social' %}" class="sidebar-link">
             <span><i class="bi bi-person-heart me-2"></i> ӘЛЕУМЕТТІК ЖҰМЫС</span>
-          </a>
-        </div>
-        <div class="sidebar-item">
-          <a href="{% url 'app:attestation' %}" class="sidebar-link">
-            <span><i class="bi bi-clipboard-check me-2"></i> АТТЕСТАЦИЯ</span>
           </a>
         </div>
         <div class="sidebar-item border-top pt-3">
