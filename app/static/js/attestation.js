@@ -189,29 +189,18 @@
 
   /* Стандартты кесте: № | Құжаттар атауы | Файлды қарау */
   function standardTable(documents, numPrefix, mode) {
-    // Егер тізімдегі элементтердің балалары (подпункттері 2.1, 2.2...) бар болса,
-    // құрама нумерациялы (иерархиялық rowspan кестесін) саламыз:
-    // Бағандар: № (Негізгі) | № (Қосалқы 2.1, 2.2) | Құжаттар атауы | Файлды қарау
-    var hasSubItems = documents.some(function (d) { return d.children && d.children.length; });
-
+    // Стандартты 3 бағанды кесте: № | Құжаттар атауы | Файлды қарау
+    // Егер элементтің балалары (подпункттері) болса, басты жол және ішкі 2.1, 2.2 иерархиясы көрсетіледі
     var table = el('table', 'att-table');
     var thead = el('thead');
     var headRow = el('tr');
 
-    var headers = hasSubItems
-      ? ['№', '№', 'Құжаттар атауы', 'Файлды қарау']
-      : ['№', 'Құжаттар атауы', 'Файлды қарау'];
+    var headers = ['№', 'Құжаттар атауы', 'Файлды қарау'];
 
     headers.forEach(function (label, i) {
       var cls = '';
-      if (hasSubItems) {
-        if (i === 0) cls = 'att-col-main-num';
-        else if (i === 1) cls = 'att-col-sub-num';
-        else if (i === 3) cls = 'att-col-action';
-      } else {
-        if (i === 0) cls = 'att-col-num';
-        else if (i === 2) cls = 'att-col-action';
-      }
+      if (i === 0) cls = 'att-col-num';
+      else if (i === 2) cls = 'att-col-action';
       headRow.appendChild(el('th', cls, label));
     });
     thead.appendChild(headRow);
@@ -221,7 +210,7 @@
     if (!documents.length) {
       var emptyRow = el('tr');
       var emptyCell = el('td', 'att-empty', 'Бұл санатта құжаттар жоқ');
-      emptyCell.colSpan = hasSubItems ? 4 : 3;
+      emptyCell.colSpan = 3;
       emptyRow.appendChild(emptyCell);
       tbody.appendChild(emptyRow);
       table.appendChild(tbody);
@@ -235,13 +224,8 @@
       if (!subs) {
         // Жай ғана 1 құжат (подпункті жоқ)
         var tr = el('tr');
-        var tdMain = el('td', hasSubItems ? 'att-col-main-num' : 'att-col-num', mainNum);
-        tr.appendChild(tdMain);
-
-        if (hasSubItems) {
-          // Қосалқы баған бос немесе дефис
-          tr.appendChild(el('td', 'att-col-sub-num', '—'));
-        }
+        var tdNum = el('td', 'att-col-num', mainNum);
+        tr.appendChild(tdNum);
 
         var tdTitle = el('td', 'att-col-title');
         tdTitle.appendChild(document.createTextNode(node.title));
@@ -258,26 +242,58 @@
 
         tbody.appendChild(tr);
       } else {
-        // Пункт 2 бөлінеді подпункттерге (2.1, 2.2, 2.3...)
-        // Басты № ұяшығы барлық подпункттерге біріктіріледі (rowspan)
-        subs.forEach(function (subNode, subIdx) {
-          var trSub = el('tr');
+        // Басты тақырып (мысалы 2 — Мектеп құжаттары, 3 — Мектеп жарғысы, 4 — Мектеп лицензиясы, 5 — СЭС)
+        var trParent = el('tr', 'att-row-parent');
+        trParent.style.backgroundColor = '#f1f5f9';
+        trParent.style.borderTop = '2px solid #cbd5e1';
 
-          if (subIdx === 0) {
-            var tdMerged = el('td', 'att-col-main-num', mainNum);
-            tdMerged.rowSpan = subs.length;
-            tdMerged.style.verticalAlign = 'middle';
-            tdMerged.style.fontWeight = '700';
-            tdMerged.style.background = '#f8fafc';
-            trSub.appendChild(tdMerged);
-          }
+        var tdParentNum = el('td', 'att-col-num', mainNum);
+        tdParentNum.style.fontWeight = '700';
+        tdParentNum.style.color = '#1e3a8a';
+        trParent.appendChild(tdParentNum);
+
+        var tdParentTitle = el('td', 'att-col-title');
+        tdParentTitle.style.fontWeight = '700';
+        tdParentTitle.style.color = '#0f172a';
+        tdParentTitle.appendChild(document.createTextNode(node.title));
+        if (node.subtitle) {
+          var subP = el('small', 'att-block-subtitle');
+          subP.textContent = node.subtitle;
+          tdParentTitle.appendChild(subP);
+        }
+        trParent.appendChild(tdParentTitle);
+
+        var tdParentAct = el('td', 'att-col-action');
+        if (node.hasFile) {
+          tdParentAct.appendChild(createOpenButton(node));
+        } else {
+          var spanEmpty = el('span', 'text-muted', '—');
+          spanEmpty.style.opacity = '0.4';
+          tdParentAct.appendChild(spanEmpty);
+        }
+        trParent.appendChild(tdParentAct);
+        tbody.appendChild(trParent);
+
+        // Подпункттері (2.1, 2.2, 2.3...)
+        subs.forEach(function (subNode, subIdx) {
+          var trSub = el('tr', 'att-row-sub');
 
           var subNum = getNodeNumber(subNode, subIdx, mainNum, mode);
-          var tdSubNum = el('td', 'att-col-sub-num', subNum);
+          var tdSubNum = el('td', 'att-col-num', subNum);
           tdSubNum.style.fontWeight = '600';
+          tdSubNum.style.color = '#475569';
+          tdSubNum.style.fontSize = '0.92rem';
           trSub.appendChild(tdSubNum);
 
           var tdSubTitle = el('td', 'att-col-title');
+          tdSubTitle.style.paddingLeft = '2rem';
+
+          var arrow = el('span', 'text-primary me-2');
+          arrow.innerHTML = '↳ ';
+          arrow.style.fontWeight = '700';
+          arrow.style.opacity = '0.75';
+          tdSubTitle.appendChild(arrow);
+
           tdSubTitle.appendChild(document.createTextNode(subNode.title));
           if (subNode.subtitle) {
             var s = el('small', 'att-block-subtitle');
