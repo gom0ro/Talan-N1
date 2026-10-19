@@ -890,13 +890,15 @@ class AttestationCategory(models.Model):
     TYPE_DEEP = 4
     TYPE_COLLAPSIBLE = 5
     TYPE_SUB_NUMBERING = 6
+    TYPE_METHODOLOGICAL = 7
     TYPE_CHOICES = [
-        (TYPE_STANDARD, 'Стандартная таблица'),
-        (TYPE_YEARS, 'Таблица по годам'),
-        (TYPE_CELL, 'Таблица с вложенными годами в ячейке'),
-        (TYPE_DEEP, 'Многоуровневая таблица'),
-        (TYPE_COLLAPSIBLE, 'Стандартная таблица (раскрывающаяся)'),
-        (TYPE_SUB_NUMBERING, 'Блок с подпунктами (1, 1.1, 1.2...)'),
+        (TYPE_STANDARD, '1. Стандартная таблица'),
+        (TYPE_YEARS, '2. Таблица по годам'),
+        (TYPE_CELL, '3. Таблица с вложенными годами в ячейке'),
+        (TYPE_DEEP, '4. Многоуровневая таблица'),
+        (TYPE_COLLAPSIBLE, '5. Стандартная таблица (раскрывающаяся)'),
+        (TYPE_SUB_NUMBERING, '6. Блок с подпунктами (1, 1.1, 1.2...)'),
+        (TYPE_METHODOLOGICAL, '7. Оқу-әдістемелік кесте (ячейкадағы оқу жылдары мен құжаттар)'),
     ]
 
     year = models.ForeignKey(

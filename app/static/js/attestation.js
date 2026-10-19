@@ -372,14 +372,139 @@
     return wrap;
   }
 
-  /* ─── 3-ТҮРІ: ЯЧЕЙКА ІШІНДЕГІ АККОРДЕОНДАР ────────────── */
+  /* ─── 3-ТҮРІ ЖӘНЕ 7-ТҮРІ: ОҚУ-ӘДІСТЕМЕЛІК КЕСТЕ (ЯЧЕЙКАДАҒЫ ОҚУ ЖЫЛДАРЫ МЕН ҚҰЖАТТАР) ── */
 
-  function renderType3(block, nodes) {
-    var table = el('table', 'att-table');
+  function createMethodoAccordion(groupNode) {
+    var wrap = el('div', 'att-methodo-acc-wrap');
+    wrap.style.marginBottom = '8px';
+
+    var isOpen = Boolean(groupNode.isOpen);
+
+    var btn = el('button', 'att-methodo-acc-btn');
+    btn.type = 'button';
+    btn.style.width = '100%';
+    btn.style.background = '#eef3fb';
+    btn.style.border = '1px solid #d8e4f5';
+    btn.style.borderRadius = isOpen ? '6px 6px 0 0' : '6px';
+    btn.style.padding = '10px 16px';
+    btn.style.display = 'flex';
+    btn.style.alignItems = 'center';
+    btn.style.justifyContent = 'center';
+    btn.style.gap = '8px';
+    btn.style.cursor = 'pointer';
+    btn.style.fontWeight = '700';
+    btn.style.color = '#1e293b';
+    btn.style.fontSize = '0.95rem';
+    btn.style.transition = 'all 0.2s ease';
+
+    var arrow = el('span', 'att-methodo-arrow', isOpen ? '▼' : '▶');
+    arrow.style.fontSize = '0.75rem';
+    arrow.style.color = '#334155';
+    arrow.style.marginRight = '6px';
+    btn.appendChild(arrow);
+
+    var text = el('span', 'att-methodo-title', groupNode.title);
+    btn.appendChild(text);
+
+    var panel = el('div', 'att-methodo-panel');
+    panel.style.background = '#ffffff';
+    panel.style.border = '1px solid #d8e4f5';
+    panel.style.borderTop = 'none';
+    panel.style.borderRadius = '0 0 6px 6px';
+    panel.style.padding = '10px 16px';
+    panel.style.display = isOpen ? 'block' : 'none';
+
+    var docs = groupNode.children && groupNode.children.length ? groupNode.children : (groupNode.hasFile ? [groupNode] : []);
+
+    var list = el('ul', 'att-methodo-file-list');
+    list.style.listStyle = 'none';
+    list.style.margin = '0';
+    list.style.padding = '0';
+
+    if (!docs.length) {
+      var emptyLi = el('li', 'att-empty', 'Құжаттар жоқ');
+      emptyLi.style.padding = '10px 0';
+      emptyLi.style.textAlign = 'center';
+      emptyLi.style.color = '#94a3b8';
+      list.appendChild(emptyLi);
+    } else {
+      docs.forEach(function (docNode, idx) {
+        var li = el('li', 'att-methodo-file-item');
+        li.style.display = 'flex';
+        li.style.alignItems = 'center';
+        li.style.justifyContent = 'space-between';
+        li.style.gap = '16px';
+        li.style.padding = '10px 0';
+        if (idx < docs.length - 1) {
+          li.style.borderBottom = '1px solid #f1f5f9';
+        }
+
+        var label = el('span', 'att-methodo-doc-name', docNode.title);
+        label.style.fontWeight = '500';
+        label.style.color = '#1e293b';
+        label.style.fontSize = '0.95rem';
+        li.appendChild(label);
+
+        li.appendChild(createOpenButton(docNode));
+        list.appendChild(li);
+      });
+    }
+
+    panel.appendChild(list);
+
+    btn.addEventListener('click', function () {
+      isOpen = !isOpen;
+      if (isOpen) {
+        panel.style.display = 'block';
+        btn.style.borderRadius = '6px 6px 0 0';
+        arrow.textContent = '▼';
+      } else {
+        panel.style.display = 'none';
+        btn.style.borderRadius = '6px';
+        arrow.textContent = '▶';
+      }
+    });
+
+    btn.addEventListener('mouseenter', function () {
+      btn.style.background = '#e2ecf9';
+    });
+    btn.addEventListener('mouseleave', function () {
+      btn.style.background = '#eef3fb';
+    });
+
+    wrap.appendChild(btn);
+    wrap.appendChild(panel);
+    return wrap;
+  }
+
+  function renderTypeMethodological(block, nodes) {
+    var table = el('table', 'att-table att-table-methodo');
+    table.style.width = '100%';
+    table.style.borderCollapse = 'collapse';
+    table.style.border = '1px solid #dee2e6';
+    table.style.background = '#ffffff';
+
     var thead = el('thead');
     var headRow = el('tr');
-    ['№', 'Құжат атауы', 'Құжаттар'].forEach(function (label, i) {
-      headRow.appendChild(el('th', i === 0 ? 'att-col-num' : (i === 1 ? 'att-col-title' : 'att-col-cell'), label));
+
+    var cols = [
+      { label: '№', width: '70px' },
+      { label: 'Құжат атауы', width: '38%' },
+      { label: 'Құжаттар', width: 'auto' }
+    ];
+
+    cols.forEach(function (col) {
+      var th = el('th', null, col.label);
+      th.style.background = '#ea7c1e';
+      th.style.color = '#ffffff';
+      th.style.fontWeight = '700';
+      th.style.textAlign = 'center';
+      th.style.verticalAlign = 'middle';
+      th.style.padding = '14px 16px';
+      th.style.border = '1px solid #d96f16';
+      th.style.fontSize = '0.95rem';
+      if (col.width !== 'auto') th.style.width = col.width;
+      headRow.appendChild(th);
     });
     thead.appendChild(headRow);
     table.appendChild(thead);
@@ -389,46 +514,76 @@
       var emptyRow = el('tr');
       var emptyCell = el('td', 'att-empty', 'Құжаттар жоқ');
       emptyCell.colSpan = 3;
+      emptyCell.style.textAlign = 'center';
+      emptyCell.style.padding = '24px';
+      emptyCell.style.border = '1px solid #dee2e6';
       emptyRow.appendChild(emptyCell);
       tbody.appendChild(emptyRow);
+      table.appendChild(tbody);
+      return wrapTable(table);
     }
 
     var mode = block ? block.numberingMode : 'auto';
     nodes.forEach(function (rowNode, index) {
       var tr = el('tr');
-      tr.appendChild(el('td', 'att-col-num', getNodeNumber(rowNode, index, null, mode)));
+      tr.style.borderBottom = '1px solid #dee2e6';
 
-      var title = el('td', 'att-col-title');
-      title.appendChild(document.createTextNode(rowNode.title));
+      // 1: №
+      var tdNum = el('td', 'att-col-num', getNodeNumber(rowNode, index, null, mode));
+      tdNum.style.textAlign = 'center';
+      tdNum.style.verticalAlign = 'middle';
+      tdNum.style.fontWeight = '500';
+      tdNum.style.fontSize = '1.05rem';
+      tdNum.style.color = '#334155';
+      tdNum.style.border = '1px solid #dee2e6';
+      tdNum.style.padding = '14px 10px';
+      tr.appendChild(tdNum);
+
+      // 2: Құжат атауы
+      var tdTitle = el('td', 'att-col-title');
+      tdTitle.style.textAlign = 'center';
+      tdTitle.style.verticalAlign = 'middle';
+      tdTitle.style.fontWeight = '700';
+      tdTitle.style.fontSize = '1.05rem';
+      tdTitle.style.color = '#1e293b';
+      tdTitle.style.padding = '18px 24px';
+      tdTitle.style.border = '1px solid #dee2e6';
+      tdTitle.appendChild(document.createTextNode(rowNode.title));
       if (rowNode.subtitle) {
-        var sub = el('small', 'att-block-subtitle');
+        var sub = el('small', 'att-block-subtitle d-block mt-1 text-muted fw-normal');
         sub.textContent = rowNode.subtitle;
-        title.appendChild(sub);
+        tdTitle.appendChild(sub);
       }
-      tr.appendChild(title);
+      tr.appendChild(tdTitle);
 
-      var cell = el('td', 'att-col-cell');
-      var groups = rowNode.children.length ? rowNode.children : [rowNode];
-      var stack = el('div', 'att-stack');
+      // 3: Құжаттар
+      var tdCell = el('td', 'att-col-cell');
+      tdCell.style.verticalAlign = 'middle';
+      tdCell.style.padding = '16px';
+      tdCell.style.border = '1px solid #dee2e6';
+
+      var groups = rowNode.children && rowNode.children.length ? rowNode.children : [rowNode];
+      var stack = el('div', 'att-methodo-stack');
 
       groups.forEach(function (groupNode) {
-        stack.appendChild(createAccordion({
-          variant: 'grey',
-          title: groupNode.title,
-          open: groupNode.isOpen,
-          render: function () {
-            return fileList(groupNode.children.length ? groupNode.children : [groupNode]);
-          }
-        }));
+        stack.appendChild(createMethodoAccordion(groupNode));
       });
 
-      cell.appendChild(stack);
-      tr.appendChild(cell);
+      tdCell.appendChild(stack);
+      tr.appendChild(tdCell);
       tbody.appendChild(tr);
     });
 
     table.appendChild(tbody);
     return wrapTable(table);
+  }
+
+  function renderType3(block, nodes) {
+    return renderTypeMethodological(block, nodes);
+  }
+
+  function renderType7(block, nodes) {
+    return renderTypeMethodological(block, nodes);
   }
 
   /* ─── 4-ТҮРІ: ТЕРЕҢ САТЫЛАР КЕСТЕСІ ───────────────────── */
@@ -593,7 +748,8 @@
     3: renderType3,
     4: renderType4,
     5: renderType5,
-    6: renderType6
+    6: renderType6,
+    7: renderType7
   };
 
   function renderBlock(block) {
@@ -688,8 +844,8 @@
               return content5;
             }
           }));
-        } else if (block.type === 2 || block.type === 3 || block.type === 4 || block.type === 6) {
-          /* 2–4 және 6 түрде санаттың өзі көк аккордеон болады */
+        } else if (block.type === 2 || block.type === 3 || block.type === 4 || block.type === 6 || block.type === 7) {
+          /* 2–4, 6 және 7 түрде санаттың өзі көк аккордеон болады */
           var content = renderBlock(block);
           host.appendChild(createAccordion({
             variant: 'blue',
